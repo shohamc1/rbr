@@ -26,7 +26,9 @@ Keep disc/, original/, and build/ ignored.
 
 Before the first function, read README.md and config/toolchain.json. Before
 choosing a target, read the initial queue below and its function record in
-analysis/functions/. Run `make analyze` if the records need regeneration.
+analysis/functions/. Run `make ghidra-analyze` once, then
+`make ghidra-function FUNCTION=<id>` for pseudocode, assembly, and references.
+Run `make analyze` for the lightweight PE metadata records.
 These files are the local knowledge base; do not import PSX toolchain assumptions.
 
 Treat pseudocode, names, types, and compiler guesses as hypotheses. Keep supporting
@@ -57,7 +59,8 @@ and .venv/. Reserve src/modern/ and build/modern/ for the future port.
 1. Use a task branch or `git worktree add -b decomp/<packet> <path> HEAD`.
 2. Claim one ready packet. Prefer a near-matching draft, then a small function with
    a matched analogue, then another bounded leaf. Respect the packet's ownership.
-3. Read the original body, callers, callees, and data references. Confirm boundaries;
+3. Export its Ghidra packet with `make ghidra-function FUNCTION=<id>`. Read the
+   original body, callers, callees, and data references. Confirm boundaries;
    a RET is not the end if a branch reaches code after it.
 4. Write the smallest readable C/C++ representation. Keep uncertain layouts local
    and assert offsets and sizes. Add source and symbol to the owned manifest;
@@ -138,8 +141,15 @@ accessor or setter example. Each packet is independent and needs no shared heade
 Run `make check-function FUNCTION=<id>`, then `make test check-overlay progress`.
 Completion requires an exact active-source match and updated evidence and status.
 
-Original compiler qualification is blocked on provenance-recorded Visual C++
-7.1-family tools and libraries. Coordinate config/toolchain.json and tools/qualify.py
-before work. Reuse the three matched leaves and probes at 0x00401020 (11 bytes)
-and 0x00406410 (26 bytes). Matching these alone does not qualify the whole game or
-resolve the full-link blocker.
+MSVC 13.10.3077 is a tested candidate. Run `make setup-msvc qualify-msvc`.
+It matches all five probes with `/arch:SSE` for the constructor. Set
+`"compiler": "msvc71"` on a compatible function manifest to use it in the normal
+checker; keep the shared Clang default until broader evidence supports a change.
+Coordinate config/msvc71.json and tools/qualify_msvc.py. The linker is present,
+but wibo lacks its kernel32 lstrcmpiA import; `make check-msvc-link` fails.
+
+Ghidra exports and its function index are hypotheses, not matching progress.
+Review boundaries, inferred conventions, and types against the instructions.
+Generated projects and pseudocode stay in build/; never commit them. Re-running
+`make ghidra-analyze` replaces its generated project and exports. Keep manual
+Ghidra work elsewhere. Runtime behavior and the full source link remain unproved.

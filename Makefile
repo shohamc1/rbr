@@ -28,3 +28,17 @@ test:
 	mkdir -p build/tests
 	$(CXX) -std=c++11 tests/behavior.cpp -o build/tests/behavior
 	build/tests/behavior
+
+.PHONY: ghidra-analyze ghidra-function setup-msvc qualify-msvc
+ghidra-analyze:
+	$(PYTHON) tools/ghidra.py analyze
+ghidra-function:
+	$(PYTHON) tools/ghidra.py function $(FUNCTION)
+setup-msvc:
+	$(PYTHON) tools/msvc.py setup
+qualify-msvc:
+	$(PYTHON) tools/qualify_msvc.py
+
+.PHONY: check-msvc-link
+check-msvc-link:
+	$(PYTHON) tools/msvc.py link-smoke

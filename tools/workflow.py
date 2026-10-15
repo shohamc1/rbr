@@ -73,6 +73,13 @@ def compiler():
 
 
 def build(row):
+    profile = row.get('compiler', 'clang')
+    if profile == 'msvc71':
+        from msvc import compile_object
+        out = compile_object(row['source'], BUILD / (row['id'] + '.obj'), row.get('extra_flags', []))
+        return function_bytes(out.read_bytes(), row['symbol'])
+    if profile != 'clang':
+        raise ValueError('Unknown compiler profile: ' + profile)
     path, flags = compiler()
     BUILD.mkdir(parents=True, exist_ok=True)
     out = BUILD / (row['id'] + '.obj')

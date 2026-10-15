@@ -65,6 +65,21 @@ class WorkflowTests(unittest.TestCase):
         self.assertNotEqual(result.returncode,0)
         self.assertIn('BLOCKED',result.stderr)
 
+    @unittest.skipUnless((ROOT / 'tools/local/msvc71/Bin/cl.exe').exists(), 'optional MSVC toolchain not installed')
+    def test_msvc_manifest_profile(self):
+        (self.root / 'tools').mkdir()
+        (self.root / 'tools/local').symlink_to(ROOT / 'tools/local', target_is_directory=True)
+        source = self.root / 'src/reconstruction/sub_00401000.cpp'
+        source.write_text((ROOT / 'tests/qualification/msvc71/getter.cpp').read_text())
+        manifest = self.root / 'config/functions/sub_00401000.json'
+        row = json.loads(manifest.read_text())
+        row['compiler'] = 'msvc71'
+        manifest.write_text(json.dumps(row))
+        result = self.run_check('check-function', 'sub_00401000')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        source.write_text(source.read_text().replace('return field_0c;', 'return field_0c + 1;'))
+        self.assertNotEqual(self.run_check('check-function', 'sub_00401000').returncode, 0)
+
     def test_symbol_and_relocation_rejection(self):
         result=self.run_check('check-function','sub_00401000')
         self.assertEqual(result.returncode,0,result.stderr)

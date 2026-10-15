@@ -1,0 +1,293 @@
+{
+  "artifacts": [
+    {
+      "path": "original/nocd/richardburnsrally.exe",
+      "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+      "linker_version": [
+        7,
+        10
+      ],
+      "rich_entries": []
+    },
+    {
+      "path": "original/disc/RichardBurnsRally.exe",
+      "sha256": "79efc2d37939331798713f4e21869b995d4d4711b57f5b29b77764b9883d0b71",
+      "linker_version": [
+        7,
+        10
+      ],
+      "rich_entries": [
+        {
+          "product_id": "0x69",
+          "build": 2067,
+          "count": 5
+        },
+        {
+          "product_id": "0xf",
+          "build": 3077,
+          "count": 9
+        },
+        {
+          "product_id": "0x5d",
+          "build": 3077,
+          "count": 4
+        },
+        {
+          "product_id": "0x5f",
+          "build": 3077,
+          "count": 34
+        },
+        {
+          "product_id": "0x5f",
+          "build": 2179,
+          "count": 1
+        },
+        {
+          "product_id": "0x5d",
+          "build": 2067,
+          "count": 2
+        },
+        {
+          "product_id": "0xb",
+          "build": 8799,
+          "count": 1
+        },
+        {
+          "product_id": "0x1d",
+          "build": 9466,
+          "count": 29
+        },
+        {
+          "product_id": "0x63",
+          "build": 3077,
+          "count": 35
+        },
+        {
+          "product_id": "0x5d",
+          "build": 2179,
+          "count": 14
+        },
+        {
+          "product_id": "0x19",
+          "build": 9210,
+          "count": 7
+        },
+        {
+          "product_id": "0x1",
+          "build": 0,
+          "count": 463
+        },
+        {
+          "product_id": "0x1c",
+          "build": 9178,
+          "count": 2
+        },
+        {
+          "product_id": "0x5f",
+          "build": 2067,
+          "count": 12
+        },
+        {
+          "product_id": "0x12",
+          "build": 8444,
+          "count": 6
+        },
+        {
+          "product_id": "0x1d",
+          "build": 9178,
+          "count": 117
+        },
+        {
+          "product_id": "0x60",
+          "build": 3077,
+          "count": 371
+        },
+        {
+          "product_id": "0x5c",
+          "build": 3077,
+          "count": 1
+        },
+        {
+          "product_id": "0x5e",
+          "build": 3052,
+          "count": 1
+        },
+        {
+          "product_id": "0x5a",
+          "build": 3077,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "original/install/Root/HedgeHog3D.dll",
+      "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+      "linker_version": [
+        7,
+        10
+      ],
+      "rich_entries": [
+        {
+          "product_id": "0x69",
+          "build": 2067,
+          "count": 4
+        },
+        {
+          "product_id": "0x5d",
+          "build": 3077,
+          "count": 4
+        },
+        {
+          "product_id": "0x60",
+          "build": 3077,
+          "count": 4
+        },
+        {
+          "product_id": "0x5f",
+          "build": 3077,
+          "count": 7
+        },
+        {
+          "product_id": "0xf",
+          "build": 3077,
+          "count": 7
+        },
+        {
+          "product_id": "0x5f",
+          "build": 2179,
+          "count": 1
+        },
+        {
+          "product_id": "0x5d",
+          "build": 2067,
+          "count": 2
+        },
+        {
+          "product_id": "0x19",
+          "build": 9210,
+          "count": 2
+        },
+        {
+          "product_id": "0x1c",
+          "build": 9178,
+          "count": 1
+        },
+        {
+          "product_id": "0x5f",
+          "build": 2067,
+          "count": 12
+        },
+        {
+          "product_id": "0x12",
+          "build": 8444,
+          "count": 6
+        },
+        {
+          "product_id": "0x1d",
+          "build": 9178,
+          "count": 128
+        },
+        {
+          "product_id": "0x5d",
+          "build": 2179,
+          "count": 9
+        },
+        {
+          "product_id": "0x1",
+          "build": 0,
+          "count": 363
+        },
+        {
+          "product_id": "0x63",
+          "build": 3077,
+          "count": 150
+        },
+        {
+          "product_id": "0x5c",
+          "build": 3077,
+          "count": 1
+        },
+        {
+          "product_id": "0x5a",
+          "build": 3077,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "original/install/Root/LocoMotion.dll",
+      "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+      "linker_version": [
+        7,
+        10
+      ],
+      "rich_entries": [
+        {
+          "product_id": "0x69",
+          "build": 2067,
+          "count": 2
+        },
+        {
+          "product_id": "0xf",
+          "build": 3077,
+          "count": 4
+        },
+        {
+          "product_id": "0x5f",
+          "build": 3077,
+          "count": 7
+        },
+        {
+          "product_id": "0x5d",
+          "build": 3077,
+          "count": 4
+        },
+        {
+          "product_id": "0x5d",
+          "build": 2179,
+          "count": 5
+        },
+        {
+          "product_id": "0x1",
+          "build": 0,
+          "count": 208
+        },
+        {
+          "product_id": "0x63",
+          "build": 3077,
+          "count": 16
+        },
+        {
+          "product_id": "0x12",
+          "build": 8444,
+          "count": 6
+        },
+        {
+          "product_id": "0x1d",
+          "build": 9178,
+          "count": 25
+        },
+        {
+          "product_id": "0x60",
+          "build": 3077,
+          "count": 88
+        },
+        {
+          "product_id": "0x5c",
+          "build": 3077,
+          "count": 1
+        },
+        {
+          "product_id": "0x5a",
+          "build": 3077,
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "candidate_compiler": "13.10.3077",
+  "candidate_linker": "7.10.3077",
+  "observed_predicate_comp_id": "0x00600c05",
+  "inference": "Candidate C++ output carries product/build 0x60/3077, also present in the disc-root EXE and base DLLs. NoCD has no Rich header. Five sample matches support the candidate, but do not prove its use for every function.",
+  "linker_probe": "link.exe 7.10.3077 cannot complete the minimal /nodefaultlib link under pinned wibo 1.2.0: missing kernel32 lstrcmpiA. No output executable was produced."
+}
