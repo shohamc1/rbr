@@ -1,0 +1,19 @@
+{
+  "name": "clang-23.1.1-leaf-candidate",
+  "tested_path": "/opt/homebrew/opt/llvm/bin/clang",
+  "sha256": "8daf964b5d524b4754d4300f370d9956a1de8f3815ce5828bb8fd8ad087b0b78",
+  "flags": [
+    "-target",
+    "i686-pc-windows-msvc",
+    "-O2",
+    "-mno-sse",
+    "-mno-sse2",
+    "-fno-exceptions",
+    "-fno-rtti"
+  ],
+  "status": "Qualified only for listed leaf examples, not the original compiler or a general game profile.",
+  "libraries": {
+    "libclang-cpp.23.1.dylib": "4e74ffd4222232bee41e80962716c65e01fa851cef58aadd5c80a46af3ba5f2e",
+    "libLLVM.23.1.dylib": "326ec839e195d5dacc50925143078cdb2cbd91700c816637f885120bc9468ee5"
+  }
+}

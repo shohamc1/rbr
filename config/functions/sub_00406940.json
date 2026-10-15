@@ -1,0 +1,9 @@
+{
+  "id": "sub_00406940",
+  "address": "0x406940",
+  "size": 10,
+  "reference_sha256": "7ed72a491eeeeb25a633645a193a3bf4428d9f32bf960a2fdf606ac2e4c67aa4",
+  "boundary_confidence": "high for straight-line body: aligned entry, terminating RET, INT3 padding; class identity unproved",
+  "status": "unresolved",
+  "evidence": "analysis/functions/sub_00406940.json"
+}

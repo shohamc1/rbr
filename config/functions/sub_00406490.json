@@ -1,0 +1,11 @@
+{
+  "id": "sub_00406490",
+  "address": "0x406490",
+  "size": 7,
+  "reference_sha256": "80e39e00406905ca532801f1aac5fea7480f8ab9fc28b5c6fe1dd372ac2b4174",
+  "boundary_confidence": "high for straight-line body: aligned entry, terminating RET, INT3 padding; class identity unproved",
+  "status": "matching_cpp",
+  "evidence": "analysis/functions/sub_00406490.json",
+  "source": "src/reconstruction/sub_00406490.cpp",
+  "symbol": "_sub_00406490"
+}

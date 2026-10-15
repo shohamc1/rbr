@@ -1,0 +1,11 @@
+{
+  "id": "sub_00401000",
+  "address": "0x401000",
+  "size": 4,
+  "reference_sha256": "2e339cdc5de837ec151dbde90057caeabba18ac3ea32e7c2cffc8f95df41a6ff",
+  "boundary_confidence": "high for straight-line body: aligned entry, terminating RET, INT3 padding; class identity unproved",
+  "status": "matching_cpp",
+  "evidence": "analysis/functions/sub_00401000.json",
+  "source": "src/reconstruction/sub_00401000.cpp",
+  "symbol": "?sub_00401000@Object00401000@@QAEIXZ"
+}
