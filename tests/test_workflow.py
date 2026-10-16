@@ -65,7 +65,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertNotEqual(result.returncode,0)
         self.assertIn('BLOCKED',result.stderr)
 
-    @unittest.skipUnless((ROOT / 'tools/local/msvc71/Bin/cl.exe').exists(), 'optional MSVC toolchain not installed')
+    @unittest.skipUnless((ROOT / 'tools/local/msvc-wine-image.txt').exists(), 'optional Docker MSVC toolchain not installed')
     def test_msvc_manifest_profile(self):
         (self.root / 'tools').mkdir()
         (self.root / 'tools/local').symlink_to(ROOT / 'tools/local', target_is_directory=True)

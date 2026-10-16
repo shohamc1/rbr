@@ -289,5 +289,6 @@
   "candidate_linker": "7.10.3077",
   "observed_predicate_comp_id": "0x00600c05",
   "inference": "Candidate C++ output carries product/build 0x60/3077, also present in the disc-root EXE and base DLLs. NoCD has no Rich header. Five sample matches support the candidate, but do not prove its use for every function.",
-  "linker_probe": "link.exe 7.10.3077 cannot complete the minimal /nodefaultlib link under pinned wibo 1.2.0: missing kernel32 lstrcmpiA. No output executable was produced."
+  "linker_probe": "link.exe 7.10.3077 completes the minimal /nodefaultlib link under Docker Wine 8.0 on linux/386, tested through OrbStack on Apple Silicon. The output is an i386 PE and its entry bytes match the compiled Entry function. The probe was not executed. The earlier wibo 1.2.0 run failed on missing kernel32 lstrcmpiA.",
+  "docker_wine_image_id": "sha256:ae08de7abdcb232c844977b0d2aea43e28ccacef16193703fda38cecce034afe"
 }

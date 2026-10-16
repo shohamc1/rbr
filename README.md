@@ -93,15 +93,28 @@ as fact. `make analyze` remains the separate, lightweight PE/Capstone metadata s
 ```sh
 make setup-msvc
 make qualify-msvc
+make check-msvc-link
 ```
 
 Setup downloads the package listed by [decomp.me's compiler catalog](https://github.com/decompme/compilers/blob/4694562e964e6198f7fef863ed48462bf1ff2f49/values.yaml)
-and wibo 1.2.0 into ignored `tools/local/`. The archive, compiler files, and runner
-are hash-pinned in `config/msvc71.json`. The package filename says `msvc7.0`, but its
-actual compiler is **13.10.3077** and linker is **7.10.3077**. This is a community
-compiler package, not a newly authenticated Microsoft distribution. The tested
-runner is macOS x86_64 under Rosetta on Apple Silicon; other hosts need a qualified
-runner pin.
+into ignored `tools/local/` and builds the default Docker Wine runner. Start a
+Docker engine before setup or any MSVC command. The runner uses 32-bit Debian
+Linux (`linux/386`) and Wine 8.0. Apple Silicon needs working x86 emulation;
+this setup is tested with OrbStack. Other Docker hosts need the same checks.
+
+The compiler archive and files are hash-pinned in `config/msvc71.json`.
+`tools/docker/msvc/Dockerfile` pins the Debian base digest and Wine package version.
+APT resolves supporting packages at image build time; this is not a complete
+package snapshot. Setup records the built image ID in ignored
+`tools/local/msvc-wine-image.txt`; compiler calls use that ID, not a mutable tag.
+Run setup again if the image is removed. Keep the compiler local; it is mounted
+at runtime and is not included in the image. Compiler and linker calls have no
+network access. Source and compiler mounts are read-only; only the output
+directory is writable. Each call uses a fresh Wine prefix.
+
+The package filename says `msvc7.0`, but its actual compiler is **13.10.3077**
+and linker is **7.10.3077**. This is a community compiler package, not a newly
+authenticated Microsoft distribution.
 
 The disc-root EXE and base DLL Rich metadata contain product/build 0x60/3077,
 which also appears in a candidate-compiled C++ object. The NoCD EXE has no Rich
@@ -122,8 +135,9 @@ use `"extra_flags": ["/arch:SSE"]` only when evidence supports it. The existing
 fields keep Clang. Do not pass Clang options to MSVC or change the shared default
 from five small samples.
 
-`make check-msvc-link` currently fails: the pinned wibo runner lacks the kernel32
-`lstrcmpiA` import required by link.exe. The compiler works, but this runner cannot
-yet complete even the small link probe. A qualified Windows/linker runner and the
-game's complete source/layout remain blockers. Virtual dispatch, exceptions, RTTI,
-custom register conventions, and Windows floating-point state are not qualified.
+`make check-msvc-link` compiles and links a small probe through Docker Wine.
+It checks that the output is an i386 PE and that its entry bytes equal the
+compiled function. This passes; the former wibo `lstrcmpiA` blocker is resolved.
+The probe is not run. The game's complete source and layout remain blockers to
+a full rebuild. Virtual dispatch, exceptions, RTTI, custom register conventions,
+and Windows floating-point state are not qualified.

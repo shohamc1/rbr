@@ -1,8 +1,8 @@
-"""Set up or run the pinned MSVC 13.10.3077 candidate on the tested macOS host."""
+"""Set up or run the pinned MSVC 13.10.3077 candidate with Docker and Wine."""
 import argparse
 import json
 from pathlib import Path
-import platform
+import re
 import subprocess
 import tarfile
 import tempfile
@@ -16,14 +16,16 @@ def config():
 
 def verify():
     cfg = config()
-    if platform.system() != cfg['host']:
-        raise ValueError('This runner pin is tested on macOS only; qualify a host-specific runner first')
     for name, expected in cfg['files'].items():
         path = Path('tools/local/msvc71') / name
         if digest(path) != expected:
             raise ValueError('MSVC file hash mismatch: ' + str(path))
-    if digest(cfg['runner']) != cfg['runner_sha256']:
-        raise ValueError('MSVC runner hash mismatch')
+    image_file = Path(cfg['docker_image_file'])
+    if not image_file.exists():
+        raise ValueError('Docker Wine image is not set up; run make setup-msvc')
+    cfg['docker_image'] = image_file.read_text().strip()
+    if not re.fullmatch(r'sha256:[0-9a-f]{64}', cfg['docker_image']):
+        raise ValueError('Invalid Docker image ID; run make setup-msvc')
     return cfg
 
 
@@ -36,8 +38,6 @@ def download(url, path, expected):
 
 def setup():
     cfg = config()
-    if platform.system() != cfg['host']:
-        raise ValueError('Only the macOS runner is pinned')
     local = Path('tools/local')
     local.mkdir(parents=True, exist_ok=True)
     destination = local / 'msvc71'
@@ -52,12 +52,23 @@ def setup():
                 if digest(unpacked / name) != expected:
                     raise ValueError('Extracted compiler hash mismatch: ' + name)
             unpacked.rename(destination)
-    runner = Path(cfg['runner'])
-    if not runner.exists():
-        download(cfg['runner_url'], runner, cfg['runner_sha256'])
-        runner.chmod(0o755)
+    # Save the image ID only after a successful build; tags can change.
+    with tempfile.TemporaryDirectory(dir=local) as temp:
+        image_file = Path(temp) / 'image.txt'
+        subprocess.run(['docker', 'build', '--platform', cfg['docker_platform'],
+                        '--iidfile', str(image_file), 'tools/docker/msvc'], check=True)
+        image_file.replace(cfg['docker_image_file'])
     verify()
-    print('PASS MSVC compiler files and macOS wibo runner hashes')
+    print('PASS MSVC compiler hashes and Docker Wine image setup')
+
+
+def run_wine(cfg, tool, args, output_dir):
+    subprocess.run(['docker', 'run', '--rm', '--platform', cfg['docker_platform'],
+                    '--network', 'none',
+                    '--mount', f'type=bind,src={Path.cwd()},dst=/work,readonly',
+                    '--mount', f'type=bind,src={Path(cfg["compiler"]).resolve().parent},dst=/compiler,readonly',
+                    '--mount', f'type=bind,src={Path(output_dir).resolve()},dst=/output',
+                    cfg['docker_image'], '/compiler/' + tool, *args], check=True)
 
 
 def compile_object(source, output, flags=()):
@@ -65,8 +76,10 @@ def compile_object(source, output, flags=()):
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.unlink(missing_ok=True)
-    subprocess.run([cfg['runner'], cfg['compiler'], *cfg['flags'], *flags,
-                    '/Fo' + str(output), str(source)], check=True)
+    source = Path(source).resolve().relative_to(Path.cwd())
+    run_wine(cfg, 'cl.exe', [*cfg['flags'], *flags,
+             '/FoZ:/output/' + output.name, 'Z:/work/' + source.as_posix()], output.parent)
+    if not output.is_file(): raise ValueError('Compiler did not produce an object')
     return output
 
 
@@ -77,13 +90,20 @@ if __name__ == '__main__':
     if args.command == 'setup': setup()
     elif args.command == 'link-smoke':
         cfg = verify()
-        obj = compile_object('tests/qualification/msvc71/link_smoke.cpp', 'build/compiler/link_smoke.obj')
         output = Path('build/compiler/link_smoke.exe')
         output.unlink(missing_ok=True)
-        subprocess.run([cfg['runner'], str(Path(cfg['compiler']).with_name('link.exe')),
-                        '/nologo', '/entry:Entry', '/subsystem:console', '/nodefaultlib',
-                        '/fixed', '/out:' + str(output), str(obj)], check=True)
+        obj = compile_object('tests/qualification/msvc71/link_smoke.cpp', 'build/compiler/link_smoke.obj')
+        run_wine(cfg, 'link.exe', ['/nologo', '/entry:Entry', '/subsystem:console',
+                 '/nodefaultlib', '/fixed', '/out:Z:/output/' + output.name,
+                 'Z:/output/' + obj.name], output.parent)
         if not output.exists(): raise ValueError('Linker did not produce an executable')
+        import pefile
+        from coff import function_bytes
+        pe = pefile.PE(str(output))
+        code = function_bytes(obj.read_bytes(), '_Entry')
+        if pe.FILE_HEADER.Machine != 0x14c or pe.get_data(pe.OPTIONAL_HEADER.AddressOfEntryPoint, len(code)) != code:
+            raise ValueError('Linked entry does not match the compiled i386 function')
+        print('PASS linked PE32 i386 EXE and compiled entry bytes')
     else:
         verify()
         print('PASS MSVC tool hashes')

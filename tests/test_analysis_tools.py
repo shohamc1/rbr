@@ -30,8 +30,22 @@ class AnalysisToolTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / 'stale.obj'
             path.write_bytes(b'old success')
-            cfg = {'runner':'unused', 'compiler':'unused', 'flags':[]}
-            with patch('msvc.verify', return_value=cfg), patch('msvc.subprocess.run', side_effect=subprocess.CalledProcessError(1, 'compile')):
+            cfg = {'compiler':'unused', 'flags':[]}
+            with patch('msvc.verify', return_value=cfg), patch('msvc.run_wine', side_effect=subprocess.CalledProcessError(1, 'compile')):
                 with self.assertRaises(subprocess.CalledProcessError):
                     msvc.compile_object('unused.cpp', path)
             self.assertFalse(path.exists())
+
+    def test_runner_rejects_invalid_image_id(self):
+        with tempfile.TemporaryDirectory() as temp:
+            image = Path(temp) / 'image.txt'
+            image.write_text('mutable-tag:latest')
+            with patch('msvc.config', return_value={'files': {}, 'docker_image_file': str(image)}):
+                with self.assertRaisesRegex(ValueError, 'Invalid Docker image ID'):
+                    msvc.verify()
+
+    def test_success_without_object_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with patch('msvc.verify', return_value={'flags': []}), patch('msvc.run_wine'):
+                with self.assertRaisesRegex(ValueError, 'did not produce an object'):
+                    msvc.compile_object('unused.cpp', Path(temp) / 'missing.obj')

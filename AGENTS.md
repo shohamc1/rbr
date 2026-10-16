@@ -145,8 +145,14 @@ MSVC 13.10.3077 is a tested candidate. Run `make setup-msvc qualify-msvc`.
 It matches all five probes with `/arch:SSE` for the constructor. Set
 `"compiler": "msvc71"` on a compatible function manifest to use it in the normal
 checker; keep the shared Clang default until broader evidence supports a change.
-Coordinate config/msvc71.json and tools/qualify_msvc.py. The linker is present,
-but wibo lacks its kernel32 lstrcmpiA import; `make check-msvc-link` fails.
+Coordinate config/msvc71.json, tools/docker/msvc/Dockerfile, and tools/qualify_msvc.py.
+Docker with Wine is the default MSVC runner. Start Docker before setup or checks.
+`make setup-msvc` builds the pinned-base linux/386 image and saves its exact ID
+under ignored tools/local/. Keep compiler binaries local; mount them at runtime.
+The tested host is Apple Silicon with OrbStack x86 emulation. On another host,
+run `make qualify-msvc check-msvc-link` before claiming runner support.
+`make check-msvc-link` passes and verifies the linked probe's entry bytes. It does
+not run the probe or prove the full game link. See README.md for image pin limits.
 
 Ghidra exports and its function index are hypotheses, not matching progress.
 Review boundaries, inferred conventions, and types against the instructions.
