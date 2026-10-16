@@ -1,0 +1,2493 @@
+[
+  {
+    "path": "original/install/Root/HedgeHog3D.dll",
+    "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+    "file_bytes": 1998848,
+    "version": {},
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x10001000",
+        "size": 1644396,
+        "raw_size": 1646592
+      }
+    ],
+    "code_bytes": 1644396,
+    "imports": [
+      {
+        "dll": "WINMM.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "d3d9.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 68
+      },
+      {
+        "dll": "USER32.dll",
+        "kind": "import",
+        "symbols": 45
+      },
+      {
+        "dll": "GDI32.dll",
+        "kind": "import",
+        "symbols": 27
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "import",
+        "symbols": 3
+      },
+      {
+        "dll": "MSVCR71.dll",
+        "kind": "import",
+        "symbols": 96
+      },
+      {
+        "dll": "MSVCP71.dll",
+        "kind": "import",
+        "symbols": 122
+      }
+    ],
+    "export_count": 1,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x196708",
+        "encoding": "ascii",
+        "value": "d3d9d.dll"
+      },
+      {
+        "file_offset": "0x197750",
+        "encoding": "ascii",
+        "value": "usp10.dll"
+      },
+      {
+        "file_offset": "0x197798",
+        "encoding": "ascii",
+        "value": "gdi32.dll"
+      },
+      {
+        "file_offset": "0x19c8f4",
+        "encoding": "ascii",
+        "value": "d3dxof.dll"
+      },
+      {
+        "file_offset": "0x1ad65c",
+        "encoding": "ascii",
+        "value": "d3d9.dll"
+      },
+      {
+        "file_offset": "0x1bd98a",
+        "encoding": "ascii",
+        "value": "WINMM.dll"
+      },
+      {
+        "file_offset": "0x1bd9a6",
+        "encoding": "ascii",
+        "value": "d3d9.dll"
+      },
+      {
+        "file_offset": "0x1bde34",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x1be120",
+        "encoding": "ascii",
+        "value": "USER32.dll"
+      },
+      {
+        "file_offset": "0x1be2fc",
+        "encoding": "ascii",
+        "value": "GDI32.dll"
+      },
+      {
+        "file_offset": "0x1be336",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0x1be73a",
+        "encoding": "ascii",
+        "value": "MSVCR71.dll"
+      },
+      {
+        "file_offset": "0x1c0856",
+        "encoding": "ascii",
+        "value": "MSVCP71.dll"
+      },
+      {
+        "file_offset": "0x1c0932",
+        "encoding": "ascii",
+        "value": "HedgeHog3D.dll"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/Intro.exe",
+    "sha256": "f99932c66f3ad1c7c4aee093f5d907f706d9cbfc92dac2d402e922b9becf1bd1",
+    "file_bytes": 73728,
+    "version": {},
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x401000",
+        "size": 16282,
+        "raw_size": 16384
+      }
+    ],
+    "code_bytes": 16282,
+    "imports": [
+      {
+        "dll": "MSVCR71.dll",
+        "kind": "import",
+        "symbols": 42
+      },
+      {
+        "dll": "VERSION.dll",
+        "kind": "import",
+        "symbols": 3
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 23
+      },
+      {
+        "dll": "USER32.dll",
+        "kind": "import",
+        "symbols": 23
+      },
+      {
+        "dll": "GDI32.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "ole32.dll",
+        "kind": "import",
+        "symbols": 4
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "kind": "import",
+        "symbols": 2
+      }
+    ],
+    "export_count": 0,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x549c",
+        "encoding": "ascii",
+        "value": "\\d3d9.dll"
+      },
+      {
+        "file_offset": "0x54a8",
+        "encoding": "ascii",
+        "value": "\\dpnet.dll"
+      },
+      {
+        "file_offset": "0x54c4",
+        "encoding": "ascii",
+        "value": "\\d3d8.dll"
+      },
+      {
+        "file_offset": "0x54d0",
+        "encoding": "ascii",
+        "value": "\\dinput.dll"
+      },
+      {
+        "file_offset": "0x54dc",
+        "encoding": "ascii",
+        "value": "\\dplayx.dll"
+      },
+      {
+        "file_offset": "0x54e8",
+        "encoding": "ascii",
+        "value": "\\d3drg8x.dll"
+      },
+      {
+        "file_offset": "0x54f8",
+        "encoding": "ascii",
+        "value": "\\ddraw.dll"
+      },
+      {
+        "file_offset": "0x6fda",
+        "encoding": "ascii",
+        "value": "MSVCR71.dll"
+      },
+      {
+        "file_offset": "0x7156",
+        "encoding": "ascii",
+        "value": "VERSION.dll"
+      },
+      {
+        "file_offset": "0x7326",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x74c4",
+        "encoding": "ascii",
+        "value": "USER32.dll"
+      },
+      {
+        "file_offset": "0x74e2",
+        "encoding": "ascii",
+        "value": "GDI32.dll"
+      },
+      {
+        "file_offset": "0x74fc",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0x7552",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0x755c",
+        "encoding": "ascii",
+        "value": "OLEAUT32.dll"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/LocoMotion.dll",
+    "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+    "file_bytes": 458752,
+    "version": {},
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x10001000",
+        "size": 351941,
+        "raw_size": 352256
+      }
+    ],
+    "code_bytes": 351941,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 31
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "import",
+        "symbols": 3
+      },
+      {
+        "dll": "MSVCP71.dll",
+        "kind": "import",
+        "symbols": 123
+      },
+      {
+        "dll": "MSVCR71.dll",
+        "kind": "import",
+        "symbols": 51
+      }
+    ],
+    "export_count": 2,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x5a668",
+        "encoding": "ascii",
+        "value": "d3d9d.dll"
+      },
+      {
+        "file_offset": "0x5a684",
+        "encoding": "ascii",
+        "value": "d3d9.dll"
+      },
+      {
+        "file_offset": "0x63f8c",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x63fca",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0x65ef6",
+        "encoding": "ascii",
+        "value": "MSVCP71.dll"
+      },
+      {
+        "file_offset": "0x6615e",
+        "encoding": "ascii",
+        "value": "MSVCR71.dll"
+      },
+      {
+        "file_offset": "0x662bc",
+        "encoding": "ascii",
+        "value": "LocoMotion.dll"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/MFC71.dll",
+    "sha256": "4da5efdc46d126b45daeee8bc69c0ba2aa243589046b7dfd12a7e21b9bee6a32",
+    "file_bytes": 1060864,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "MFCDLL Shared Library - Retail Version",
+      "FileVersion": "7.10.3077.0",
+      "OriginalFilename": "MFC71.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x7c141000",
+        "size": 897494,
+        "raw_size": 901120
+      }
+    ],
+    "code_bytes": 897494,
+    "imports": [
+      {
+        "dll": "MSVCR71.dll",
+        "kind": "import",
+        "symbols": 105
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 133
+      },
+      {
+        "dll": "GDI32.dll",
+        "kind": "import",
+        "symbols": 111
+      },
+      {
+        "dll": "USER32.dll",
+        "kind": "import",
+        "symbols": 205
+      },
+      {
+        "dll": "SHLWAPI.dll",
+        "kind": "import",
+        "symbols": 6
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "delay_import",
+        "symbols": 15
+      },
+      {
+        "dll": "ole32.dll",
+        "kind": "delay_import",
+        "symbols": 78
+      },
+      {
+        "dll": "SHELL32.dll",
+        "kind": "delay_import",
+        "symbols": 5
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "kind": "delay_import",
+        "symbols": 50
+      },
+      {
+        "dll": "WS2_32.dll",
+        "kind": "delay_import",
+        "symbols": 23
+      },
+      {
+        "dll": "OLEACC.dll",
+        "kind": "delay_import",
+        "symbols": 3
+      },
+      {
+        "dll": "COMCTL32.dll",
+        "kind": "delay_import",
+        "symbols": 17
+      },
+      {
+        "dll": "comdlg32.dll",
+        "kind": "delay_import",
+        "symbols": 11
+      },
+      {
+        "dll": "WINSPOOL.DRV",
+        "kind": "delay_import",
+        "symbols": 4
+      },
+      {
+        "dll": "WININET.dll",
+        "kind": "delay_import",
+        "symbols": 39
+      },
+      {
+        "dll": "oledlg.dll",
+        "kind": "delay_import",
+        "symbols": 10
+      },
+      {
+        "dll": "urlmon.dll",
+        "kind": "delay_import",
+        "symbols": 4
+      },
+      {
+        "dll": "ODBC32.dll",
+        "kind": "delay_import",
+        "symbols": 32
+      }
+    ],
+    "export_count": 6443,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x9e00",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0xad28",
+        "encoding": "ascii",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0xadd4",
+        "encoding": "ascii",
+        "value": "MFC71%s.DLL"
+      },
+      {
+        "file_offset": "0xe684",
+        "encoding": "ascii",
+        "value": "RICHED32.DLL"
+      },
+      {
+        "file_offset": "0xe98c",
+        "encoding": "ascii",
+        "value": "RICHED20.DLL"
+      },
+      {
+        "file_offset": "0x122d4",
+        "encoding": "ascii",
+        "value": "COMCTL32.DLL"
+      },
+      {
+        "file_offset": "0x12a98",
+        "encoding": "ascii",
+        "value": "MAPI32.DLL"
+      },
+      {
+        "file_offset": "0x246ee",
+        "encoding": "ascii",
+        "value": "MFC71.DLL"
+      },
+      {
+        "file_offset": "0x3e510",
+        "encoding": "ascii",
+        "value": "ntdll.dll"
+      },
+      {
+        "file_offset": "0x413a8",
+        "encoding": "ascii",
+        "value": "GDI32.DLL"
+      },
+      {
+        "file_offset": "0x41919",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0x4cf6c",
+        "encoding": "ascii",
+        "value": "comctl32.dll"
+      },
+      {
+        "file_offset": "0x9f6a0",
+        "encoding": "ascii",
+        "value": "UxTheme.dll"
+      },
+      {
+        "file_offset": "0xa6d9c",
+        "encoding": "ascii",
+        "value": "WININET.DLL"
+      },
+      {
+        "file_offset": "0xaa26c",
+        "encoding": "ascii",
+        "value": "KERNEL32.DLL"
+      },
+      {
+        "file_offset": "0xae45c",
+        "encoding": "ascii",
+        "value": "%s.dll"
+      },
+      {
+        "file_offset": "0xd81d0",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0xd8200",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0xd8210",
+        "encoding": "ascii",
+        "value": "SHELL32.dll"
+      },
+      {
+        "file_offset": "0xd8220",
+        "encoding": "ascii",
+        "value": "OLEAUT32.dll"
+      },
+      {
+        "file_offset": "0xd8230",
+        "encoding": "ascii",
+        "value": "WS2_32.dll"
+      },
+      {
+        "file_offset": "0xd8240",
+        "encoding": "ascii",
+        "value": "OLEACC.dll"
+      },
+      {
+        "file_offset": "0xd8250",
+        "encoding": "ascii",
+        "value": "COMCTL32.dll"
+      },
+      {
+        "file_offset": "0xd8260",
+        "encoding": "ascii",
+        "value": "comdlg32.dll"
+      },
+      {
+        "file_offset": "0xd8280",
+        "encoding": "ascii",
+        "value": "WININET.dll"
+      },
+      {
+        "file_offset": "0xd8290",
+        "encoding": "ascii",
+        "value": "oledlg.dll"
+      },
+      {
+        "file_offset": "0xd82a0",
+        "encoding": "ascii",
+        "value": "urlmon.dll"
+      },
+      {
+        "file_offset": "0xd82b0",
+        "encoding": "ascii",
+        "value": "ODBC32.dll"
+      },
+      {
+        "file_offset": "0xd9584",
+        "encoding": "ascii",
+        "value": "MSVCR71.dll"
+      },
+      {
+        "file_offset": "0xd9590",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0xd959e",
+        "encoding": "ascii",
+        "value": "GDI32.dll"
+      },
+      {
+        "file_offset": "0xd95a8",
+        "encoding": "ascii",
+        "value": "USER32.dll"
+      },
+      {
+        "file_offset": "0xd95b4",
+        "encoding": "ascii",
+        "value": "SHLWAPI.dll"
+      },
+      {
+        "file_offset": "0xe41fc",
+        "encoding": "ascii",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0xe4254",
+        "encoding": "ascii",
+        "value": "advapi32.dll"
+      },
+      {
+        "file_offset": "0xe4264",
+        "encoding": "ascii",
+        "value": "comctl32.dll"
+      },
+      {
+        "file_offset": "0xe4274",
+        "encoding": "ascii",
+        "value": "comdlg32.dll"
+      },
+      {
+        "file_offset": "0xe4284",
+        "encoding": "ascii",
+        "value": "odbc32.dll"
+      },
+      {
+        "file_offset": "0xe4290",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0xe429c",
+        "encoding": "ascii",
+        "value": "oleacc.dll"
+      },
+      {
+        "file_offset": "0xe42a8",
+        "encoding": "ascii",
+        "value": "oleaut32.dll"
+      },
+      {
+        "file_offset": "0xe42b8",
+        "encoding": "ascii",
+        "value": "oledlg.dll"
+      },
+      {
+        "file_offset": "0xe42c4",
+        "encoding": "ascii",
+        "value": "shell32.dll"
+      },
+      {
+        "file_offset": "0xe42d0",
+        "encoding": "ascii",
+        "value": "urlmon.dll"
+      },
+      {
+        "file_offset": "0xe42dc",
+        "encoding": "ascii",
+        "value": "wininet.dll"
+      },
+      {
+        "file_offset": "0xe42f8",
+        "encoding": "ascii",
+        "value": "ws2_32.dll"
+      },
+      {
+        "file_offset": "0xec534",
+        "encoding": "utf-16le",
+        "value": "MFC71.DLL"
+      },
+      {
+        "file_offset": "0xec650",
+        "encoding": "utf-16le",
+        "value": "MFC71.DLL"
+      },
+      {
+        "file_offset": "0xf1aa8",
+        "encoding": "utf-16le",
+        "value": "Recordset is read-only6ODBC driver doesn't support MFC LongBinary data model.5Attempt to load required component ODBC32.DLL failed.&ODBC driver does not support dynasets.2ODBC static cursors required for snapshot support.`ODBC driver incompatible with MFC database classes (API_CONFORMANCE >= SQL_OAC_LEVEL1 required).aODBC driver incompatible with MFC database classes (SQL_CONFORMANCE >= SQL_OSC_MINIMUM required).7Attempt to scroll past end or before beginning of data.&Dynasets not supported by ODBC driver.'ODBC Level 2 compliant driver required.0Positioned updates not supported by ODBC driver.%Requested lock mode is not supported."
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/RBR Startup.exe",
+    "sha256": "0ac6b81667c066c981bc0b32168fbe369d6021f3a9f19897e6fe2fe51b295611",
+    "file_bytes": 446464,
+    "version": {
+      "CompanyName": "Warthog",
+      "FileDescription": "Richard Burns Rally Startup",
+      "FileVersion": "1.0.0.1",
+      "OriginalFilename": "RBR Startup.exe"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x401000",
+        "size": 268319,
+        "raw_size": 270336
+      }
+    ],
+    "code_bytes": 268319,
+    "imports": [
+      {
+        "dll": "d3d9.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "DSOUND.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 110
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "USER32.dll",
+        "kind": "import",
+        "symbols": 86
+      },
+      {
+        "dll": "GDI32.dll",
+        "kind": "import",
+        "symbols": 31
+      },
+      {
+        "dll": "COMCTL32.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "SHLWAPI.dll",
+        "kind": "import",
+        "symbols": 4
+      },
+      {
+        "dll": "ole32.dll",
+        "kind": "import",
+        "symbols": 15
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "kind": "import",
+        "symbols": 11
+      },
+      {
+        "dll": "WINSPOOL.DRV",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "OLEACC.dll",
+        "kind": "delay_import",
+        "symbols": 2
+      }
+    ],
+    "export_count": 0,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x450d8",
+        "encoding": "ascii",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0x45130",
+        "encoding": "ascii",
+        "value": "advapi32.dll"
+      },
+      {
+        "file_offset": "0x45174",
+        "encoding": "ascii",
+        "value": "shell32.dll"
+      },
+      {
+        "file_offset": "0x45190",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x451c8",
+        "encoding": "ascii",
+        "value": "gdi32.dll"
+      },
+      {
+        "file_offset": "0x45360",
+        "encoding": "ascii",
+        "value": "msvfw32.dll"
+      },
+      {
+        "file_offset": "0x4536c",
+        "encoding": "ascii",
+        "value": "sensapi.dll"
+      },
+      {
+        "file_offset": "0x45378",
+        "encoding": "ascii",
+        "value": "oledlg.dll"
+      },
+      {
+        "file_offset": "0x45384",
+        "encoding": "ascii",
+        "value": "oleacc.dll"
+      },
+      {
+        "file_offset": "0x45390",
+        "encoding": "ascii",
+        "value": "secur32.dll"
+      },
+      {
+        "file_offset": "0x4539c",
+        "encoding": "ascii",
+        "value": "avicap32.dll"
+      },
+      {
+        "file_offset": "0x453bc",
+        "encoding": "ascii",
+        "value": "winmm.dll"
+      },
+      {
+        "file_offset": "0x453c8",
+        "encoding": "ascii",
+        "value": "rasapi32.dll"
+      },
+      {
+        "file_offset": "0x453d8",
+        "encoding": "ascii",
+        "value": "mpr.dll"
+      },
+      {
+        "file_offset": "0x453e0",
+        "encoding": "ascii",
+        "value": "version.dll"
+      },
+      {
+        "file_offset": "0x453ec",
+        "encoding": "ascii",
+        "value": "comdlg32.dll"
+      },
+      {
+        "file_offset": "0x453fc",
+        "encoding": "ascii",
+        "value": "unicows.dll"
+      },
+      {
+        "file_offset": "0x45490",
+        "encoding": "ascii",
+        "value": "security.dll"
+      },
+      {
+        "file_offset": "0x46e00",
+        "encoding": "ascii",
+        "value": "COMCTL32.DLL"
+      },
+      {
+        "file_offset": "0x48bc4",
+        "encoding": "ascii",
+        "value": "mscoree.dll"
+      },
+      {
+        "file_offset": "0x4ad10",
+        "encoding": "ascii",
+        "value": "OLEACC.dll"
+      },
+      {
+        "file_offset": "0x52ee2",
+        "encoding": "ascii",
+        "value": "d3d9.dll"
+      },
+      {
+        "file_offset": "0x52eec",
+        "encoding": "ascii",
+        "value": "DSOUND.dll"
+      },
+      {
+        "file_offset": "0x530de",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x530fa",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0x532a2",
+        "encoding": "ascii",
+        "value": "USER32.dll"
+      },
+      {
+        "file_offset": "0x5330e",
+        "encoding": "ascii",
+        "value": "GDI32.dll"
+      },
+      {
+        "file_offset": "0x53318",
+        "encoding": "ascii",
+        "value": "COMCTL32.dll"
+      },
+      {
+        "file_offset": "0x53372",
+        "encoding": "ascii",
+        "value": "SHLWAPI.dll"
+      },
+      {
+        "file_offset": "0x534c8",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0x534d2",
+        "encoding": "ascii",
+        "value": "OLEAUT32.dll"
+      },
+      {
+        "file_offset": "0x5401c",
+        "encoding": "ascii",
+        "value": "comdlg32.dll"
+      },
+      {
+        "file_offset": "0x5402a",
+        "encoding": "ascii",
+        "value": "SHELL32.dll"
+      },
+      {
+        "file_offset": "0x45780",
+        "encoding": "utf-16le",
+        "value": "ntdll.dll"
+      },
+      {
+        "file_offset": "0x45824",
+        "encoding": "utf-16le",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0x45ab0",
+        "encoding": "utf-16le",
+        "value": "%s.dll"
+      },
+      {
+        "file_offset": "0x4770c",
+        "encoding": "utf-16le",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x4844a",
+        "encoding": "utf-16le",
+        "value": "ole32.dll"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/dbghelp.dll",
+    "sha256": "5799aff4e0e6e6df240d7c942e0549498c8b498a1b96d4abef9f550bb8bd0771",
+    "file_bytes": 813568,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "Windows Image Helper",
+      "FileVersion": "6.2.0013.1 (DbgBuild.030619-2209)",
+      "OriginalFilename": "DBGHELP.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x2801000",
+        "size": 750298,
+        "raw_size": 750592
+      }
+    ],
+    "code_bytes": 750298,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 96
+      },
+      {
+        "dll": "msvcrt.dll",
+        "kind": "import",
+        "symbols": 87
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "import",
+        "symbols": 10
+      },
+      {
+        "dll": "RPCRT4.dll",
+        "kind": "import",
+        "symbols": 1
+      }
+    ],
+    "export_count": 119,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x34d8",
+        "encoding": "ascii",
+        "value": "symsrv.dll"
+      },
+      {
+        "file_offset": "0x3644",
+        "encoding": "ascii",
+        "value": "srcsrv.dll"
+      },
+      {
+        "file_offset": "0x36b4",
+        "encoding": "ascii",
+        "value": "Need a newer version of srcsrv.dll"
+      },
+      {
+        "file_offset": "0x3810",
+        "encoding": "ascii",
+        "value": "shell32.dll"
+      },
+      {
+        "file_offset": "0x3a78",
+        "encoding": "ascii",
+        "value": "psapi.dll"
+      },
+      {
+        "file_offset": "0x3b8c",
+        "encoding": "ascii",
+        "value": "ntdll.dll"
+      },
+      {
+        "file_offset": "0x3c20",
+        "encoding": "ascii",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0x66f0",
+        "encoding": "ascii",
+        "value": "version.dll"
+      },
+      {
+        "file_offset": "0x6c54",
+        "encoding": "ascii",
+        "value": "wsock32.dll"
+      },
+      {
+        "file_offset": "0x6c68",
+        "encoding": "ascii",
+        "value": "netmsg.dll"
+      },
+      {
+        "file_offset": "0x6c88",
+        "encoding": "ascii",
+        "value": "advapi32.dll"
+      },
+      {
+        "file_offset": "0x6d00",
+        "encoding": "ascii",
+        "value": "crypt32.dll"
+      },
+      {
+        "file_offset": "0x6e40",
+        "encoding": "ascii",
+        "value": "shlwapi.dll"
+      },
+      {
+        "file_offset": "0x6e60",
+        "encoding": "ascii",
+        "value": "oleaut32.dll"
+      },
+      {
+        "file_offset": "0x6ecc",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0x6fa4",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x11884",
+        "encoding": "ascii",
+        "value": "SYMSRV.DLL"
+      },
+      {
+        "file_offset": "0xb62c2",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0xb6492",
+        "encoding": "ascii",
+        "value": "msvcrt.dll"
+      },
+      {
+        "file_offset": "0xb64b6",
+        "encoding": "ascii",
+        "value": "VERSION.dll"
+      },
+      {
+        "file_offset": "0xb6504",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0xb6982",
+        "encoding": "ascii",
+        "value": "RPCRT4.dll"
+      },
+      {
+        "file_offset": "0xb6ede",
+        "encoding": "ascii",
+        "value": "dbghelp.dll"
+      },
+      {
+        "file_offset": "0x6014",
+        "encoding": "utf-16le",
+        "value": "mscorsvr.dll"
+      },
+      {
+        "file_offset": "0x6038",
+        "encoding": "utf-16le",
+        "value": "mscorwks.dll"
+      },
+      {
+        "file_offset": "0x605c",
+        "encoding": "utf-16le",
+        "value": "mscoree.dll"
+      },
+      {
+        "file_offset": "0x60dc",
+        "encoding": "utf-16le",
+        "value": "mscordacwks.dll"
+      },
+      {
+        "file_offset": "0x11898",
+        "encoding": "utf-16le",
+        "value": "SYMSRV.DLL*"
+      },
+      {
+        "file_offset": "0xba41c",
+        "encoding": "utf-16le",
+        "value": "DBGHELP.DLL"
+      },
+      {
+        "file_offset": "0xba4dc",
+        "encoding": "utf-16le",
+        "value": "DBGHELP.DLL"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/eax.dll",
+    "sha256": "c35ab67198bafacbdcffae17d991726f75716ad5e5701fd6905280d68e56bb1a",
+    "file_bytes": 139264,
+    "version": {
+      "CompanyName": "Creative Technology Ltd",
+      "FileDescription": "EAX Unified",
+      "FileVersion": "3.06",
+      "OriginalFilename": "eax.dll"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x10001000",
+        "size": 91072,
+        "raw_size": 94208
+      }
+    ],
+    "code_bytes": 91072,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 56
+      },
+      {
+        "dll": "USER32.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "import",
+        "symbols": 7
+      },
+      {
+        "dll": "ole32.dll",
+        "kind": "import",
+        "symbols": 5
+      }
+    ],
+    "export_count": 7,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x19060",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x1958e",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x195b0",
+        "encoding": "ascii",
+        "value": "USER32.dll"
+      },
+      {
+        "file_offset": "0x1962c",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0x19692",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0x19a3e",
+        "encoding": "ascii",
+        "value": "EAX.DLL"
+      },
+      {
+        "file_offset": "0x1f2a4",
+        "encoding": "utf-16le",
+        "value": "eax.dll"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/mfc70.dll",
+    "sha256": "a133f981269d550812ac443f8171013767edf75fd5e8f45f28e10d87132df5c7",
+    "file_bytes": 974848,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "MFCDLL Shared Library - Retail Version",
+      "FileVersion": "7.00.9466.0",
+      "OriginalFilename": "MFC70.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x7c141000",
+        "size": 816552,
+        "raw_size": 819200
+      }
+    ],
+    "code_bytes": 816552,
+    "imports": [
+      {
+        "dll": "GDI32.dll",
+        "kind": "import",
+        "symbols": 110
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 128
+      },
+      {
+        "dll": "MSVCR70.dll",
+        "kind": "import",
+        "symbols": 85
+      },
+      {
+        "dll": "OLEACC.dll",
+        "kind": "import",
+        "symbols": 3
+      },
+      {
+        "dll": "SHLWAPI.dll",
+        "kind": "import",
+        "symbols": 5
+      },
+      {
+        "dll": "USER32.dll",
+        "kind": "import",
+        "symbols": 201
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "delay_import",
+        "symbols": 15
+      },
+      {
+        "dll": "ole32.dll",
+        "kind": "delay_import",
+        "symbols": 76
+      },
+      {
+        "dll": "SHELL32.dll",
+        "kind": "delay_import",
+        "symbols": 5
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "kind": "delay_import",
+        "symbols": 50
+      },
+      {
+        "dll": "COMCTL32.dll",
+        "kind": "delay_import",
+        "symbols": 17
+      },
+      {
+        "dll": "comdlg32.dll",
+        "kind": "delay_import",
+        "symbols": 11
+      },
+      {
+        "dll": "WINSPOOL.DRV",
+        "kind": "delay_import",
+        "symbols": 4
+      },
+      {
+        "dll": "WININET.dll",
+        "kind": "delay_import",
+        "symbols": 39
+      },
+      {
+        "dll": "WSOCK32.dll",
+        "kind": "delay_import",
+        "symbols": 23
+      },
+      {
+        "dll": "oledlg.dll",
+        "kind": "delay_import",
+        "symbols": 10
+      },
+      {
+        "dll": "urlmon.dll",
+        "kind": "delay_import",
+        "symbols": 4
+      },
+      {
+        "dll": "ODBC32.dll",
+        "kind": "delay_import",
+        "symbols": 32
+      }
+    ],
+    "export_count": 5774,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0xa08c",
+        "encoding": "ascii",
+        "value": "MFC70.DLL"
+      },
+      {
+        "file_offset": "0x200f8",
+        "encoding": "ascii",
+        "value": "MFC70%s.DLL"
+      },
+      {
+        "file_offset": "0x25160",
+        "encoding": "ascii",
+        "value": "COMCTL32.DLL"
+      },
+      {
+        "file_offset": "0x274c0",
+        "encoding": "ascii",
+        "value": "RICHED20.DLL"
+      },
+      {
+        "file_offset": "0x2870c",
+        "encoding": "ascii",
+        "value": "RICHED32.DLL"
+      },
+      {
+        "file_offset": "0x28c78",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x29ab4",
+        "encoding": "ascii",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0x2d904",
+        "encoding": "ascii",
+        "value": "MAPI32.DLL"
+      },
+      {
+        "file_offset": "0x336dd",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0x3e32c",
+        "encoding": "ascii",
+        "value": "ntdll.dll"
+      },
+      {
+        "file_offset": "0x40adc",
+        "encoding": "ascii",
+        "value": "GDI32.DLL"
+      },
+      {
+        "file_offset": "0x42ccc",
+        "encoding": "ascii",
+        "value": "comctl32.dll"
+      },
+      {
+        "file_offset": "0x8dbe8",
+        "encoding": "ascii",
+        "value": "UxTheme.dll"
+      },
+      {
+        "file_offset": "0x95290",
+        "encoding": "ascii",
+        "value": "WININET.DLL"
+      },
+      {
+        "file_offset": "0x9cb88",
+        "encoding": "ascii",
+        "value": "%s.dll"
+      },
+      {
+        "file_offset": "0xc4820",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0xc4830",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0xc4840",
+        "encoding": "ascii",
+        "value": "SHELL32.dll"
+      },
+      {
+        "file_offset": "0xc4850",
+        "encoding": "ascii",
+        "value": "OLEAUT32.dll"
+      },
+      {
+        "file_offset": "0xc4860",
+        "encoding": "ascii",
+        "value": "COMCTL32.dll"
+      },
+      {
+        "file_offset": "0xc4870",
+        "encoding": "ascii",
+        "value": "comdlg32.dll"
+      },
+      {
+        "file_offset": "0xc4890",
+        "encoding": "ascii",
+        "value": "WININET.dll"
+      },
+      {
+        "file_offset": "0xc48a0",
+        "encoding": "ascii",
+        "value": "WSOCK32.dll"
+      },
+      {
+        "file_offset": "0xc48b0",
+        "encoding": "ascii",
+        "value": "oledlg.dll"
+      },
+      {
+        "file_offset": "0xc48c0",
+        "encoding": "ascii",
+        "value": "urlmon.dll"
+      },
+      {
+        "file_offset": "0xc48d0",
+        "encoding": "ascii",
+        "value": "ODBC32.dll"
+      },
+      {
+        "file_offset": "0xc5b30",
+        "encoding": "ascii",
+        "value": "GDI32.dll"
+      },
+      {
+        "file_offset": "0xc5b3a",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0xc5b48",
+        "encoding": "ascii",
+        "value": "MSVCR70.dll"
+      },
+      {
+        "file_offset": "0xc5b54",
+        "encoding": "ascii",
+        "value": "OLEACC.dll"
+      },
+      {
+        "file_offset": "0xc5b60",
+        "encoding": "ascii",
+        "value": "SHLWAPI.dll"
+      },
+      {
+        "file_offset": "0xc5b6c",
+        "encoding": "ascii",
+        "value": "USER32.dll"
+      },
+      {
+        "file_offset": "0xcffa7",
+        "encoding": "ascii",
+        "value": "|kernel32.dll"
+      },
+      {
+        "file_offset": "0xd0000",
+        "encoding": "ascii",
+        "value": "advapi32.dll"
+      },
+      {
+        "file_offset": "0xd0010",
+        "encoding": "ascii",
+        "value": "comctl32.dll"
+      },
+      {
+        "file_offset": "0xd0020",
+        "encoding": "ascii",
+        "value": "comdlg32.dll"
+      },
+      {
+        "file_offset": "0xd0030",
+        "encoding": "ascii",
+        "value": "odbc32.dll"
+      },
+      {
+        "file_offset": "0xd003c",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0xd0048",
+        "encoding": "ascii",
+        "value": "oleacc.dll"
+      },
+      {
+        "file_offset": "0xd0054",
+        "encoding": "ascii",
+        "value": "oleaut32.dll"
+      },
+      {
+        "file_offset": "0xd0064",
+        "encoding": "ascii",
+        "value": "oledlg.dll"
+      },
+      {
+        "file_offset": "0xd0070",
+        "encoding": "ascii",
+        "value": "shell32.dll"
+      },
+      {
+        "file_offset": "0xd007c",
+        "encoding": "ascii",
+        "value": "urlmon.dll"
+      },
+      {
+        "file_offset": "0xd0088",
+        "encoding": "ascii",
+        "value": "wininet.dll"
+      },
+      {
+        "file_offset": "0xd00a4",
+        "encoding": "ascii",
+        "value": "wsock32.dll"
+      },
+      {
+        "file_offset": "0xd8534",
+        "encoding": "utf-16le",
+        "value": "MFC70.DLL"
+      },
+      {
+        "file_offset": "0xd8650",
+        "encoding": "utf-16le",
+        "value": "MFC70.DLL"
+      },
+      {
+        "file_offset": "0xdda88",
+        "encoding": "utf-16le",
+        "value": "Recordset is read-only6ODBC driver doesn't support MFC LongBinary data model.5Attempt to load required component ODBC32.DLL failed.&ODBC driver does not support dynasets.2ODBC static cursors required for snapshot support.`ODBC driver incompatible with MFC database classes (API_CONFORMANCE >= SQL_OAC_LEVEL1 required).aODBC driver incompatible with MFC database classes (SQL_CONFORMANCE >= SQL_OSC_MINIMUM required).7Attempt to scroll past end or before beginning of data.&Dynasets not supported by ODBC driver.'ODBC Level 2 compliant driver required.0Positioned updates not supported by ODBC driver.%Requested lock mode is not supported."
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/msvci70.dll",
+    "sha256": "b757f653eed51b7c2d5e38215297298c696559bade3162c46afb7201fb23ceed",
+    "file_bytes": 54784,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "Microsoft\u00ae C++ Runtime Library",
+      "FileVersion": "7.00.9466.0",
+      "OriginalFilename": "MSVCI70.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x7c061000",
+        "size": 27216,
+        "raw_size": 27648
+      }
+    ],
+    "code_bytes": 27216,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 11
+      },
+      {
+        "dll": "MSVCR70.dll",
+        "kind": "import",
+        "symbols": 44
+      }
+    ],
+    "export_count": 445,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x830a",
+        "encoding": "ascii",
+        "value": "MSVCI70.dll"
+      },
+      {
+        "file_offset": "0xc0a0",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0xc0ae",
+        "encoding": "ascii",
+        "value": "MSVCR70.dll"
+      },
+      {
+        "file_offset": "0xcc04",
+        "encoding": "utf-16le",
+        "value": "MSVCI70.DLL"
+      },
+      {
+        "file_offset": "0xccc8",
+        "encoding": "utf-16le",
+        "value": "MSVCI70.DLL"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/msvcp70.dll",
+    "sha256": "9255c60b194cf849f3db54587627e1b8fce10c88875748642b58ee8e27e22536",
+    "file_bytes": 487424,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "Microsoft\u00ae C++ Runtime Library",
+      "FileVersion": "7.00.9466.0",
+      "OriginalFilename": "MSVCP70.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x7c081000",
+        "size": 183936,
+        "raw_size": 184320
+      }
+    ],
+    "code_bytes": 183936,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 16
+      },
+      {
+        "dll": "MSVCR70.dll",
+        "kind": "import",
+        "symbols": 92
+      }
+    ],
+    "export_count": 2896,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x35668",
+        "encoding": "ascii",
+        "value": "MSVCP70.dll"
+      },
+      {
+        "file_offset": "0x6e6a0",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x6e6ae",
+        "encoding": "ascii",
+        "value": "MSVCR70.dll"
+      },
+      {
+        "file_offset": "0x72204",
+        "encoding": "utf-16le",
+        "value": "MSVCP70.DLL"
+      },
+      {
+        "file_offset": "0x722c8",
+        "encoding": "utf-16le",
+        "value": "MSVCP70.DLL"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/msvcp71.dll",
+    "sha256": "df96156f6a548fd6fe5672918de5ae4509d3c810a57bffd2a91de45a3ed5b23b",
+    "file_bytes": 499712,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "Microsoft\u00ae C++ Runtime Library",
+      "FileVersion": "7.10.3077.0",
+      "OriginalFilename": "MSVCP71.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x7c3a1000",
+        "size": 191640,
+        "raw_size": 192512
+      }
+    ],
+    "code_bytes": 191640,
+    "imports": [
+      {
+        "dll": "MSVCR71.dll",
+        "kind": "import",
+        "symbols": 93
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 16
+      }
+    ],
+    "export_count": 2903,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x3f8b2",
+        "encoding": "ascii",
+        "value": "MSVCP71.dll"
+      },
+      {
+        "file_offset": "0x721a0",
+        "encoding": "ascii",
+        "value": "MSVCR71.dll"
+      },
+      {
+        "file_offset": "0x721ac",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x75204",
+        "encoding": "utf-16le",
+        "value": "MSVCP71.DLL"
+      },
+      {
+        "file_offset": "0x752c8",
+        "encoding": "utf-16le",
+        "value": "MSVCP71.DLL"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/msvcr70.dll",
+    "sha256": "f68e4cdbc879423ea47d763a6768567f5f8063924f13a74239750c13fa8d168a",
+    "file_bytes": 344064,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "Microsoft\u00ae C Runtime Library",
+      "FileVersion": "7.00.9466.0",
+      "OriginalFilename": "MSVCR70.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x7c001000",
+        "size": 228328,
+        "raw_size": 229376
+      }
+    ],
+    "code_bytes": 228328,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 153
+      }
+    ],
+    "export_count": 839,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x3bbae",
+        "encoding": "ascii",
+        "value": "MSVCR70.dll"
+      },
+      {
+        "file_offset": "0x3e237",
+        "encoding": "ascii",
+        "value": "|mscoree.dll"
+      },
+      {
+        "file_offset": "0x3e2fc",
+        "encoding": "ascii",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0x3eaac",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x47f8c",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x50200",
+        "encoding": "utf-16le",
+        "value": "MSVCR70.DLL"
+      },
+      {
+        "file_offset": "0x502c4",
+        "encoding": "utf-16le",
+        "value": "MSVCR70.DLL"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/msvcr71.dll",
+    "sha256": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe",
+    "file_bytes": 348160,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "Microsoft\u00ae C Runtime Library",
+      "FileVersion": "7.10.3052.4",
+      "OriginalFilename": "MSVCR71.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x7c341000",
+        "size": 232360,
+        "raw_size": 233472
+      }
+    ],
+    "code_bytes": 232360,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 154
+      }
+    ],
+    "export_count": 837,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x3a298",
+        "encoding": "ascii",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0x3cd4e",
+        "encoding": "ascii",
+        "value": "MSVCR71.dll"
+      },
+      {
+        "file_offset": "0x3f0c0",
+        "encoding": "ascii",
+        "value": "mscoree.dll"
+      },
+      {
+        "file_offset": "0x3f6c0",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x492c0",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x51200",
+        "encoding": "utf-16le",
+        "value": "MSVCR71.DLL"
+      },
+      {
+        "file_offset": "0x512c4",
+        "encoding": "utf-16le",
+        "value": "MSVCR71.DLL"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/msvcrt.dll",
+    "sha256": "eda09e2a61c1f9b9a4ec7bdfd8f4deaac7505855ef9a26ea367e5e23611c5b73",
+    "file_bytes": 290869,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "Microsoft (R) C Runtime Library",
+      "FileVersion": "6.10.9359.0",
+      "OriginalFilename": "MSVCRT.DLL"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x78001000",
+        "size": 203027,
+        "raw_size": 204800
+      }
+    ],
+    "code_bytes": 203027,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 140
+      }
+    ],
+    "export_count": 779,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x35180",
+        "encoding": "ascii",
+        "value": "MSVCRT.DLL for Win32"
+      },
+      {
+        "file_offset": "0x35196",
+        "encoding": "ascii",
+        "value": "Error: MSVCRT.DLL is not compatible with Win32s."
+      },
+      {
+        "file_offset": "0x3537c",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x38936",
+        "encoding": "ascii",
+        "value": "MSVCRT.dll"
+      },
+      {
+        "file_offset": "0x3a948",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x43204",
+        "encoding": "utf-16le",
+        "value": "MSVCRT.DLL"
+      },
+      {
+        "file_offset": "0x432b8",
+        "encoding": "utf-16le",
+        "value": "MSVCRT.DLL"
+      }
+    ]
+  },
+  {
+    "path": "original/install/Root/unicows.dll",
+    "sha256": "22f23cc65698741184ec34f46e6f69717644e0b5aabf5d5bd015101f2d72e56e",
+    "file_bytes": 245408,
+    "version": {
+      "CompanyName": "Microsoft Corporation",
+      "FileDescription": "Microsoft Layer for Unicode on Win9x Systems (MSLU)",
+      "FileVersion": "1.0.4018.0",
+      "OriginalFilename": "UnicoWS.dll"
+    },
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x7f2d1000",
+        "size": 221089,
+        "raw_size": 221184
+      }
+    ],
+    "code_bytes": 221089,
+    "imports": [
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 295
+      },
+      {
+        "dll": "USER32.dll",
+        "kind": "import",
+        "symbols": 223
+      },
+      {
+        "dll": "GDI32.dll",
+        "kind": "import",
+        "symbols": 88
+      },
+      {
+        "dll": "MPR.dll",
+        "kind": "import",
+        "symbols": 38
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "import",
+        "symbols": 44
+      },
+      {
+        "dll": "comdlg32.dll",
+        "kind": "import",
+        "symbols": 18
+      },
+      {
+        "dll": "VERSION.dll",
+        "kind": "import",
+        "symbols": 10
+      },
+      {
+        "dll": "SHELL32.dll",
+        "kind": "import",
+        "symbols": 20
+      },
+      {
+        "dll": "WINSPOOL.DRV",
+        "kind": "import",
+        "symbols": 58
+      },
+      {
+        "dll": "oledlg.dll",
+        "kind": "import",
+        "symbols": 14
+      },
+      {
+        "dll": "WINMM.dll",
+        "kind": "import",
+        "symbols": 43
+      },
+      {
+        "dll": "AVICAP32.dll",
+        "kind": "import",
+        "symbols": 2
+      },
+      {
+        "dll": "MSVFW32.dll",
+        "kind": "import",
+        "symbols": 4
+      },
+      {
+        "dll": "IMM32.dll",
+        "kind": "import",
+        "symbols": 4
+      }
+    ],
+    "export_count": 507,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x11cc",
+        "encoding": "ascii",
+        "value": "c_g18030.dll"
+      },
+      {
+        "file_offset": "0x11dc",
+        "encoding": "ascii",
+        "value": "sensapi.dll"
+      },
+      {
+        "file_offset": "0x11e8",
+        "encoding": "ascii",
+        "value": "oleacc.dll"
+      },
+      {
+        "file_offset": "0x11f4",
+        "encoding": "ascii",
+        "value": "secur32.dll"
+      },
+      {
+        "file_offset": "0x1200",
+        "encoding": "ascii",
+        "value": "avicap32.dll"
+      },
+      {
+        "file_offset": "0x1210",
+        "encoding": "ascii",
+        "value": "rnaph.dll"
+      },
+      {
+        "file_offset": "0x121c",
+        "encoding": "ascii",
+        "value": "rasapi32.dll"
+      },
+      {
+        "file_offset": "0x122c",
+        "encoding": "ascii",
+        "value": "comdlg32.dll"
+      },
+      {
+        "file_offset": "0x123c",
+        "encoding": "ascii",
+        "value": "shell32.dll"
+      },
+      {
+        "file_offset": "0x1248",
+        "encoding": "ascii",
+        "value": "advapi32.dll"
+      },
+      {
+        "file_offset": "0x1258",
+        "encoding": "ascii",
+        "value": "user32.dll"
+      },
+      {
+        "file_offset": "0x1264",
+        "encoding": "ascii",
+        "value": "kernel32.dll"
+      },
+      {
+        "file_offset": "0x1284",
+        "encoding": "ascii",
+        "value": "security.dll"
+      },
+      {
+        "file_offset": "0x30308",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x3131c",
+        "encoding": "ascii",
+        "value": "USER32.dll"
+      },
+      {
+        "file_offset": "0x319be",
+        "encoding": "ascii",
+        "value": "GDI32.dll"
+      },
+      {
+        "file_offset": "0x31d54",
+        "encoding": "ascii",
+        "value": "MPR.dll"
+      },
+      {
+        "file_offset": "0x3204e",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0x32178",
+        "encoding": "ascii",
+        "value": "comdlg32.dll"
+      },
+      {
+        "file_offset": "0x3224e",
+        "encoding": "ascii",
+        "value": "VERSION.dll"
+      },
+      {
+        "file_offset": "0x3239c",
+        "encoding": "ascii",
+        "value": "SHELL32.dll"
+      },
+      {
+        "file_offset": "0x328e8",
+        "encoding": "ascii",
+        "value": "oledlg.dll"
+      },
+      {
+        "file_offset": "0x32c42",
+        "encoding": "ascii",
+        "value": "WINMM.dll"
+      },
+      {
+        "file_offset": "0x32cd6",
+        "encoding": "ascii",
+        "value": "AVICAP32.dll"
+      },
+      {
+        "file_offset": "0x32ce4",
+        "encoding": "ascii",
+        "value": "MSVFW32.dll"
+      },
+      {
+        "file_offset": "0x32d4c",
+        "encoding": "ascii",
+        "value": "IMM32.dll"
+      },
+      {
+        "file_offset": "0x34166",
+        "encoding": "ascii",
+        "value": "unicows.dll"
+      },
+      {
+        "file_offset": "0x3682c",
+        "encoding": "utf-16le",
+        "value": "Godot.dll"
+      },
+      {
+        "file_offset": "0x368e8",
+        "encoding": "utf-16le",
+        "value": "UnicoWS.dll"
+      }
+    ]
+  },
+  {
+    "path": "original/nocd/richardburnsrally.exe",
+    "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+    "file_bytes": 4009984,
+    "version": {},
+    "code_sections": [
+      {
+        "name": ".text",
+        "address": "0x401000",
+        "size": 3190784,
+        "raw_size": 3190784
+      }
+    ],
+    "code_bytes": 3190784,
+    "imports": [
+      {
+        "dll": "DINPUT8.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "DSOUND.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "KERNEL32.dll",
+        "kind": "import",
+        "symbols": 91
+      },
+      {
+        "dll": "USER32.dll",
+        "kind": "import",
+        "symbols": 58
+      },
+      {
+        "dll": "GDI32.dll",
+        "kind": "import",
+        "symbols": 16
+      },
+      {
+        "dll": "ADVAPI32.dll",
+        "kind": "import",
+        "symbols": 5
+      },
+      {
+        "dll": "ole32.dll",
+        "kind": "import",
+        "symbols": 3
+      },
+      {
+        "dll": "OLEAUT32.dll",
+        "kind": "import",
+        "symbols": 2
+      },
+      {
+        "dll": "MSVCP71.dll",
+        "kind": "import",
+        "symbols": 135
+      },
+      {
+        "dll": "MSVCR71.dll",
+        "kind": "import",
+        "symbols": 146
+      },
+      {
+        "dll": "VERSION.dll",
+        "kind": "import",
+        "symbols": 3
+      },
+      {
+        "dll": "d3d9.dll",
+        "kind": "import",
+        "symbols": 1
+      },
+      {
+        "dll": "WINMM.dll",
+        "kind": "import",
+        "symbols": 1
+      }
+    ],
+    "export_count": 1,
+    "forwarders": [],
+    "dll_string_candidates": [
+      {
+        "file_offset": "0x30c7dc",
+        "encoding": "ascii",
+        "value": "misc\\lng.dll"
+      },
+      {
+        "file_offset": "0x315cc0",
+        "encoding": "ascii",
+        "value": "error loading HedgeHog3D.DLL"
+      },
+      {
+        "file_offset": "0x315cf4",
+        "encoding": "ascii",
+        "value": "HedgeHog3D\\HedgeHog3D.DLL"
+      },
+      {
+        "file_offset": "0x315d10",
+        "encoding": "ascii",
+        "value": "HedgeHog3D.DLL"
+      },
+      {
+        "file_offset": "0x315d4c",
+        "encoding": "ascii",
+        "value": "error loading LocoMotion.DLL"
+      },
+      {
+        "file_offset": "0x315d6c",
+        "encoding": "ascii",
+        "value": "LocoMotion\\LocoMotion.DLL"
+      },
+      {
+        "file_offset": "0x315d88",
+        "encoding": "ascii",
+        "value": "LocoMotion.DLL"
+      },
+      {
+        "file_offset": "0x317804",
+        "encoding": "ascii",
+        "value": "NPClient.dll"
+      },
+      {
+        "file_offset": "0x32ef4c",
+        "encoding": "ascii",
+        "value": "ParticleTweakerD.dll"
+      },
+      {
+        "file_offset": "0x3335f4",
+        "encoding": "ascii",
+        "value": "d3d9d.dll"
+      },
+      {
+        "file_offset": "0x333610",
+        "encoding": "ascii",
+        "value": "d3d9.dll"
+      },
+      {
+        "file_offset": "0x356510",
+        "encoding": "ascii",
+        "value": "Loading of oleaut32.dll failed.  VBScript and other activeX scripting languages require use of oleaut32.dll.  On platforms where oleaut32.dll is not present, only the DirectMusicScript language, which doesn't require oleaut32.dll can be used."
+      },
+      {
+        "file_offset": "0x3705e4",
+        "encoding": "ascii",
+        "value": "DBGHELP.DLL"
+      },
+      {
+        "file_offset": "0x376774",
+        "encoding": "ascii",
+        "value": "\\d3d9.dll"
+      },
+      {
+        "file_offset": "0x376780",
+        "encoding": "ascii",
+        "value": "\\dpnet.dll"
+      },
+      {
+        "file_offset": "0x37679c",
+        "encoding": "ascii",
+        "value": "\\d3d8.dll"
+      },
+      {
+        "file_offset": "0x3767a8",
+        "encoding": "ascii",
+        "value": "\\dinput.dll"
+      },
+      {
+        "file_offset": "0x3767b4",
+        "encoding": "ascii",
+        "value": "\\dplayx.dll"
+      },
+      {
+        "file_offset": "0x3767c0",
+        "encoding": "ascii",
+        "value": "\\d3drg8x.dll"
+      },
+      {
+        "file_offset": "0x3767d0",
+        "encoding": "ascii",
+        "value": "\\ddraw.dll"
+      },
+      {
+        "file_offset": "0x39bf52",
+        "encoding": "ascii",
+        "value": "DINPUT8.dll"
+      },
+      {
+        "file_offset": "0x39bf5e",
+        "encoding": "ascii",
+        "value": "DSOUND.dll"
+      },
+      {
+        "file_offset": "0x39c5a0",
+        "encoding": "ascii",
+        "value": "KERNEL32.dll"
+      },
+      {
+        "file_offset": "0x39c95c",
+        "encoding": "ascii",
+        "value": "USER32.dll"
+      },
+      {
+        "file_offset": "0x39ca6a",
+        "encoding": "ascii",
+        "value": "GDI32.dll"
+      },
+      {
+        "file_offset": "0x39cac4",
+        "encoding": "ascii",
+        "value": "ADVAPI32.dll"
+      },
+      {
+        "file_offset": "0x39cb08",
+        "encoding": "ascii",
+        "value": "ole32.dll"
+      },
+      {
+        "file_offset": "0x39cb12",
+        "encoding": "ascii",
+        "value": "OLEAUT32.dll"
+      },
+      {
+        "file_offset": "0x39edfc",
+        "encoding": "ascii",
+        "value": "MSVCP71.dll"
+      },
+      {
+        "file_offset": "0x39f398",
+        "encoding": "ascii",
+        "value": "MSVCR71.dll"
+      },
+      {
+        "file_offset": "0x39f506",
+        "encoding": "ascii",
+        "value": "VERSION.dll"
+      },
+      {
+        "file_offset": "0x39f524",
+        "encoding": "ascii",
+        "value": "d3d9.dll"
+      },
+      {
+        "file_offset": "0x39f53c",
+        "encoding": "ascii",
+        "value": "WINMM.dll"
+      },
+      {
+        "file_offset": "0x360f50",
+        "encoding": "utf-16le",
+        "value": "Loading of oleaut32.dll failed.  VBScript and other activeX scripting languages require use of oleaut32.dll.  On platforms where oleaut32.dll is not present, only the DirectMusicScript language, which doesn't require oleaut32.dll can be used."
+      }
+    ]
+  }
+]

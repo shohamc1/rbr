@@ -6,12 +6,13 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from coff import function_bytes
 from extract import carve
-from workflow import compiler
+from workflow import compiler, entries
 
 
 class ExtractionTests(unittest.TestCase):
@@ -24,6 +25,35 @@ class ExtractionTests(unittest.TestCase):
         with self.assertRaises(ValueError): carve(data + data)
 
 
+class ManifestTests(unittest.TestCase):
+    def test_manifest_validation(self):
+        first = {'id': 'sub_00401000', 'address': '0x401000', 'size': 4}
+        second = {'id': 'sub_00401010', 'address': '0x401010', 'size': 4}
+        with patch('workflow.read_json', return_value=[first, second]) as read:
+            self.assertEqual(entries(), [first, second])
+            read.assert_called_once_with('config/functions.json')
+        for invalid in ([], {}, [first, first],
+                        [first, dict(second, address='0x401002')],
+                        [dict(first, size=0)], [dict(first, nonmatching='false')]):
+            with self.subTest(rows=invalid), patch('workflow.read_json', return_value=invalid):
+                with self.assertRaises(ValueError): entries()
+
+    def test_compact_entries_and_overrides(self):
+        row = {'id': 'sub_00401000', 'size': 4}
+        with patch('workflow.read_json', return_value=[dict(row)]):
+            result = entries()[0]
+        self.assertEqual(result['address'], '0x00401000')
+        self.assertEqual(result['source'], 'src/reconstruction/sub_00401000.cpp')
+        self.assertEqual(result['status'], 'matching_cpp')
+        with patch('workflow.read_json', return_value=[dict(row, nonmatching=True)]):
+            self.assertEqual(entries()[0]['status'], 'nonmatching_cpp')
+        with patch('workflow.read_json', return_value=[dict(row, address='0x500000', source='other.cpp')]):
+            result = entries()[0]
+        self.assertEqual((result['address'], result['source']), ('0x500000', 'other.cpp'))
+        with patch('workflow.read_json', return_value=[dict(row, source=None)]):
+            self.assertEqual(entries()[0]['status'], 'unresolved')
+
+
 class WorkflowTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -31,6 +61,14 @@ class WorkflowTests(unittest.TestCase):
         self.root = Path(self.tmp.name)
         for name in ('config', 'src'):
             shutil.copytree(ROOT / name, self.root / name)
+        # The overlay integration gate covers the full manifest; unit fixtures stay fixed.
+        manifest = self.root / 'config/functions.json'
+        rows = json.loads(manifest.read_text())
+        fixture_ids = {'sub_00401000', 'sub_00406490', 'sub_004068e0'}
+        manifest.write_text(json.dumps([row for row in rows if row['id'] in fixture_ids]))
+        if (ROOT / 'tools/local/msvc-wine-image.txt').exists():
+            (self.root / 'tools').mkdir()
+            (self.root / 'tools/local').symlink_to(ROOT / 'tools/local', target_is_directory=True)
         cfg = json.loads((self.root / 'config/reference.json').read_text())
         self.ref = self.root / cfg['executable']
         self.ref.parent.mkdir(parents=True)
@@ -48,6 +86,8 @@ class WorkflowTests(unittest.TestCase):
         result = self.run_check('check-function', 'sub_00401000')
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('Expected 4 bytes', result.stderr)
+        self.assertNotEqual(self.run_check('check-overlay').returncode, 0)
+        self.assertNotEqual(self.run_check('progress').returncode, 0)
         source.write_text('invalid C++')
         self.assertNotEqual(self.run_check('check-function','sub_00401000').returncode,0)
         self.assertFalse((self.root/'build/reconstruction/sub_00401000.obj').exists())
@@ -56,8 +96,10 @@ class WorkflowTests(unittest.TestCase):
         data = bytearray(self.ref.read_bytes()); data[4096] ^= 1; self.ref.write_bytes(data)
         self.assertIn('hash mismatch', self.run_check('check-overlay').stderr)
         shutil.copyfile(ROOT / json.loads((ROOT/'config/reference.json').read_text())['executable'], self.ref)
-        path=self.root/'config/functions/sub_00401000.json'
-        row=json.loads(path.read_text()); row['address']='0x400000';path.write_text(json.dumps(row))
+        path=self.root/'config/functions.json'
+        rows=json.loads(path.read_text())
+        next(row for row in rows if row['id']=='sub_00401000')['address']='0x400000'
+        path.write_text(json.dumps(rows))
         self.assertNotEqual(self.run_check('check-function','sub_00401000').returncode,0)
 
     def test_no_false_full_reconstruction(self):
@@ -65,16 +107,32 @@ class WorkflowTests(unittest.TestCase):
         self.assertNotEqual(result.returncode,0)
         self.assertIn('BLOCKED',result.stderr)
 
+    def test_explicit_draft_is_excluded_from_matches(self):
+        source = self.root / 'src/reconstruction/sub_00401000.cpp'
+        source.write_text(source.read_text().replace('return field_0c;', 'return field_0c + 1;'))
+        manifest = self.root / 'config/functions.json'
+        rows = json.loads(manifest.read_text())
+        next(row for row in rows if row['id'] == 'sub_00401000')['nonmatching'] = True
+        manifest.write_text(json.dumps(rows))
+        result = self.run_check('check-overlay')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.run_check('progress')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('"nonmatching_cpp": 4', result.stdout)
+        progress = json.loads(result.stdout[result.stdout.index('{'):result.stdout.rindex('}') + 1])
+        self.assertEqual(progress['manifest_functions']['nonmatching_cpp'], 1)
+        self.assertEqual(progress['manifest_functions']['matching_cpp'], len(rows) - 1)
+        self.assertNotEqual(self.run_check('check-function', 'sub_00401000').returncode, 0)
+
     @unittest.skipUnless((ROOT / 'tools/local/msvc-wine-image.txt').exists(), 'optional Docker MSVC toolchain not installed')
     def test_msvc_manifest_profile(self):
-        (self.root / 'tools').mkdir()
-        (self.root / 'tools/local').symlink_to(ROOT / 'tools/local', target_is_directory=True)
         source = self.root / 'src/reconstruction/sub_00401000.cpp'
         source.write_text((ROOT / 'tests/qualification/msvc71/getter.cpp').read_text())
-        manifest = self.root / 'config/functions/sub_00401000.json'
-        row = json.loads(manifest.read_text())
+        manifest = self.root / 'config/functions.json'
+        rows = json.loads(manifest.read_text())
+        row = next(row for row in rows if row['id'] == 'sub_00401000')
         row['compiler'] = 'msvc71'
-        manifest.write_text(json.dumps(row))
+        manifest.write_text(json.dumps(rows))
         result = self.run_check('check-function', 'sub_00401000')
         self.assertEqual(result.returncode, 0, result.stderr)
         source.write_text(source.read_text().replace('return field_0c;', 'return field_0c + 1;'))

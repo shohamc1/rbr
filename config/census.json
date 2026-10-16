@@ -1,0 +1,259 @@
+{
+  "game_root": "richardburnsrally.exe",
+  "auxiliary_roots": [
+    "RBR Startup.exe",
+    "Intro.exe"
+  ],
+  "review_modules": [
+    "eax.dll"
+  ],
+  "reviewed_entries": [
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "006f0726",
+      "evidence": "Startup code pushes this callback at 0x006f02e8 and calls 0x006efecf. That wrapper passes its argument to 0x006efea9, which forwards to imported _onexit at IAT 0x0070c440. The callback starts after the RET at 0x006f0725 and has its own frame and return paths. Automatic analysis omitted this entry on one clean run."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "005948b0",
+      "evidence": "Direct CALL at 00594ef8 enters 16-byte-aligned SUB ESP,0x204. No existing body owns the target. This entry became visible after the bounded CFG pass."
+    }
+  ],
+  "vtable_stops": [
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "007108b4",
+      "evidence": "Start of the RBR text label after the CPC_View vtable"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "0071a350",
+      "evidence": "Start of the Pan text label after the SOUND CSound vtable"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "0072810c",
+      "evidence": "Start of the ADD text label after the CLetterBox vtable"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "00728ff8",
+      "evidence": "Start of the POS text label after the CMPHotStageStartDropInUI vtable"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "00729268",
+      "evidence": "Start of the UTF-16 INPUT FILTER label"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "0072bfbc",
+      "evidence": "Start of the UTF-16 Difference label"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "0072c080",
+      "evidence": "Start of the UTF-16 Temperature label"
+    }
+  ],
+  "fragment_merges": [
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "owner": "0040d580",
+      "fragment": "0040d59c"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "owner": "00410800",
+      "fragment": "004108b8"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "owner": "004164a0",
+      "fragment": "0041651d"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "owner": "004d72b0",
+      "fragment": "004d7459"
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "owner": "006516d6",
+      "fragment": "006516df"
+    },
+    {
+      "module": "original/install/Root/HedgeHog3D.dll",
+      "owner": "100f9027",
+      "fragment": "100f9030",
+      "evidence": "Owner sets EBP frame and EBX; fragment falls through directly, has no independent references, and restores ESI, EBX, EBP before RET at 100f92fc."
+    },
+    {
+      "module": "original/install/Root/HedgeHog3D.dll",
+      "owner": "10005cb0",
+      "fragment": "10005f90",
+      "evidence": "Shared epilogue restores EBP frame, SEH chain, EDI, ESI, EBX and returns 0xc. Both branch sources and the fallthrough source belong to 10005cb0. Correct the false CALL_RETURN override before merging."
+    }
+  ],
+  "fragment_merge_evidence": "Each reviewed fragment restores its owner's frame and saved registers. No call, jump, or data reference enters from outside that owner. Owner branches can reach its own epilogue. Correct explicitly reviewed false JMP overrides before merging. These decisions apply only to census projects.",
+  "code_data_corrections": [
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "address": "005b6db0",
+      "call_site": "005b7cbb",
+      "evidence": "Direct CALL enters SUB ESP,0x104 at a 16-byte-aligned entry. Ghidra instead defined a four-byte address here. Clear this data definition in the census project, then decode the target and create its function."
+    }
+  ],
+  "dynamic_loads": [
+    {
+      "from": "richardburnsrally.exe",
+      "to": "HedgeHog3D.dll",
+      "provider_export_address": "0x10006100",
+      "confidence": "High for the static load/export path; runtime behavior is untested",
+      "condition": "Required engine; failure throws an exception",
+      "evidence": "EXE sub_004b9450; LoadLibraryA at 0x004b94ca and fallback at 0x004b94f6; GetProcAddress HH_Create at 0x004b956b"
+    },
+    {
+      "from": "richardburnsrally.exe",
+      "to": "LocoMotion.dll",
+      "provider_export_address": "0x10029bc0",
+      "confidence": "High for the static load/export path; runtime behavior is untested",
+      "condition": "Required engine; failure throws an exception",
+      "evidence": "EXE sub_004b9640; LoadLibraryA at 0x004b96ba and fallback at 0x004b96e6; GetProcAddress LM_Create at 0x004b975b"
+    },
+    {
+      "from": "richardburnsrally.exe",
+      "to": "dbghelp.dll",
+      "condition": "Conditional crash-dump support",
+      "evidence": "EXE sub_0041adf0; GetModuleHandleA, then LoadLibraryA at 0x0041ae10; GetProcAddress MiniDumpWriteDump at 0x0041ae22"
+    },
+    {
+      "from": "RBR Startup.exe",
+      "to": "unicows.dll",
+      "condition": "Conditional launcher Unicode support",
+      "evidence": "RBR Startup.exe sub_00417ae1 loads unicows.dll, checks its location, and has an MSLU fallback path"
+    }
+  ],
+  "missing_optional_modules": [
+    {
+      "name": "NPClient.dll",
+      "condition": "TrackIR integration; path comes from the NaturalPoint registry key; entry reachability remains unresolved",
+      "evidence": "EXE code at 0x004c69c8 copies NPClient.dll into a path; LoadLibraryA at 0x004c69f8; GetProcAddress calls follow",
+      "status": "Load path confirmed. Binary not supplied; count and source recovery blocked for this optional module."
+    },
+    {
+      "name": "ParticleTweakerD.dll",
+      "condition": "Particle editor support; entry reachability remains unresolved",
+      "evidence": "EXE code at 0x005cfe50; LoadLibraryA at 0x005cfe5e; GetProcAddress at 0x005cfe6f",
+      "status": "Load code exists. Binary not supplied; count and source recovery blocked for this optional module."
+    }
+  ],
+  "data_named_dll": [
+    {
+      "archive": "original/install/Root/misc.rbz",
+      "member": "Misc/lng.dll",
+      "size": 75,
+      "classification": "Language-list text, not a PE image",
+      "evidence": "EXE sub_00436dd0 reads misc\\lng.dll through the file interface and parses language names"
+    }
+  ],
+  "returning_imports": [
+    {
+      "library": "MSVCR71.DLL",
+      "symbol": "??3@YAXPAX@Z",
+      "evidence_module": "original/install/Root/msvcr71.dll",
+      "evidence_sha256": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe",
+      "export_address": "0x7c36094a",
+      "tail_target": "0x7c342151",
+      "return_address": "0x7c34218f",
+      "reason": "The exported operator delete jumps to free. A null pointer follows the branch at 0x7c342162 to cleanup and RET. The EXE also retains stack cleanup after calls. The inferred no-return flag is false. This correction applies only to census projects."
+    }
+  ],
+  "flow_repairs": [
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "0040bcc8",
+      "target": "0040bccf",
+      "clear_end": "0040bcd2",
+      "evidence": "Bounded switch table at 0040c088 targets MOV AL,[ESI+0xa8]; rejoins 0040bc08."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "0040bcc8",
+      "target": "0040bce5",
+      "clear_end": "0040bce8",
+      "evidence": "Same bounded switch table; MOV AL,[ESI+0xa8] starts a second case."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "0040bfd5",
+      "target": "0040bfdc",
+      "clear_end": "0040bfdf",
+      "evidence": "Bounded switch table at 0040c09c targets MOV EAX,[ESI]; PUSH 1; virtual call; rejoins 0040bc08."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "0040bfd5",
+      "target": "0040bff8",
+      "clear_end": "0040bffb",
+      "evidence": "Same bounded switch table; MOV AL,[ESI+0xa1] starts this case."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "00444e3b",
+      "target": "00444e40",
+      "clear_end": "00444e4a",
+      "evidence": "Returning delete call falls through to ADD ESP,4; stores; POP ESI; POP ECX; RET. Unowned misaligned instructions block decoding."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "00498dbf",
+      "target": "00498dc1",
+      "clear_end": "00498dc4",
+      "evidence": "Fallthrough to MOV ECX,[ESP+0x50]; then frame and SEH restoration; RET 8. Data pointer 006e130c is a false address from RET plus LEA padding."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "006d0063",
+      "target": "006d0065",
+      "clear_end": "006d006f",
+      "evidence": "Fallthrough to CMP EAX,0x80040154; JNE 006d224e; then same HRESULT string-return tail as adjacent cases."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "006e130b",
+      "target": "006e130c",
+      "clear_end": "006e130f",
+      "evidence": "POP EBX falls through to RET at 006e130c. The next three bytes are LEA ECX,[ECX] padding, followed by the switch table at 006e1310."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "006707b6",
+      "target": "00670060",
+      "clear_end": "0067006d",
+      "evidence": "Loop branch targets MOV EAX,[EDI+0x164]; next MOV EDX,[ESP+0x14]; ADD EDX,0x100. Misaligned unowned instructions block this path."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "006a4ff4",
+      "target": "006a4fff",
+      "clear_end": "006a5003",
+      "evidence": "JC targets XOR EAX,EAX; INC EAX; JMP 006a500b. Misaligned unowned instruction blocks decoding."
+    },
+    {
+      "module": "original/nocd/richardburnsrally.exe",
+      "from": "005c2027",
+      "target": "005c2028",
+      "clear_end": "005c202b",
+      "evidence": "POP EDI falls through to RET plus three-byte LEA ECX,[ECX] padding. Ghidra defined the four bytes as a false address 00498dc3; switch table starts at 005c202c."
+    }
+  ],
+  "jump_overrides": [
+    {
+      "module": "original/install/Root/HedgeHog3D.dll",
+      "from": "10005e8c",
+      "target": "10005f90",
+      "evidence": "Original five-byte E9 branch reaches the same frame epilogue as conditional branch 10005cdf. Ghidra inferred CALL_RETURN. Both incoming flow references are from owner 10005cb0; no independent callers or data pointers reach the epilogue."
+    }
+  ]
+}

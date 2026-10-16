@@ -19,6 +19,7 @@ check-integrated:
 	$(PYTHON) tools/workflow.py check-integrated
 progress:
 	$(PYTHON) tools/workflow.py progress
+	$(PYTHON) tools/census.py progress
 analyze:
 	$(PYTHON) tools/analyze.py
 qualify:
@@ -28,6 +29,10 @@ test:
 	mkdir -p build/tests
 	$(CXX) -std=c++11 tests/behavior.cpp -o build/tests/behavior
 	build/tests/behavior
+	$(CXX) -std=c++11 tests/behavior_large.cpp -o build/tests/behavior_large
+	build/tests/behavior_large
+	$(CXX) -std=c++11 tests/behavior_packets.cpp -o build/tests/behavior_packets
+	build/tests/behavior_packets
 
 .PHONY: ghidra-analyze ghidra-function setup-msvc qualify-msvc
 ghidra-analyze:
@@ -42,3 +47,21 @@ qualify-msvc:
 .PHONY: check-msvc-link
 check-msvc-link:
 	$(PYTHON) tools/msvc.py link-smoke
+
+.PHONY: census-inventory census-analyze census-refine census-audit census-decompile census-progress census
+census-inventory:
+	$(PYTHON) tools/census.py inventory
+census-analyze:
+	$(PYTHON) tools/census.py analyze
+census-refine:
+	$(PYTHON) tools/census.py refine
+census-audit:
+	$(PYTHON) tools/census.py audit
+census:
+	$(PYTHON) tools/census.py report
+
+census-decompile:
+	$(PYTHON) tools/census.py decompile
+
+census-progress:
+	$(PYTHON) tools/census.py progress

@@ -47,7 +47,7 @@ def main():
             data=section.get_data(); pos=0
             while (pos:=data.find(needle,pos))>=0:
                 pointers.append(hex(pe.OPTIONAL_HEADER.ImageBase+section.VirtualAddress+pos));pos+=1
-        save(out/'functions'/(row['id']+'.json'),{'id':row['id'],'reference_sha256':cfg['executable_sha256'],'address':row['address'],'size':row['size'],'file_offset':offset,'bytes':body.hex(' '),'boundary_confidence':row['boundary_confidence'],'instructions':[f'{i.address:08x}: {i.mnemonic} {i.op_str}' for i in md.disasm(body,address)],'direct_xref_candidates':targets[address],'data_pointer_candidates':pointers,'limitations':'Linear decoding can misidentify embedded data; these are reference sites, not proved caller boundaries. Indirect callers are incomplete. No calls or global-data accesses occur in these straight-line leaf bodies.'})
+        save(out/'functions'/(row['id']+'.json'),{'id':row['id'],'reference_sha256':cfg['executable_sha256'],'address':row['address'],'size':row['size'],'file_offset':offset,'bytes':body.hex(' '),'instructions':[f'{i.address:08x}: {i.mnemonic} {i.op_str}' for i in md.disasm(body,address)],'direct_xref_candidates':targets[address],'data_pointer_candidates':pointers,'limitations':'Generated linear decoding can misidentify embedded data. Reference sites do not prove caller boundaries; indirect callers are incomplete. Reviewed conclusions belong in analysis/notes.md.'})
     print('Wrote analysis/modules.json and bounded function evidence')
 
 

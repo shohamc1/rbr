@@ -1,4 +1,3 @@
-// Evidence: 0x004068e0 writes the stack argument to ECX+0x3c and returns with RET 4.
 struct Object004068e0 {
     unsigned char unknown_00[60];
     unsigned int field_3c;

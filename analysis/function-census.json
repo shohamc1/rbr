@@ -1,0 +1,1772 @@
+{
+  "generated_at_utc": "2026-10-16T04:35:03+00:00",
+  "method": "Unseeded Ghidra baseline; bounded RTTI-backed virtual tables, padded straight-line leaves, bounded branch graphs, reviewed callbacks, return contracts, code/data corrections, body fixups, and repeated analysis. No candidate is a source match.",
+  "limitations": "Static analysis cannot prove a complete count with unresolved indirect flow, data boundaries, or runtime-selected modules.",
+  "tool_sha256": {
+    "tools/census.py": "e59ded6346e0cdc8acca709264744d42ace40eeead2729f793c5911f23fa5cdb",
+    "tools/boundaries.py": "fa8b4b7b26e67a8352d6d463b4c17ab31e6b616c8dbd46453996e4f0570ec5ba",
+    "tools/ghidra/AuditBoundaries.java": "06dcf9e90f9b065dcfa870365afb194bb99a1f20668c05baa08bea4afce92697",
+    "tools/ghidra/RefineBoundaries.java": "60e97ce5ac76c70919decb8efd801a90fab61828a69c95cc7b8a073ab58accd1",
+    "tools/ghidra/DecompileCensus.java": "bdce042131d64f9cf24f1dda15e1c067e75fb75510e94fadf4b6adb5d80b9745",
+    "config/census.json": "2157221c61c68696968240b0609970dedad478efbb4095b1606b24751a4cf301",
+    "config/ghidra.json": "a7584553c99b82b723bbf9d7035596baa81abb68e204723d3ffdf001b43e69fc",
+    "config/reference.json": "8348324d6ee3ff94f2c9975b50a45bcc99294cb8db1be06d018acd659aedd3eb"
+  },
+  "modules": [
+    {
+      "path": "original/install/Root/HedgeHog3D.dll",
+      "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+      "evidence": "build/census/3e20fa00f141/boundaries.json",
+      "evidence_sha256": "f9558b3fc98ee08a5bb5e2cb20ba0f34f17d79629274f7ec9faea809164f8f53",
+      "function_candidates": 11963,
+      "thunks": 211,
+      "exception_funclet_name_candidates": 1457,
+      "noncontiguous_bodies": 218,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 5878,
+      "executable_bytes": 1646592,
+      "function_body_union_bytes": 1425545,
+      "unowned_instruction_bytes": 98151,
+      "defined_data_outside_bodies_bytes": 8764,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 80600,
+        "unresolved": 31336,
+        "zero_fill_candidate": 2196
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 140,
+        "unresolved_indirect_jump": 43
+      },
+      "computed_call_sites": 7180,
+      "computed_calls_without_flow_targets": 3910,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 1644396,
+      "raw_section_alignment_bytes": 2196,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 9431,
+          "after": 9431,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 9431,
+          "after": 11666,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+            "created_from_evidence_seeds": 2233,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [
+              "100f9030"
+            ],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 11666,
+          "after": 11793,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+            "created_from_evidence_seeds": 125,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "10155a60"
+            ]
+          }
+        },
+        {
+          "before": 11793,
+          "after": 11948,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+            "created_from_evidence_seeds": 153,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "10155a60"
+            ]
+          }
+        },
+        {
+          "before": 11948,
+          "after": 11964,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+            "created_from_evidence_seeds": 16,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "10155a60"
+            ]
+          }
+        },
+        {
+          "before": 11964,
+          "after": 11964,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "10155a60"
+            ]
+          }
+        },
+        {
+          "before": 11964,
+          "after": 11963,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "3e20fa00f14122c2274a5b94bd8a66cdfbd56eb508e22ddb90bff54dd3055980",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [
+              "10005f90"
+            ],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "10155a60"
+            ]
+          }
+        }
+      ],
+      "baseline_function_candidates": 5975,
+      "rtti_vtables": 138,
+      "rtti_distinct_targets": 419,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 1,
+      "pseudocode_export": {
+        "status": "current_entries_and_sizes",
+        "completed": 11963,
+        "failed_entries": [],
+        "path": "build/census/3e20fa00f141/decompiled",
+        "pseudocode_sha256": "5e3479afd22ab894955828d704cbeb877c43681dca1971b3cec4644ba739460d",
+        "limitations": "Generated pseudocode; not reviewed C/C++ or matching source"
+      },
+      "other_padding_entry_candidates": 34,
+      "return_entry_candidates": 38
+    },
+    {
+      "path": "original/install/Root/Intro.exe",
+      "sha256": "f99932c66f3ad1c7c4aee093f5d907f706d9cbfc92dac2d402e922b9becf1bd1",
+      "evidence": "build/census/f99932c66f3a/boundaries.json",
+      "evidence_sha256": "b9b6875081e81ad7b89756d36a68662686bcad9aaa5406fa141e373da8007169",
+      "function_candidates": 137,
+      "thunks": 32,
+      "exception_funclet_name_candidates": 14,
+      "noncontiguous_bodies": 8,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 1,
+      "executable_bytes": 16384,
+      "function_body_union_bytes": 15294,
+      "unowned_instruction_bytes": 297,
+      "defined_data_outside_bodies_bytes": 27,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 597,
+        "unresolved": 67,
+        "zero_fill_candidate": 102
+      },
+      "issues_by_kind": {},
+      "computed_call_sites": 166,
+      "computed_calls_without_flow_targets": 66,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 16282,
+      "raw_section_alignment_bytes": 102,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 128,
+          "after": 134,
+          "vtable_seeds": 3,
+          "padded_leaf_seeds": 1,
+          "refinement": {
+            "sha256": "f99932c66f3ad1c7c4aee093f5d907f706d9cbfc92dac2d402e922b9becf1bd1",
+            "created_from_evidence_seeds": 4,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 134,
+          "after": 137,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "f99932c66f3ad1c7c4aee093f5d907f706d9cbfc92dac2d402e922b9becf1bd1",
+            "created_from_evidence_seeds": 3,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        }
+      ],
+      "baseline_function_candidates": 128,
+      "rtti_vtables": 4,
+      "rtti_distinct_targets": 4,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 0,
+      "pseudocode_export": {
+        "status": "not_exported"
+      },
+      "other_padding_entry_candidates": 1,
+      "return_entry_candidates": 0
+    },
+    {
+      "path": "original/install/Root/LocoMotion.dll",
+      "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+      "evidence": "build/census/073160161f99/boundaries.json",
+      "evidence_sha256": "471bdbcd3299d052ea41cd7f11868f6522e6438b760811f1b30d09bbfb3143d2",
+      "function_candidates": 3839,
+      "thunks": 84,
+      "exception_funclet_name_candidates": 692,
+      "noncontiguous_bodies": 54,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 1857,
+      "executable_bytes": 352256,
+      "function_body_union_bytes": 284290,
+      "unowned_instruction_bytes": 32987,
+      "defined_data_outside_bodies_bytes": 464,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 25306,
+        "unresolved": 8894,
+        "zero_fill_candidate": 315
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 61,
+        "fallthrough_outside_body": 1,
+        "unresolved_indirect_jump": 14
+      },
+      "computed_call_sites": 1660,
+      "computed_calls_without_flow_targets": 153,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 351941,
+      "raw_section_alignment_bytes": 315,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 3144,
+          "after": 3144,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 3144,
+          "after": 3715,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 569,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 3715,
+          "after": 3770,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 53,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3770,
+          "after": 3823,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 52,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3823,
+          "after": 3830,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 7,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3830,
+          "after": 3833,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 3,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3833,
+          "after": 3835,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 2,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3835,
+          "after": 3836,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 1,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3836,
+          "after": 3837,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 1,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3837,
+          "after": 3838,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 1,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3838,
+          "after": 3839,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 1,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        },
+        {
+          "before": 3839,
+          "after": 3839,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "073160161f999edc8e8d54db1f986edc8efb7b0a2cfe3941a57310d88a2d2c31",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 0,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "1004a060"
+            ]
+          }
+        }
+      ],
+      "baseline_function_candidates": 2001,
+      "rtti_vtables": 102,
+      "rtti_distinct_targets": 246,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 1,
+      "pseudocode_export": {
+        "status": "current_entries_and_sizes",
+        "completed": 3839,
+        "failed_entries": [],
+        "path": "build/census/073160161f99/decompiled",
+        "pseudocode_sha256": "07fee46103109941081e9b6fba3d726cec9f36bb640e510815132a988c24a786",
+        "limitations": "Generated pseudocode; not reviewed C/C++ or matching source"
+      },
+      "other_padding_entry_candidates": 20,
+      "return_entry_candidates": 9
+    },
+    {
+      "path": "original/install/Root/RBR Startup.exe",
+      "sha256": "0ac6b81667c066c981bc0b32168fbe369d6021f3a9f19897e6fe2fe51b295611",
+      "evidence": "build/census/0ac6b81667c0/boundaries.json",
+      "evidence_sha256": "d7355eea628b6e710a3be1924fa9c7a74dde7f40607281d9c596c65f672f5add",
+      "function_candidates": 2591,
+      "thunks": 37,
+      "exception_funclet_name_candidates": 473,
+      "noncontiguous_bodies": 78,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 43,
+      "executable_bytes": 270336,
+      "function_body_union_bytes": 252762,
+      "unowned_instruction_bytes": 6744,
+      "defined_data_outside_bodies_bytes": 1922,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 3969,
+        "unresolved": 2922,
+        "zero_fill_candidate": 2017
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 56,
+        "unresolved_indirect_jump": 54
+      },
+      "computed_call_sites": 2331,
+      "computed_calls_without_flow_targets": 936,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 268319,
+      "raw_section_alignment_bytes": 2017,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 2203,
+          "after": 2562,
+          "vtable_seeds": 301,
+          "padded_leaf_seeds": 12,
+          "refinement": {
+            "sha256": "0ac6b81667c066c981bc0b32168fbe369d6021f3a9f19897e6fe2fe51b295611",
+            "created_from_evidence_seeds": 312,
+            "body_fixups": 13,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 2562,
+          "after": 2590,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "0ac6b81667c066c981bc0b32168fbe369d6021f3a9f19897e6fe2fe51b295611",
+            "created_from_evidence_seeds": 28,
+            "body_fixups": 11,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 2590,
+          "after": 2591,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "0ac6b81667c066c981bc0b32168fbe369d6021f3a9f19897e6fe2fe51b295611",
+            "created_from_evidence_seeds": 1,
+            "body_fixups": 11,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        }
+      ],
+      "baseline_function_candidates": 2203,
+      "rtti_vtables": 77,
+      "rtti_distinct_targets": 537,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 0,
+      "pseudocode_export": {
+        "status": "not_exported"
+      },
+      "other_padding_entry_candidates": 4,
+      "return_entry_candidates": 9
+    },
+    {
+      "path": "original/install/Root/dbghelp.dll",
+      "sha256": "5799aff4e0e6e6df240d7c942e0549498c8b498a1b96d4abef9f550bb8bd0771",
+      "evidence": "build/census/5799aff4e0e6/boundaries.json",
+      "evidence_sha256": "83560c9fb05b759bb2f25768e499f9cc2af0e18bf1c68222f89efa95d91d8c19",
+      "function_candidates": 4207,
+      "thunks": 24,
+      "exception_funclet_name_candidates": 555,
+      "noncontiguous_bodies": 74,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 12,
+      "executable_bytes": 750592,
+      "function_body_union_bytes": 594663,
+      "unowned_instruction_bytes": 44393,
+      "defined_data_outside_bodies_bytes": 76432,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 7810,
+        "unresolved": 25232,
+        "zero_fill_candidate": 2062
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 19,
+        "unresolved_indirect_jump": 130
+      },
+      "computed_call_sites": 4667,
+      "computed_calls_without_flow_targets": 3337,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 750298,
+      "raw_section_alignment_bytes": 294,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 4207,
+          "after": 4207,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "5799aff4e0e6e6df240d7c942e0549498c8b498a1b96d4abef9f550bb8bd0771",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 2,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 4207,
+          "after": 4207,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "5799aff4e0e6e6df240d7c942e0549498c8b498a1b96d4abef9f550bb8bd0771",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 2,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        }
+      ],
+      "baseline_function_candidates": 4187,
+      "rtti_vtables": 0,
+      "rtti_distinct_targets": 0,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 0,
+      "pseudocode_export": {
+        "status": "current_entries_and_sizes",
+        "completed": 4207,
+        "failed_entries": [],
+        "path": "build/census/5799aff4e0e6/decompiled",
+        "pseudocode_sha256": "adbf5d189b1ad725021bfb400a1b8f1f42ef013c852e71310eddd8bdfa7dff28",
+        "limitations": "Generated pseudocode; not reviewed C/C++ or matching source"
+      },
+      "other_padding_entry_candidates": 6,
+      "return_entry_candidates": 54
+    },
+    {
+      "path": "original/install/Root/eax.dll",
+      "sha256": "c35ab67198bafacbdcffae17d991726f75716ad5e5701fd6905280d68e56bb1a",
+      "evidence": "build/census/c35ab67198ba/boundaries.json",
+      "evidence_sha256": "0bec33389cb2e2cfae26bdf5b341b5343263c8a9d50273f12a5580920cd3295f",
+      "function_candidates": 405,
+      "thunks": 1,
+      "exception_funclet_name_candidates": 13,
+      "noncontiguous_bodies": 22,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 6,
+      "executable_bytes": 94208,
+      "function_body_union_bytes": 65632,
+      "unowned_instruction_bytes": 16603,
+      "defined_data_outside_bodies_bytes": 1677,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 1866,
+        "unresolved": 5294,
+        "zero_fill_candidate": 3136
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 8,
+        "unresolved_indirect_jump": 63
+      },
+      "computed_call_sites": 372,
+      "computed_calls_without_flow_targets": 177,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 91072,
+      "raw_section_alignment_bytes": 3136,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 405,
+          "after": 405,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "c35ab67198bafacbdcffae17d991726f75716ad5e5701fd6905280d68e56bb1a",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 4,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        }
+      ],
+      "baseline_function_candidates": 402,
+      "rtti_vtables": 0,
+      "rtti_distinct_targets": 0,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 6,
+      "pseudocode_export": {
+        "status": "not_exported"
+      },
+      "other_padding_entry_candidates": 19,
+      "return_entry_candidates": 3
+    },
+    {
+      "path": "original/install/Root/msvcp71.dll",
+      "sha256": "df96156f6a548fd6fe5672918de5ae4509d3c810a57bffd2a91de45a3ed5b23b",
+      "evidence": "build/census/df96156f6a54/boundaries.json",
+      "evidence_sha256": "cb08f84786beaddc3a3fc183002888d0d25817a9583c1c43c75eab7eac3cc87e",
+      "function_candidates": 2884,
+      "thunks": 42,
+      "exception_funclet_name_candidates": 659,
+      "noncontiguous_bodies": 13,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 2,
+      "executable_bytes": 192512,
+      "function_body_union_bytes": 186635,
+      "unowned_instruction_bytes": 3924,
+      "defined_data_outside_bodies_bytes": 91,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 10,
+        "unresolved": 979,
+        "zero_fill_candidate": 873
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 271,
+        "unresolved_indirect_jump": 23
+      },
+      "computed_call_sites": 713,
+      "computed_calls_without_flow_targets": 230,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 191640,
+      "raw_section_alignment_bytes": 872,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 2884,
+          "after": 2884,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "df96156f6a548fd6fe5672918de5ae4509d3c810a57bffd2a91de45a3ed5b23b",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 28,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 2884,
+          "after": 2884,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "df96156f6a548fd6fe5672918de5ae4509d3c810a57bffd2a91de45a3ed5b23b",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 26,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        }
+      ],
+      "baseline_function_candidates": 2767,
+      "rtti_vtables": 100,
+      "rtti_distinct_targets": 264,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 0,
+      "pseudocode_export": {
+        "status": "current_entries_and_sizes",
+        "completed": 2884,
+        "failed_entries": [],
+        "path": "build/census/df96156f6a54/decompiled",
+        "pseudocode_sha256": "c9db0d3f0c9d032e7f0a15134223f5eddc0fbb46cc4ba26bed00c51bc9235e17",
+        "limitations": "Generated pseudocode; not reviewed C/C++ or matching source"
+      },
+      "other_padding_entry_candidates": 1,
+      "return_entry_candidates": 9
+    },
+    {
+      "path": "original/install/Root/msvcr71.dll",
+      "sha256": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe",
+      "evidence": "build/census/8094af5ee310/boundaries.json",
+      "evidence_sha256": "b3602c6ed122f4171dc430852f5cbc2e614592432f3180344a6fb2400604d3cf",
+      "function_candidates": 1522,
+      "thunks": 14,
+      "exception_funclet_name_candidates": 0,
+      "noncontiguous_bodies": 120,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 4,
+      "executable_bytes": 233472,
+      "function_body_union_bytes": 225961,
+      "unowned_instruction_bytes": 1823,
+      "defined_data_outside_bodies_bytes": 1220,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 56,
+        "unresolved": 3299,
+        "zero_fill_candidate": 1113
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 102,
+        "fallthrough_outside_body": 5,
+        "jump_to_unowned": 5,
+        "unresolved_indirect_jump": 8
+      },
+      "computed_call_sites": 746,
+      "computed_calls_without_flow_targets": 104,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 232360,
+      "raw_section_alignment_bytes": 1112,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 1522,
+          "after": 1522,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 29,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 1522,
+          "after": 1522,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 29,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        }
+      ],
+      "baseline_function_candidates": 1512,
+      "rtti_vtables": 5,
+      "rtti_distinct_targets": 5,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 0,
+      "pseudocode_export": {
+        "status": "current_entries_and_sizes",
+        "completed": 1522,
+        "failed_entries": [],
+        "path": "build/census/8094af5ee310/decompiled",
+        "pseudocode_sha256": "9cd1e7425bf69677ed71ee7f4bd914387bdecdc26a1101a0ec6cc22ec6dbfa97",
+        "limitations": "Generated pseudocode; not reviewed C/C++ or matching source"
+      },
+      "other_padding_entry_candidates": 0,
+      "return_entry_candidates": 7
+    },
+    {
+      "path": "original/install/Root/msvcrt.dll",
+      "sha256": "eda09e2a61c1f9b9a4ec7bdfd8f4deaac7505855ef9a26ea367e5e23611c5b73",
+      "evidence": "build/census/eda09e2a61c1/boundaries.json",
+      "evidence_sha256": "0c949bcb95bba3c6bdd8b2edf4a2e83e83d43aa433cc8aa82b5d75e4b142936c",
+      "function_candidates": 1388,
+      "thunks": 6,
+      "exception_funclet_name_candidates": 0,
+      "noncontiguous_bodies": 161,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 1,
+      "executable_bytes": 204800,
+      "function_body_union_bytes": 197224,
+      "unowned_instruction_bytes": 2308,
+      "defined_data_outside_bodies_bytes": 1049,
+      "undefined_bytes_by_kind": {
+        "unresolved": 2420,
+        "zero_fill_candidate": 1799
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 252,
+        "fallthrough_outside_body": 2,
+        "jump_to_unowned": 5,
+        "unresolved_indirect_jump": 6
+      },
+      "computed_call_sites": 644,
+      "computed_calls_without_flow_targets": 79,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 203027,
+      "raw_section_alignment_bytes": 1773,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 1388,
+          "after": 1388,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "eda09e2a61c1f9b9a4ec7bdfd8f4deaac7505855ef9a26ea367e5e23611c5b73",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 43,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 1388,
+          "after": 1388,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "eda09e2a61c1f9b9a4ec7bdfd8f4deaac7505855ef9a26ea367e5e23611c5b73",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 42,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        }
+      ],
+      "baseline_function_candidates": 1388,
+      "rtti_vtables": 5,
+      "rtti_distinct_targets": 4,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 0,
+      "pseudocode_export": {
+        "status": "current_entries_and_sizes",
+        "completed": 1388,
+        "failed_entries": [],
+        "path": "build/census/eda09e2a61c1/decompiled",
+        "pseudocode_sha256": "3eec62d23860cd5b0d138f2a43427708c40e5d7544bf93f0387c2c0f6680b16f",
+        "limitations": "Generated pseudocode; not reviewed C/C++ or matching source"
+      },
+      "other_padding_entry_candidates": 1,
+      "return_entry_candidates": 8
+    },
+    {
+      "path": "original/install/Root/unicows.dll",
+      "sha256": "22f23cc65698741184ec34f46e6f69717644e0b5aabf5d5bd015101f2d72e56e",
+      "evidence": "build/census/22f23cc65698/boundaries.json",
+      "evidence_sha256": "fadacc432b0e7e32faf35a50dde628aad192c33a4e58db75033bf3a787259422",
+      "function_candidates": 839,
+      "thunks": 150,
+      "exception_funclet_name_candidates": 0,
+      "noncontiguous_bodies": 8,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 4,
+      "executable_bytes": 221184,
+      "function_body_union_bytes": 170617,
+      "unowned_instruction_bytes": 622,
+      "defined_data_outside_bodies_bytes": 40469,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 19,
+        "unresolved": 8498,
+        "zero_fill_candidate": 959
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 8,
+        "unresolved_indirect_jump": 33
+      },
+      "computed_call_sites": 2687,
+      "computed_calls_without_flow_targets": 147,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 221089,
+      "raw_section_alignment_bytes": 95,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 839,
+          "after": 839,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "22f23cc65698741184ec34f46e6f69717644e0b5aabf5d5bd015101f2d72e56e",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 0,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "rejected_seeds": []
+          }
+        },
+        {
+          "before": 839,
+          "after": 839,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "22f23cc65698741184ec34f46e6f69717644e0b5aabf5d5bd015101f2d72e56e",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 0,
+            "corrected_returning_imports": [],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": []
+          }
+        }
+      ],
+      "baseline_function_candidates": 833,
+      "rtti_vtables": 0,
+      "rtti_distinct_targets": 0,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 0,
+      "pseudocode_export": {
+        "status": "current_entries_and_sizes",
+        "completed": 839,
+        "failed_entries": [],
+        "path": "build/census/22f23cc65698/decompiled",
+        "pseudocode_sha256": "682537b492972d9607e4625b2921bba955571262dec1770bd7da02148884161e",
+        "limitations": "Generated pseudocode; not reviewed C/C++ or matching source"
+      },
+      "other_padding_entry_candidates": 0,
+      "return_entry_candidates": 1
+    },
+    {
+      "path": "original/nocd/richardburnsrally.exe",
+      "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+      "evidence": "build/census/2b871c95a1ed/boundaries.json",
+      "evidence_sha256": "730d42a0ab9ae92c54c11708a9171f91e1754cfafa496f177d7100454fb7e5af",
+      "function_candidates": 27207,
+      "thunks": 278,
+      "exception_funclet_name_candidates": 4748,
+      "noncontiguous_bodies": 687,
+      "overlapping_body_bytes": 0,
+      "entries_without_instruction": [],
+      "bodies_outside_executable_bytes": 0,
+      "entries_without_call_jump_or_data_reference": 9317,
+      "executable_bytes": 3190784,
+      "function_body_union_bytes": 2781930,
+      "unowned_instruction_bytes": 121518,
+      "defined_data_outside_bodies_bytes": 29172,
+      "undefined_bytes_by_kind": {
+        "int3_nop_padding_candidate": 178684,
+        "unresolved": 77904,
+        "zero_fill_candidate": 1576
+      },
+      "issues_by_kind": {
+        "cross_function_jump": 178,
+        "unresolved_indirect_jump": 388
+      },
+      "computed_call_sites": 13714,
+      "computed_calls_without_flow_targets": 9087,
+      "failed_loader_decompilations": [],
+      "exact_count_proved": false,
+      "pe_virtual_code_bytes": 3190784,
+      "raw_section_alignment_bytes": 0,
+      "entries_outside_declared_code_sections": [],
+      "refinement_history": [
+        {
+          "before": 15865,
+          "after": 23235,
+          "vtable_seeds": 1875,
+          "padded_leaf_seeds": 6034,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 7001,
+            "body_fixups": 1618,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [
+              "005b6db0"
+            ],
+            "rejected_seeds": [
+              "004f71f0",
+              "004f9cf0",
+              "005a8770"
+            ]
+          }
+        },
+        {
+          "before": 23235,
+          "after": 26500,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 3247,
+            "body_fixups": 6,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [
+              "0040bccf",
+              "0040bce5",
+              "0040bfdc",
+              "0040bff8",
+              "00444e40",
+              "00498dc1",
+              "006d0065",
+              "006e130c",
+              "00670060",
+              "006a4fff"
+            ],
+            "rejected_seeds": [
+              "00547660",
+              "0056d4a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005948b0: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 26500,
+          "after": 26500,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 2,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [
+              "005c2028"
+            ],
+            "rejected_seeds": [
+              "00547660",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005948b0: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 26500,
+          "after": 26501,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 1,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 26501,
+          "after": 26931,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 426,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "00589360",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 26931,
+          "after": 27103,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 172,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 27103,
+          "after": 27137,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 34,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 27137,
+          "after": 27155,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 18,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 27155,
+          "after": 27169,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 14,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 27169,
+          "after": 27176,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 7,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 27176,
+          "after": 27182,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 6,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 27182,
+          "after": 27188,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 6,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 27188,
+          "after": 27194,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 6,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          },
+          "controller_restarted_after_project_save": true
+        },
+        {
+          "before": 27194,
+          "after": 27207,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 13,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        },
+        {
+          "before": 27207,
+          "after": 27207,
+          "vtable_seeds": 0,
+          "padded_leaf_seeds": 0,
+          "refinement": {
+            "sha256": "2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0",
+            "created_from_evidence_seeds": 0,
+            "body_fixups": 1,
+            "corrected_returning_imports": [
+              "MSVCR71.DLL::operator_delete"
+            ],
+            "merged_fragments": [],
+            "corrected_code_data_targets": [],
+            "repaired_flow_targets": [],
+            "rejected_seeds": [
+              "00547660",
+              "0063c7a0",
+              "006f9830",
+              "00705450",
+              "00707540",
+              "0070a180",
+              "0047d330: Ghidra body differs from bounded CFG",
+              "0047d3a0: Ghidra body differs from bounded CFG",
+              "0048a060: Ghidra body differs from bounded CFG",
+              "004b5fc0: Ghidra body differs from bounded CFG",
+              "004c0ea0: Ghidra body differs from bounded CFG",
+              "004c1170: Ghidra body differs from bounded CFG",
+              "004c11b0: Ghidra body differs from bounded CFG",
+              "004c4840: Ghidra body differs from bounded CFG",
+              "004c5dd0: Ghidra body differs from bounded CFG",
+              "00512cf0: Ghidra body differs from bounded CFG",
+              "005367a0: Ghidra body differs from bounded CFG",
+              "00548870: Ghidra body differs from bounded CFG",
+              "005ca860: Ghidra body differs from bounded CFG"
+            ]
+          }
+        }
+      ],
+      "baseline_function_candidates": 15870,
+      "rtti_vtables": 913,
+      "rtti_distinct_targets": 3265,
+      "rtti_targets_in_body_interiors": [],
+      "pending_rtti_entries": 0,
+      "pending_padded_leaves": 0,
+      "pending_bounded_cfg_entries": 19,
+      "pseudocode_export": {
+        "status": "not_exported"
+      },
+      "other_padding_entry_candidates": 192,
+      "return_entry_candidates": 77
+    }
+  ]
+}

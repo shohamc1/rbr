@@ -1,4 +1,3 @@
-// Evidence: 0x00401000 reads a 32-bit field at ECX+0x0c. Class identity is unknown.
 struct Object00401000 {
     unsigned char unknown_00[12];
     unsigned int field_0c;

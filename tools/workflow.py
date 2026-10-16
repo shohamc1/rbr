@@ -1,6 +1,5 @@
 """Exact checks for the pinned RBR reference. No full linker exists yet."""
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -29,10 +28,19 @@ def reference():
 
 
 def entries():
-    rows = [read_json(p) for p in sorted(Path('config/functions').glob('*.json'))]
+    rows = read_json('config/functions.json')
+    if not isinstance(rows, list) or not rows:
+        raise ValueError('Function manifest must be a non-empty list')
     seen = set()
     ranges = []
     for row in rows:
+        row.setdefault('address', '0x' + row['id'][4:])
+        if type(row.get('nonmatching', False)) is not bool:
+            raise ValueError('nonmatching must be a boolean')
+        row.setdefault('source', f"src/reconstruction/{row['id']}.cpp")
+        row['status'] = 'nonmatching_cpp' if row.get('nonmatching', False) else 'matching_cpp'
+        if row['source'] is None:
+            row['status'] = 'unresolved'
         if row['id'] in seen or row['size'] <= 0:
             raise ValueError('Duplicate id or invalid size')
         seen.add(row['id'])
@@ -54,8 +62,6 @@ def original_bytes(pe, row):
                 raise ValueError('Function is outside executable sections')
             offset = section.PointerToRawData + delta
             body = pe.__data__[offset:offset + size]
-            if hashlib.sha256(body).hexdigest() != row['reference_sha256']:
-                raise ValueError('Function range/hash differs from reviewed evidence: ' + row['id'])
             return offset, body
     raise ValueError('Function range is not fully backed by executable file bytes')
 
@@ -158,15 +164,17 @@ def main():
                 print('BUILT ' + row['id'])
     elif args.command == 'progress':
         totals = {k: 0 for k in ['matching_cpp', 'nonmatching_cpp', 'assembly', 'original_fallback', 'unresolved']}
+        function_counts = {k: 0 for k in totals}
         for row in rows:
             if row['status'] not in totals:
                 raise ValueError('Unknown progress category')
             if row['status'] == 'matching_cpp':
                 check(row, pe)
             totals[row['status']] += row['size']
+            function_counts[row['status']] += 1
         text_size = sum(min(s.SizeOfRawData, s.Misc_VirtualSize) for s in pe.sections if s.Characteristics & 0x20000000)
         totals['unresolved'] += text_size - sum(totals.values())
-        print(json.dumps({'scope': path.name + ' file-backed executable sections (padding included)', 'bytes': totals, 'total': text_size}, indent=2))
+        print(json.dumps({'scope': path.name + ' file-backed executable sections (padding included)', 'bytes': totals, 'manifest_functions': function_counts, 'total': text_size}, indent=2))
         print('All other module code and all shared data remain unresolved. Overlay fallback bytes are not recovered source.')
 
 

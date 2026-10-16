@@ -4,8 +4,10 @@ Target: Windows x86, the **NoCD EXE** (assumed compatible with 1.0.2). The exact
 Modern graphics, new platforms, and input changes are deferred.
 
 This repository has a verified **function-matching baseline**, not a rebuilt game.
-Three active C/C++ functions match 21 original bytes. The full executable and DLL
-link remains blocked. `make check-integrated` reports that limit and fails.
+103 active C/C++ functions match 1,694 original bytes. Three more functions remain
+nonmatching C++ drafts. The matches include a 549-byte array routine.
+The full executable and DLL link remains blocked.
+`make check-integrated` reports that limit and fails.
 `make check-overlay` is a separate intermediate check with original byte fallbacks.
 
 ## Start
@@ -14,7 +16,8 @@ On the tested Apple Silicon macOS host, Python 3.11.15, Clang 23.1.1,
 Ghidra 12.1.4, bsdtar, and unshield 1.6.2 are available.
 Install missing tools with `brew install llvm ghidra unshield openjdk@21`.
 The compiler hash in `config/toolchain.json` must match; a newer package is not
-silently accepted. This compiler is qualified only for the three matched leaves.
+silently accepted. Compiler results apply only to the listed exact matches;
+the general game profile remains unresolved.
 
 ```sh
 make setup
@@ -47,21 +50,47 @@ LocoMotion DLLs are companion targets. Patch files remain comparison evidence.
 No game payload is tracked.
 
 MSVC 13.10.3077 is now a tested candidate: it matches all five probes.
-Clang remains the default for the three integrated leaves. The complete original
+Clang remains the default for compatible leaves. The complete original
 build options and full link layout remain unresolved. Windows gameplay and 1.0.2 compatibility have not been tested;
 compatibility is assumed at the user's request.
 
 `make check-function` compiles active source and compares its complete function
 section with the pinned range. For an example, read
-`src/reconstruction/sub_00401000.cpp` and its record in `analysis/functions/`.
+`src/reconstruction/sub_00401000.cpp` and its entry in `config/functions.json`.
 `make check-overlay` replaces matching ranges in a reference copy and compares the
 whole file without normalization. Retained bytes do not count as recovered source.
 
+`config/functions.json` stores one compact JSON object per line. Each entry keeps
+its ID, size, symbol, and any compiler settings. The full executable SHA-256
+in `config/reference.json` pins the reference bytes; per-function hashes are redundant.
+The loader derives the address from `sub_<VA>` and the source path from
+`src/reconstruction/<id>.cpp`. Set `address` or `source` only for exceptions;
+set `source` to `null` for an unresolved entry. All source entries must match
+unless marked `"nonmatching": true`. Remove that flag after an exact check passes.
+Overlay and progress checks rebuild all expected matches and fail on a difference.
+`make progress` then prints the saved boundary census by core, runtime/crash, and
+auxiliary scope. It shows candidate entries, code-section bytes, unresolved regions,
+and generated pseudocode counts. `make census-progress` shows this summary without
+compiling source or running Ghidra. Verified C/C++ function and byte counts remain
+separate from analysis candidates. No pseudocode export counts as a source match.
+
+The summary checks snapshot tool/configuration hashes and module pins. It rejects
+changed local boundary evidence or pseudocode files. Missing ignored evidence uses
+the saved snapshot with an explicit notice. The pinned module files are still
+required. An unanalyzed module has an unknown
+function count; its code bytes stay in the total. After analysis or export changes,
+run `make census` to refresh `analysis/function-census.json` and
+`analysis/module-scope.json`. This refresh needs the local census evidence.
+Keep manual findings and unresolved questions in [analysis/notes.md](analysis/notes.md).
+`make analyze` regenerates the ignored `analysis/functions/` files from the pinned
+reference and manifest. Checks do not require these files. Keep generated assembly,
+pseudocode, references, and logs local. Do not create batch or session reports.
+
 ## Ghidra analysis for agents
 
-`make ghidra-analyze` imports the pinned EXE, seeds the six reviewed function
-boundaries, runs full analysis, and exports a function index and six function
-packets. It takes about 90 seconds on the tested host. It replaces only its
+`make ghidra-analyze` imports the pinned EXE, seeds the function boundaries in
+`config/functions.json`, runs full analysis, and exports an index and a packet for
+each manifest entry. The run time depends on the manifest. It replaces only its
 generated project and exports under `build/ghidra/<reference-hash-prefix>/`.
 Do not store manual work in this project; use a separate Ghidra project for that.
 The old `sh tools/ghidra-import.sh` command runs this same workflow.
@@ -87,6 +116,40 @@ count. Boundaries, types, and calling conventions need review. Ghidra calls the
 Header data references are not proof of callers. The analyzer also reported invalid
 PNG resource candidates. Review these warnings instead of treating inferred data
 as fact. `make analyze` remains the separate, lightweight PE/Capstone metadata scan.
+
+## Function census and DLL scope
+
+The original 15,874-entry EXE index is incomplete. Use the separate census
+projects for counts and boundary review. See [analysis/notes.md](analysis/notes.md) for reviewed findings.
+`analysis/function-census.json` and `analysis/module-scope.json` hold current measurements.
+
+```sh
+make census-inventory # hash-checked base-install PE inventory
+make census-analyze   # independent, unseeded projects for game and support modules
+make census-refine    # virtual tables, bounded branch paths, and reviewed corrections
+make census-audit     # refresh evidence from saved projects without changes
+make census-decompile # export all candidates in DLLs with supported load paths
+make census           # refresh saved reports from local census evidence
+make census-progress  # quick saved summary; no compile or Ghidra run
+```
+
+Run another refinement pass when the report still has new supported entry
+candidates. The tool retains the baseline for comparison. Projects, instruction
+evidence, pseudocode, and per-address queues stay under ignored `build/census/`.
+It never changes the matching-work Ghidra project or function manifests.
+
+`config/census.json` records reviewed DLL load paths and boundary corrections.
+The inventory follows normal and delay imports. A DLL name in a string is only
+a candidate. Runtime-selected modules, launcher dependencies, unused bundled
+files, and text files with a `.dll` suffix have separate records.
+
+Counts describe distinct machine-code entry candidates in each module. They
+include thunks and generated library routines. They do not count inlined source
+functions, identify every original source function, or prove a complete count.
+All code bytes remain in the size denominator, including unexplained ranges.
+No census entry counts as recovered C/C++. Pseudocode exports retain per-function
+failures and must agree with the current module hash, entry list, and body sizes.
+They remain unreviewed analysis drafts, even when Ghidra reports success.
 
 ## MSVC candidate
 
@@ -129,7 +192,7 @@ its probe sources instead of Clang-specific syntax. These are qualification prob
 not additional recovered production functions. Reports go to
 `build/compiler/qualification.json`.
 
-For a compatible new source, set `"compiler": "msvc71"` in its function manifest;
+For a compatible new source, set `"compiler": "msvc71"` in its `config/functions.json` entry;
 use `"extra_flags": ["/arch:SSE"]` only when evidence supports it. The existing
 `make check-function` and overlay gates then use that compiler. Omitted compiler
 fields keep Clang. Do not pass Clang options to MSVC or change the shared default
