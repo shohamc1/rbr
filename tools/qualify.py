@@ -3,15 +3,17 @@ import json
 from pathlib import Path
 import subprocess
 from coff import function_bytes
-from workflow import reference, compiler, entries, check, difference, BUILD
+from workflow import reference, compiler, entries, check, difference, relocation_resolver, BUILD
 
 
 def main():
     cfg, reference_path, pe = reference()
     cc, flags = compiler()
     BUILD.mkdir(parents=True, exist_ok=True)
-    for row in entries():
-        if row['status'] == 'matching_cpp': check(row,pe)
+    rows = entries()
+    resolve = relocation_resolver(pe, rows)
+    for row in rows:
+        if row['status'] == 'matching_cpp': check(row, pe, resolve)
     results=[]
     for name,address,size,symbol,extra in [
         ('constructor',0x406410,26,'??0Pair@@QAE@MM@Z',['-msse','-mno-sse2']),

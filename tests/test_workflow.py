@@ -12,7 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from coff import function_bytes
 from extract import carve
-from workflow import compiler, entries
+from workflow import compiler, entries, original_bytes, reference
+from capstone import Cs, CS_ARCH_X86, CS_MODE_32
+from capstone.x86_const import X86_OP_IMM
 
 
 class ExtractionTests(unittest.TestCase):
@@ -26,6 +28,26 @@ class ExtractionTests(unittest.TestCase):
 
 
 class ManifestTests(unittest.TestCase):
+    def test_reviewed_startup_ranges_include_all_branches(self):
+        reviewed = {'sub_00411bc0', 'sub_00471110', 'sub_004807c0',
+                    'sub_0059ee80', 'sub_006f06e2'}
+        _, _, pe = reference()
+        decoder = Cs(CS_ARCH_X86, CS_MODE_32)
+        decoder.detail = True
+        for row in entries():
+            if row['id'] not in reviewed:
+                continue
+            with self.subTest(function=row['id']):
+                _, body = original_bytes(pe, row)
+                start = int(row['address'], 16)
+                instructions = list(decoder.disasm(body, start))
+                self.assertEqual(sum(i.size for i in instructions), len(body))
+                self.assertEqual(instructions[-1].mnemonic, 'ret')
+                for instruction in instructions:
+                    if instruction.mnemonic.startswith('j') and instruction.operands[0].type == X86_OP_IMM:
+                        target = instruction.operands[0].imm
+                        self.assertTrue(start <= target < start + len(body), hex(target))
+
     def test_manifest_validation(self):
         first = {'id': 'sub_00401000', 'address': '0x401000', 'size': 4}
         second = {'id': 'sub_00401010', 'address': '0x401010', 'size': 4}
@@ -102,6 +124,18 @@ class WorkflowTests(unittest.TestCase):
         path.write_text(json.dumps(rows))
         self.assertNotEqual(self.run_check('check-function','sub_00401000').returncode,0)
 
+    def test_build_keeps_drafts_with_extra_sections(self):
+        source = self.root / 'src/reconstruction/sub_00401000.cpp'
+        source.write_text('extern "C" int global; int global = 1; int f() { return global; }')
+        manifest = self.root / 'config/functions.json'
+        rows = json.loads(manifest.read_text())
+        rows[0]['nonmatching'] = True
+        manifest.write_text(json.dumps(rows))
+        result = self.run_check('build')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.root / 'build/reconstruction/sub_00401000.obj').is_file())
+        self.assertNotEqual(self.run_check('check-function', 'sub_00401000').returncode, 0)
+
     def test_no_false_full_reconstruction(self):
         result=self.run_check('check-integrated')
         self.assertNotEqual(result.returncode,0)
@@ -144,7 +178,7 @@ class WorkflowTests(unittest.TestCase):
         data=bytearray((self.root/'build/reconstruction/sub_00401000.obj').read_bytes())
         with self.assertRaises(ValueError): function_bytes(data, 'wrong_symbol')
         struct.pack_into('<H',data,20+32,1)
-        with self.assertRaisesRegex(ValueError,'relocations'):
+        with self.assertRaisesRegex(ValueError,'known symbol addresses'):
             function_bytes(data,'?sub_00401000@Object00401000@@QAEIXZ')
 
 

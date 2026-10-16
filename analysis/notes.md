@@ -55,6 +55,96 @@ list draft handles empty and nonempty insertion paths. Earlier forms and total
 attempt counts for the reader and list were not preserved; do not claim an
 eight-attempt history for them. Regenerate instruction dumps and check logs locally.
 
+## Startup subsystem (entry 0x006f0208)
+
+The checker resolves REL32 calls to manifest symbols and DIR32 `__imp_` imports
+(IAT slots and `FF 25` import thunks); relocation-free objects are unaffected.
+Both relocation forms retain their COFF addends. Resolution requires an
+undefined external symbol; object-local and common symbols remain unsupported.
+`make build` compiles drafts without extracting their code. Exact checks still
+reject extra code/data sections. Clang qualification uses the same resolver.
+MSVC SEH and C++ EH frames still need linker-aware checking: scope tables land
+in `.rdata`, funclets in `.text$x`, with `.xdata$x` funcinfo and
+`__CxxFrameHandler` references (see `sub_0040f9f0`).
+
+Matched entry callees: `sub_006f078b` returns zero; `sub_006f0770`
+`__setdefaultprecision` calls the `_controlfp` thunk 0x006f0414 with
+`_PC_53`/`_MCW_PC`; `sub_006efecf` is CRT `_atexit` with the NEG/SBB/NEG/DEC
+tail. Both CRT wrappers need a file-local `#pragma optimize("s", on)`: under
+plain `/O2` MSVC 13.10.3077 cleans cdecl arguments with `add esp,N`, while the
+reference uses `POP`-based epilogues.
+
+`sub_00471110` is the game main: `__stdcall` with four stack arguments. It
+reads `[Settings]` from RichardBurnsRally.ini — Fullscreen, RunIntro,
+RunDiagnose, RunStartup through the `sub_0040f9f0` initializer family — and
+builds a `GamePlatform0044a3c0` object of 0x1bd0 bytes from the `sub_006efa32`
+allocation helper with constructor `sub_0044a3c0(hInstance)`. CPUID at
+0x00471360 has no MSVC 7.1 source form without inline assembly and remains the
+hard blocker. MSVCP71 `basic_string` imports reproduce with
+`__declspec(dllimport)` specializations; `char_traits` must be a struct and
+`allocator` a class for exact mangling.
+
+`sub_0040f9f0` is C++-EH-guarded (scope 0x70617b → funcinfo 0x79b5f0);
+37 of 99 bytes match with a plain non-EH draft, and the ternary conditional is
+load-bearing for the null path. `sub_006f06e2` `__RTC_Initialize` needs
+`__try`/`__except(1)` and size optimization. Its scope table remains outside
+checker support. The source uses separate linker sentinels; both resolve to
+EXE 0x00788080. It does not call the SEH prologue and epilogue as ordinary C
+functions. The filter at 0x006f070f and handler restore at 0x006f0713 sit
+inside its 68-byte span.
+
+Raw boundary review includes code after early returns. `sub_00471110` ends
+after RET 0x10 at 0x0047160b (1,278 bytes); its return at 0x00471589 does not
+end the function. `sub_004807c0` ends after RET at 0x00480910 (337 bytes),
+and `sub_0059ee80` after RET at 0x0059eea4 (37 bytes). `sub_00411bc0` ends
+after RET 0xc at 0x00411c73 (182 bytes), before padding. The manifest uses
+these spans, rather than summed Ghidra body-range sizes.
+
+## Launch and crash startup helpers
+
+The reference build uses `/GS`: the cookie lives at 0x007c9410 and the check
+call targets `@__security_check_cookie@4` (fastcall decoration) at 0x006efe25.
+`config/globals.json` maps data symbols, so `/GS` functions compile with
+`"extra_flags": ["/GS"]`; `sub_00470f70` (the CRASHDUMP.TXT unhandled-exception
+filter, 410 bytes) matches this way. Any function showing the cookie load or
+check call needs the flag; MSVC 7.1 is opt-in `/GS`.
+
+Matched in this frontier: `sub_006efea9` (CRT `__onexit`: -1 sentinel on
+`*(void**)0x16e3510`, `jmp [__imp__onexit]` tail, else `__dllonexit` thunk with
+table pointers 0x16e3510/0x16e350c), `sub_00470f00` (launches RBR Startup.exe
+and closes both handles), `sub_0040fa60` (ini-block release: the field must be
+copied to a local so ESI holds the pointer across both calls), `sub_00470e60`
+(intro-launch teardown gated on the flag byte 0x007ca1ec), `sub_0043b3c0`
+(variadic error forward to the logging core `sub_0048cc00`; header-free
+`va_start` is `(char*)&message + 4`; EXE callers pass kind, code, message),
+and `sub_006efa32` (MSVC `operator new`:
+malloc/`_callnewh`/`std::_Nomemory` retry loop). The intro launcher
+`sub_00470ea0` stays nonmatching: its three PROCESS_INFORMATION stores and two
+tail stores sit outside the /O2 push-run interleave cadence; volatile, memset
+expansions, chained assignments, and the size pragma do not move them.
+
+Source-level encoding levers proven on this artifact: a file-local
+`#pragma optimize("s", on)` switches MSVC 7.1 to pop-based cdecl cleanup,
+re-pushes buffered arguments from `[esp+N]`, and jmp-rotates loops; plain `/O2`
+buffers a first cdecl argument in ECX. C imports need
+`extern "C" __declspec(dllimport)`; mangled MSVCP names reproduce from real
+C++ declarations (`namespace std { __declspec(dllimport) void __cdecl
+_Nomemory(); }` gives `__imp_?_Nomemory@std@@YAXXZ`; `basic_string` needs
+`char_traits` as a struct and `allocator` as a class).
+
+`sub_0041c8a0` (RunDiagnose chain) stays nonmatching: the reference passes the
+handler in EDI — a register argument no standard declaration produces (default
+handler 0x0041c820, FILE* global 0x016e3044). `sub_0040fab0` is really 156
+bytes (RET 4 at 0x40fb49) and is C++-EH-guarded. Its helper
+`sub_00411bc0` also reads the container from EDI, in addition to three stack
+arguments. The draft does not model this register input. The helper walks
+node links; its first stack node pointer is not a virtual table.
+Naming any destructor also emits a local `??_G` deleting-dtor
+COMDAT that breaks the one-function rule. Ghidra packets under-report extents:
+verify body ends against RET and padding (`sub_0040fa60` is 34, not 31). The
+MSVC Docker image has no standard headers; a compile error can hang the Wine
+container and needs a manual `docker rm -f`.
+
 ## Module scope and function boundaries
 
 Use the separate census projects in `build/census/<sha256-prefix>/`. They do not

@@ -77,11 +77,14 @@ and .venv/. Reserve src/modern/ and build/modern/ for the future port.
 6. On a match, remove `nonmatching`. Keep durable findings in analysis/notes.md and
    check output in build/. Run `make test check-overlay progress` before integration.
 
-The current COFF checker accepts only one relocation-free function per object.
-Coordinate linker/checker work before adding globals, several emitted functions,
-RTTI, or exception tables. Do not hide those limitations with inline assembly,
-binary includes, or conditional original-byte fallbacks. Review source as well as
-checker output; the checker cannot prove that C++ contains no disguised assembly.
+The checker accepts one function per object. REL32 external relocations resolve
+against manifest functions and IAT thunks. DIR32 externals resolve against PE
+import slots and globals in config/globals.json. Both retain relocation addends.
+Object-local data, RTTI, and SEH/C++-EH scope
+tables and funclet sections still need linker-aware checking. Do not hide
+those limitations with inline assembly, binary includes, or conditional
+original-byte fallbacks. Review source as well as checker output; the checker
+cannot prove that C++ contains no disguised assembly.
 
 ## When a function will not match
 
@@ -151,7 +154,7 @@ Coordinate shared manifest and manual-note edits with the integrator.
 | P2 | sub_00406900 | 10 bytes | Write stack word to ECX+0x28; RET 4 | Matched |
 | P3 | sub_00406940 | 10 bytes | Write stack word to ECX+0x74; RET 4 | Matched |
 
-The open drafts are `sub_00408d00`, `sub_004183d0`, and `sub_0043ebb0`.
+The manifest marks all open drafts with `"nonmatching": true`.
 See analysis/notes.md for their remaining differences. Keep them separate from
 matching progress.
 

@@ -78,12 +78,76 @@ def compiler():
     return path, cfg['flags']
 
 
-def build(row):
+def import_slots(pe):
+    slots = {}
+    for key in ('DIRECTORY_ENTRY_IMPORT', 'DIRECTORY_ENTRY_DELAY_IMPORT'):
+        for descriptor in getattr(pe, key, []) or []:
+            for entry in descriptor.imports:
+                if entry.name and entry.address:
+                    slots[entry.name.decode()] = entry.address
+    return slots
+
+
+def import_thunks(pe, slots):
+    targets = {address: name for name, address in slots.items()}
+    thunks = {}
+    for section in pe.sections:
+        if not section.Characteristics & 0x20000000:
+            continue
+        data = section.get_data()
+        base = pe.OPTIONAL_HEADER.ImageBase + section.VirtualAddress
+        for index in range(len(data) - 5):
+            if data[index] == 0xFF and data[index + 1] == 0x25:
+                name = targets.get(int.from_bytes(data[index + 2:index + 6], 'little'))
+                if name is not None:
+                    thunks.setdefault(name, base + index)
+    return thunks
+
+
+def data_symbols():
+    path = Path('config/globals.json')
+    if not path.exists():
+        return {}
+    rows = json.loads(path.read_text())
+    return {row['symbol']: int(row['address'], 16) for row in rows}
+
+
+def relocation_resolver(pe, rows):
+    slots = import_slots(pe)
+    thunks = import_thunks(pe, slots)
+    addresses = {row['symbol']: int(row['address'], 16) for row in rows}
+    data = data_symbols()
+
+    def candidates(name):
+        without = name.split('@')[0]
+        yield name
+        yield without
+        if without.startswith('_'):
+            yield without[1:]
+
+    def resolve(name, kind):
+        if kind == 20:
+            if name in addresses:
+                return addresses[name]
+            return next((thunks[c] for c in candidates(name) if c in thunks), None)
+        if kind == 6:
+            if name.startswith('__imp_'):
+                base = name[len('__imp_'):]
+                if base in slots:
+                    return slots[base]
+                return next((slots[c] for c in candidates(base) if c in slots), None)
+            if name in data:
+                return data[name]
+        return None
+
+    return resolve
+
+
+def compile_source(row):
     profile = row.get('compiler', 'clang')
     if profile == 'msvc71':
         from msvc import compile_object
-        out = compile_object(row['source'], BUILD / (row['id'] + '.obj'), row.get('extra_flags', []))
-        return function_bytes(out.read_bytes(), row['symbol'])
+        return compile_object(row['source'], BUILD / (row['id'] + '.obj'), row.get('extra_flags', []))
     if profile != 'clang':
         raise ValueError('Unknown compiler profile: ' + profile)
     path, flags = compiler()
@@ -92,7 +156,7 @@ def build(row):
     out.unlink(missing_ok=True)
     # Always compile the active source; a prior object cannot satisfy a check.
     subprocess.run([path, *flags, *row.get('extra_flags', []), '-c', row['source'], '-o', str(out)], check=True)
-    return function_bytes(out.read_bytes(), row['symbol'])
+    return out
 
 
 def difference(expected, actual, address):
@@ -104,16 +168,17 @@ def difference(expected, actual, address):
     return '\n'.join(lines)
 
 
-def check(row, pe):
+def check(row, pe, resolve=None):
     offset, expected = original_bytes(pe, row)
-    actual = build(row)
+    out = compile_source(row)
+    actual = function_bytes(out.read_bytes(), row['symbol'], int(row['address'], 16), resolve)
     if actual != expected:
         raise ValueError(row['id'] + '\n' + difference(expected, actual, int(row['address'], 16)))
     print(f"MATCH active C/C++ {row['id']} {row['address']} {len(actual)} bytes")
     return offset, actual
 
 
-def overlay(pe, rows):
+def overlay(pe, rows, resolve=None):
     out = BUILD / 'reference-overlay.exe'
     out.unlink(missing_ok=True)
     image = bytearray(pe.__data__)
@@ -121,7 +186,7 @@ def overlay(pe, rows):
     for row in rows:
         if row['status'] != 'matching_cpp':
             continue
-        offset, code = check(row, pe)
+        offset, code = check(row, pe, resolve)
         image[offset:offset + len(code)] = code
         total += len(code)
     if total == 0:
@@ -148,19 +213,20 @@ def main():
     rows = entries()
     for row in rows:
         original_bytes(pe, row)
+    resolve = relocation_resolver(pe, rows)
     if args.command == 'check-integrated':
         raise ValueError('BLOCKED: no complete source/link layout for the EXE or game DLLs. Use check-overlay for the bounded intermediate check.')
     if args.command == 'check-function':
         selected = [r for r in rows if r['id'] == args.id]
         if len(selected) != 1 or not selected[0].get('source'):
             raise ValueError('Unknown function or missing source: ' + str(args.id))
-        check(selected[0], pe)
+        check(selected[0], pe, resolve)
     elif args.command == 'check-overlay':
-        overlay(pe, rows)
+        overlay(pe, rows, resolve)
     elif args.command == 'build':
         for row in rows:
             if row.get('source'):
-                build(row)
+                compile_source(row)
                 print('BUILT ' + row['id'])
     elif args.command == 'progress':
         totals = {k: 0 for k in ['matching_cpp', 'nonmatching_cpp', 'assembly', 'original_fallback', 'unresolved']}
@@ -169,7 +235,7 @@ def main():
             if row['status'] not in totals:
                 raise ValueError('Unknown progress category')
             if row['status'] == 'matching_cpp':
-                check(row, pe)
+                check(row, pe, resolve)
             totals[row['status']] += row['size']
             function_counts[row['status']] += 1
         text_size = sum(min(s.SizeOfRawData, s.Misc_VirtualSize) for s in pe.sections if s.Characteristics & 0x20000000)
