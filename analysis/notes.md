@@ -26,8 +26,12 @@ module dependencies are in `analysis/module-scope.json`.
   callers before assigning a standard C++ calling convention.
 
 - Clang 23.1.6 replaced 23.1.1 on 2026-11-21. Every Clang-profile match reproduces;
-  the two `make qualify` candidate probes still differ, as before. Ghidra 12.2 is
-  installed, but the pin stays 12.1.4 until census and matching analysis rerun.
+  the two `make qualify` candidate probes still differ, as before.
+- Ghidra 12.2 replaced 12.1.4 on 2026-11-21. After two refinement passes, the EXE
+  census has 27,201 entry candidates (27,207 before) and pseudocode covers 26,508
+  functions in seven modules (26,642 before). MSVCP71 changed most: 125
+  noncontiguous bodies (13 before) and 56 cross-function jumps (271 before). The
+  matching project indexes 15,706 EXE functions.
 
 ## Specific behavior
 
@@ -169,6 +173,30 @@ through virtual slot 27 of `gObject00874618`. `sub_00446bd0` assigns the string 
 +0xd64 through the MSVCP71 `basic_string::operator=` import. MSVC 7.1 ends an
 argument list whose last parameter is a class type with `@@@Z`; check other
 manifest symbols with that shape.
+
+## Shared objects and class files
+
+Classes group functions only where callers pass the same object as `this`; see
+the evidence comment in each class file. `0x007ca2a0` holds the
+GamePlatform0044a3c0 instance (stored at 0x00471404). `0x007c9fe8` is the
+application object: +0x28 is the Object0040e570 window object and +0x2c an
+Object00406a20 instance. `0x007aeb78` is a state object whose +8 word
+`sub_005341e0` sets and `sub_005342a0` and `sub_00534390` test.
+
+`sub_0047a0a0` returns GamePlatform+0x70, which callers pass as `this` to
+`sub_004837b0`, so an embedded object of at least 0x4f4 bytes starts there.
+`sub_00587070` returns an array of 0x46c-byte elements whose type has
+`sub_00586c20` and `sub_00586c70`. `sub_005b5550` indexes the container at
+0x007b5a04 with stride 0xe8; the element class holds the five `sub_005c2f90`
+to `sub_005c3030` accessors.
+
+Likely merges that wait on test edits: Collection00416390 with Collection004163c0
+(the same receivers and a 0x74-byte record), and Reader004183d0 with
+Object004181e0. Nine sources are pinned by test includes or fixtures. Cross-profile
+pairs (`sub_00406a20` with `sub_004087a0`, `sub_004c4a70` with `sub_004c4b00`,
+`sub_004c41c0` with `sub_004c4240`) share receivers but stay split by compiler
+profile. Shared headers use `layout.h` assertions, which compile under both
+Clang and MSVC 7.1.
 
 ## Module scope and function boundaries
 

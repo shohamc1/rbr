@@ -224,7 +224,7 @@ example such as `sub_00406900`.
 
 ## Ghidra analysis
 
-Analysis requires the Ghidra version pinned in config/ghidra.json (12.1.4) and a
+Analysis requires the Ghidra version pinned in config/ghidra.json (12.2) and a
 JDK that meets that release's `application.java.min`. The tools read that minimum
 from the installed Ghidra and select the oldest Homebrew `openjdk@N` that meets
 it, unless you set `JAVA_HOME`. A different Ghidra release fails verification.
@@ -250,14 +250,14 @@ and outgoing references, including imported symbols and referenced data.
 records the Ghidra version, reference hash, and all analysis options. Logs remain
 beside the exports. All these generated files are ignored by Git.
 
-Ghidra 12.1.4 and analyzer enablement are pinned in `config/ghidra.json`. Other
+Ghidra 12.2 and analyzer enablement are pinned in `config/ghidra.json`. Other
 options use that version's defaults and are recorded in the export receipt. The
 language is x86 little-endian 32-bit, with the Windows compiler specification.
 Set `GHIDRA_HEADLESS` or `JAVA_HOME` to select installed tool paths. Timeouts,
 missing functions, failed decompilation, wrong references, and missing completion
 receipts cause failure; old exports cannot satisfy the selected function check.
 
-The tested analysis found 15,874 function candidates. This is not a recovered-source
+The tested 12.2 analysis found 15,706 function candidates. This is not a recovered-source
 count. Boundaries, types, and calling conventions need review. Ghidra calls the
 0x00401000 getter `fastcall`; matching source uses a C++ `thiscall` representation.
 Header data references are not proof of callers. The analyzer also reported invalid
@@ -266,7 +266,7 @@ as fact. `make analyze` remains the separate, lightweight PE/Capstone metadata s
 
 ## Function census and DLL scope
 
-The original 15,874-entry EXE index is incomplete. Use the separate census
+The 15,706-entry matching-project EXE index is incomplete. Use the separate census
 projects for counts and boundary review. See [analysis/notes.md](analysis/notes.md) for reviewed findings.
 `analysis/function-census.json` and `analysis/module-scope.json` hold current measurements.
 
