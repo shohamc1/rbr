@@ -16,6 +16,7 @@
 #include "msvcp71.h"
 #include "Object0040f9f0.h"
 #include "GamePlatform0044a3c0.h"
+#include "Object0040e570.h"
 
 // KERNEL32/USER32/OLE32 imports; the reference reaches all of them through the
 // import address table (CALL [__imp_...]).
@@ -40,12 +41,8 @@ extern "C" void __cdecl sub_0043b3c0(int kind, int code, const char* message, ..
 extern "C" void* __cdecl sub_006efa32(unsigned int size); // operator new; manifest symbol resolves
 extern "C" unsigned int __cdecl sub_00471110_missingCpuid(int level); // returns the EDX leaf
 
-// Stand-in for the window handle getter used at 0x007c9fe8+0x28; the manifest
-// pins the exact mangled symbol for this member.
-struct Object0040e570 {
-    unsigned int sub_0040e570();
-};
-
+// The application global at 0x007c9fe8 holds the window object at +0x28.
+// Object0040e570 is declared in Object0040e570.h.
 struct AppWindow007c9fe8 {
     unsigned char unknown_00[0x28];
     Object0040e570* window;
