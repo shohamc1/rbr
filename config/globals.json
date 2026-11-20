@@ -3,5 +3,6 @@
 {"symbol":"_gLogToStdout","address":"0x007a18f8"},
 {"symbol":"_gLogRouteTable","address":"0x007a29d8"},
 {"symbol":"_gLogRecords","address":"0x007a5ab4"},
-{"symbol":"_gLogLineBuffer","address":"0x007cc4b0"}
+{"symbol":"_gLogLineBuffer","address":"0x007cc4b0"},
+{"symbol":"_gObject00874618","address":"0x00874618"}
 ]
