@@ -29,25 +29,7 @@
 // two function symbols and check-function reports that instead of byte
 // differences. EH frames still need linker-aware checking.
 
-namespace std {
-    template<class Element> struct char_traits;
-    template<class Element> class allocator;
-    template<class Element, class Traits, class Allocator> class basic_string;
-    // The EXE imports the destructor from MSVCP71.dll; char_traits must be a
-    // struct (mangles as U) and allocator a class (mangles as V) to keep the
-    // mangled import name byte-identical to the import slot.
-    template<> class __declspec(dllimport) basic_string<char, char_traits<char>, allocator<char> > {
-        char buffer[0x10];
-        unsigned int length;
-        unsigned int capacity;
-        unsigned int allocatorField;
-    public:
-        ~basic_string();
-    };
-}
-
-typedef std::basic_string<char, std::char_traits<char>, std::allocator<char> > IniString;
-typedef char ini_string_size_assertion[(sizeof(IniString) == 0x1c) ? 1 : -1];
+#include "msvcp71.h"
 
 // EXE-internal callees. sub_006efdd0 is the 6-byte operator delete thunk
 // (jmp dword ptr [0x70c504], cdecl). sub_00411bc0 consumes three stack arguments
@@ -79,12 +61,12 @@ struct Block0040fab0 {
     void* field_00;
     ReleaseHub0040fab0 lowHub;   // +0x04
     ReleaseHub0040fab0 highHub;  // +0x10
-    IniString value;             // +0x1c
+    std::string value;             // +0x1c
 };
 
 extern "C" void __stdcall sub_0040fab0(void* block) {
     Block0040fab0* self = static_cast<Block0040fab0*>(block);
-    self->value.~IniString();
+    self->value.~basic_string();
     releaseHub(&self->highHub);
     releaseHub(&self->lowHub);
 }

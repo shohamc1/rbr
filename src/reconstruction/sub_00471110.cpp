@@ -13,26 +13,7 @@
 // - The CPUID placeholder has no manifest address. C++ EH data and funclets
 //   also need linker-aware checking.
 
-namespace std {
-    template<class Element> struct char_traits;
-    template<class Element> class allocator;
-    template<class Element, class Traits, class Allocator> class basic_string;
-    // The EXE imports these two member functions from MSVCP71.dll. char_traits
-    // must be a struct (mangles as U) and allocator a class (mangles as V) to
-    // keep the mangled names byte-identical to the import slots.
-    template<> class __declspec(dllimport) basic_string<char, char_traits<char>, allocator<char> > {
-        char buffer[0x10];
-        unsigned int length;
-        unsigned int capacity;
-        unsigned int allocatorField;
-    public:
-        basic_string(const char* text);
-        ~basic_string();
-    };
-}
-
-typedef std::basic_string<char, std::char_traits<char>, std::allocator<char> > IniString;
-typedef char ini_string_size_assertion[(sizeof(IniString) == 0x1c) ? 1 : -1];
+#include "msvcp71.h"
 
 // KERNEL32/USER32/OLE32 imports; the reference reaches all of them through the
 // import address table (CALL [__imp_...]).
@@ -76,8 +57,8 @@ struct Object0040f9f0 {
     void* field_00;
     void* sub_0040f9f0();
     void sub_0040fa60();
-    void sub_0040fb60(const IniString& fileName, int mode);
-    bool sub_004100e0(const IniString& section, const IniString& key, int fallback);
+    void sub_0040fb60(const std::string& fileName, int mode);
+    bool sub_004100e0(const std::string& section, const std::string& key, int fallback);
 };
 
 // The 0x1bd0-byte platform object created below. delete uses vtable slot 0 with
@@ -88,7 +69,7 @@ struct GamePlatform0044a3c0 {
     virtual void run();
     virtual void shutdown();
     GamePlatform0044a3c0* sub_0044a3c0(void* instance); // constructor, returns this
-    void sub_00446bd0(const IniString& arguments);
+    void sub_00446bd0(const std::string& arguments);
     unsigned int sub_0047e860();
     unsigned int sub_0047eb00();
     void sub_00479e00();
@@ -120,19 +101,19 @@ extern "C" int __stdcall sub_00471110(void* instance, void* previousInstance,
 
     Object0040f9f0 iniReader;
     iniReader.sub_0040f9f0();
-    iniReader.sub_0040fb60(IniString((const char*)0x00710ab4), 2); // "RichardBurnsRally.ini"
+    iniReader.sub_0040fb60(std::string((const char*)0x00710ab4), 2); // "RichardBurnsRally.ini"
 
     runIntro = iniReader.sub_004100e0( // section "Settings", key "Fullscreen", default on
-                       IniString((const char*)0x0070eba4), IniString((const char*)0x0070ebb0), 1)
+                       std::string((const char*)0x0070eba4), std::string((const char*)0x0070ebb0), 1)
             && iniReader.sub_004100e0( // section "Settings", key "RunIntro", default on
-                       IniString((const char*)0x0070eba4), IniString((const char*)0x00710aa8), 1);
+                       std::string((const char*)0x0070eba4), std::string((const char*)0x00710aa8), 1);
 
     if (iniReader.sub_004100e0( // section "Settings", key "RunDiagnose", default off
-            IniString((const char*)0x0070eba4), IniString((const char*)0x00710a9c), 0)) {
+            std::string((const char*)0x0070eba4), std::string((const char*)0x00710a9c), 0)) {
         sub_0041c8a0(0);
     }
     bool runStartup = iniReader.sub_004100e0( // section "Settings", key "RunStartup", default on
-            IniString((const char*)0x0070eba4), IniString((const char*)0x00710a90), 1);
+            std::string((const char*)0x0070eba4), std::string((const char*)0x00710a90), 1);
     if (runStartup) {
         if (sub_00470f00()) {
             iniReader.sub_0040fa60();
@@ -142,7 +123,7 @@ extern "C" int __stdcall sub_00471110(void* instance, void* previousInstance,
     sub_00470ca0(runIntro, instance);
 
     if (iniReader.sub_004100e0( // section "Settings", key "RunIntro" again after the startup run
-            IniString((const char*)0x0070eba4), IniString((const char*)0x00710aa8), 1)) {
+            std::string((const char*)0x0070eba4), std::string((const char*)0x00710aa8), 1)) {
         sub_00470ea0();
         sub_00470e60();
         sub_00470ca0(runIntro, instance);
@@ -172,7 +153,7 @@ extern "C" int __stdcall sub_00471110(void* instance, void* previousInstance,
     const char* commandLineEnd = commandLine;
     while (*commandLineEnd != '\0') ++commandLineEnd;
     if (commandLineEnd != commandLine) {
-        platform->sub_00446bd0(IniString(commandLine));
+        platform->sub_00446bd0(std::string(commandLine));
     }
 
     if (platform->sub_0047e860() == 0) {
