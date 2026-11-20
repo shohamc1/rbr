@@ -149,6 +149,27 @@ verify body ends against RET and padding (`sub_0040fa60` is 34, not 31). The
 MSVC Docker image has no standard headers. A compile error can hang the Wine
 container; the runner removes it after `RBR_MSVC_TIMEOUT` seconds (default 300).
 
+## Logging, strings, and platform teardown
+
+`sub_0048cc00` is the logging core `(kind, code, message, args)`. If
+`gLogToStdout` (0x007a18f8) is set, it calls `vprintf`. Otherwise
+`gLogRouteTable[code * 8 + kind]` (0x007a29d8; note the order) selects an 8-byte
+record at 0x007a5ab4. The record's sink object receives `vsprintf` output from
+the buffer at 0x007cc4b0 through virtual slot 1. Names are hypotheses.
+
+`sub_0059e9d0` narrows a 16-bit string, mapping any character above 0xff to 0xff.
+It matches only with the character cached in a `u16` local and tested as
+`(c & 0xff00) > 0`; a direct test narrows to `test ch,0xff`. `sub_0059ee80` widens
+with a do-while; its mid-span JMP is compiler loop alignment.
+
+`GamePlatform0044a3c0::sub_00479e00` is teardown called from game main at
+0x0047159d. It calls `sub_004d6210` (cdecl, no inputs; writes soundtweak.cfg and
+deletes the object at 0x008cadb0), then releases the handles at +0x5c and +0x60
+through virtual slot 27 of `gObject00874618`. `sub_00446bd0` assigns the string at
++0xd64 through the MSVCP71 `basic_string::operator=` import. MSVC 7.1 ends an
+argument list whose last parameter is a class type with `@@@Z`; check other
+manifest symbols with that shape.
+
 ## Module scope and function boundaries
 
 Use the separate census projects in `build/census/<sha256-prefix>/`. They do not
