@@ -14,6 +14,7 @@ import pefile
 from analyze import save
 from boundaries import discovery
 from extract import digest
+from ghidra import ghidra_env
 from workflow import reference
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -115,10 +116,8 @@ def analyze(path):
     output = base / 'boundaries.json'
     output.unlink(missing_ok=True)
     (base / 'refinement.json').unlink(missing_ok=True)
-    env = os.environ.copy()
-    env.setdefault('JAVA_HOME', '/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home')
-    env['PATH'] = env['JAVA_HOME'] + '/bin:' + env['PATH']
-    cmd = [env.get('GHIDRA_HEADLESS', '/opt/homebrew/opt/ghidra/libexec/support/analyzeHeadless'),
+    headless, env = ghidra_env()
+    cmd = [headless,
            str(base), 'census', '-scriptPath', str(ROOT / 'tools/ghidra'), '-max-cpu', '4',
            '-import', str(path.resolve()), '-overwrite', '-processor', settings['language'],
            '-cspec', settings['compiler_spec'], '-analysisTimeoutPerFile', '900',
@@ -166,10 +165,8 @@ def refine(path, audit_only=False):
     receipt = base / 'refinement.json'
     if not audit_only:
         receipt.unlink(missing_ok=True)
-    env = os.environ.copy()
-    env.setdefault('JAVA_HOME', '/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home')
-    env['PATH'] = env['JAVA_HOME'] + '/bin:' + env['PATH']
-    cmd = [env.get('GHIDRA_HEADLESS', '/opt/homebrew/opt/ghidra/libexec/support/analyzeHeadless'),
+    headless, env = ghidra_env()
+    cmd = [headless,
            str(base), 'census', '-scriptPath', str(ROOT / 'tools/ghidra'), '-max-cpu', '4',
            '-process', path.name, '-noanalysis']
     if audit_only:
@@ -212,10 +209,8 @@ def decompile(path):
     out.mkdir(exist_ok=True)
     receipt = out / 'complete.json'
     receipt.unlink(missing_ok=True)
-    env = os.environ.copy()
-    env.setdefault('JAVA_HOME', '/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home')
-    env['PATH'] = env['JAVA_HOME'] + '/bin:' + env['PATH']
-    cmd = [env.get('GHIDRA_HEADLESS', '/opt/homebrew/opt/ghidra/libexec/support/analyzeHeadless'),
+    headless, env = ghidra_env()
+    cmd = [headless,
            str(base), 'census', '-scriptPath', str(ROOT / 'tools/ghidra'), '-max-cpu', '4',
            '-process', path.name, '-noanalysis', '-readOnly', '-postScript', 'DecompileCensus.java', str(out), sha]
     log = base / 'decompile.log'

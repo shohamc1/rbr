@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import re
 import shutil
 from pathlib import Path
 import subprocess
@@ -10,6 +11,70 @@ import sys
 from workflow import entries, reference
 
 ROOT = Path(__file__).resolve().parents[1]
+HEADLESS = '/opt/homebrew/opt/ghidra/libexec/support/analyzeHeadless'
+
+
+def main_checkout():
+    """Return the main checkout when ROOT is a linked worktree, else ROOT."""
+    try:
+        common = subprocess.run(['git', 'rev-parse', '--path-format=absolute', '--git-common-dir'], cwd=ROOT,
+                                capture_output=True, text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return ROOT
+    return Path(common).parent
+
+
+def shared_build(relative):
+    """Prefer this checkout's build/<relative>; a worktree falls back to the main checkout's copy."""
+    local = ROOT / 'build' / relative
+    shared = main_checkout() / 'build' / relative
+    return local if local.exists() or not shared.exists() else shared
+
+
+def java_major(home):
+    """Return the major version from a JDK's release file, or 0."""
+    try:
+        text = (Path(home) / 'release').read_text()
+    except OSError:
+        return 0
+    found = re.search(r'JAVA_VERSION="(\d+)', text)
+    return int(found.group(1)) if found else 0
+
+
+def java_minimum(headless):
+    """Read the minimum JDK major version from Ghidra's application.properties."""
+    props = Path(headless).resolve().parents[1] / 'Ghidra/application.properties'
+    try:
+        found = re.search(r'^application\.java\.min=(\d+)', props.read_text(), re.M)
+    except OSError:
+        return 21
+    return int(found.group(1)) if found else 21
+
+
+def installed_version(headless):
+    props = Path(headless).resolve().parents[1] / 'Ghidra/application.properties'
+    try:
+        found = re.search(r'^application\.version=(\S+)', props.read_text(), re.M)
+    except OSError:
+        return None
+    return found.group(1) if found else None
+
+
+def ghidra_env():
+    """Return (headless path, environment) with a JDK that this Ghidra accepts."""
+    env = os.environ.copy()
+    headless = env.get('GHIDRA_HEADLESS', HEADLESS)
+    minimum = java_minimum(headless)
+    if 'JAVA_HOME' not in env:
+        homes = sorted(Path('/opt/homebrew/opt').glob('openjdk*/libexec/openjdk.jdk/Contents/Home'), key=java_major)
+        usable = [h for h in homes if java_major(h) >= minimum]
+        if not usable:
+            raise ValueError(f'Ghidra needs JDK {minimum} or later; install it with brew install openjdk@{minimum} or set JAVA_HOME')
+        env['JAVA_HOME'] = str(usable[0])
+    elif java_major(env['JAVA_HOME']) < minimum:
+        raise ValueError(f'JAVA_HOME is older than JDK {minimum}, which Ghidra requires: ' + env['JAVA_HOME'])
+    env['PATH'] = env['JAVA_HOME'] + '/bin:' + env['PATH']
+    return headless, env
 
 
 def address(value):
@@ -30,12 +95,12 @@ def main():
     base = ROOT / 'build/ghidra' / cfg['executable_sha256'][:12]
     project = base / 'project'
     out = base / 'exports'
+    if args.command == 'function' and not (project / 'rbr.gpr').exists():
+        # Worktrees read the main checkout's saved project; exports stay local.
+        project = shared_build(f"ghidra/{cfg['executable_sha256'][:12]}/project/rbr.gpr").parent
     project.mkdir(parents=True, exist_ok=True)
     out.mkdir(parents=True, exist_ok=True)
-    headless = os.environ.get('GHIDRA_HEADLESS', '/opt/homebrew/opt/ghidra/libexec/support/analyzeHeadless')
-    env = os.environ.copy()
-    env.setdefault('JAVA_HOME', '/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home')
-    env['PATH'] = env['JAVA_HOME'] + '/bin:' + env['PATH']
+    headless, env = ghidra_env()
     cmd = [headless, str(project), 'rbr', '-scriptPath', str(ROOT / 'tools/ghidra'), '-max-cpu', '4']
     if args.command == 'analyze':
         shutil.rmtree(out)
@@ -62,6 +127,15 @@ def main():
     print(f'Ghidra {args.command}; log: {log}', flush=True)
     with log.open('w') as stream:
         result = subprocess.run(cmd, env=env, stdout=stream, stderr=subprocess.STDOUT)
+    census = shared_build(f"census/{cfg['executable_sha256'][:12]}/census.gpr")
+    if (args.command == 'function' and not receipt.exists() and census.exists()
+            and 'No function entry' in log.read_text()):
+        # The matching project only seeds manifest entries; the census project
+        # holds every reviewed boundary candidate.
+        print('Not in the matching project; retrying with the census project', flush=True)
+        cmd[1:3] = [str(census.parent), 'census']
+        with log.open('a') as stream:
+            result = subprocess.run(cmd, env=env, stdout=stream, stderr=subprocess.STDOUT)
     if result.returncode or not receipt.exists():
         raise RuntimeError(f'Ghidra failed or did not complete exports; see {log}')
     metadata = json.loads(receipt.read_text())
@@ -69,9 +143,13 @@ def main():
         raise ValueError('Export reference hash mismatch')
     if metadata['ghidra_version'] != settings['version']:
         raise ValueError('Ghidra version mismatch; qualify the new version before updating its pin')
-    for name, expected in settings['analyzers'].items():
-        if metadata['analysis_options'].get(name) != expected:
-            raise ValueError('Ghidra analyzer setting mismatch: ' + name)
+    differ = [name for name, expected in settings['analyzers'].items()
+              if metadata['analysis_options'].get(name) != expected]
+    if differ and cmd[2] == 'census':
+        print('WARNING: census project analyzer settings differ from config/ghidra.json: ' + ', '.join(differ)
+              + '. Treat this packet as boundary evidence only.')
+    elif differ:
+        raise ValueError('Ghidra analyzer setting mismatch: ' + differ[0])
     for target in targets:
         path = out / (target + '.json')
         row = json.loads(path.read_text())

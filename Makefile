@@ -65,3 +65,17 @@ census-decompile:
 
 census-progress:
 	$(PYTHON) tools/census.py progress
+
+.PHONY: doctor candidates new-function lookup worktree
+LIMIT ?= 25
+MAX_SIZE ?= 128
+doctor:
+	$(PYTHON) tools/harness.py doctor
+candidates:
+	$(PYTHON) tools/harness.py candidates --limit $(LIMIT) --max-size $(MAX_SIZE) $(if $(TIER),--tier $(TIER))
+new-function:
+	$(PYTHON) tools/harness.py new-function $(FUNCTION) $(if $(SIZE),--size $(SIZE))
+lookup:
+	$(PYTHON) tools/harness.py lookup $(ADDR)
+worktree:
+	$(PYTHON) tools/harness.py worktree $(FUNCTION)

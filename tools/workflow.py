@@ -1,11 +1,15 @@
 """Exact checks for the pinned RBR reference. No full linker exists yet."""
 import argparse
+import difflib
+import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
 
 import pefile
 from capstone import Cs, CS_ARCH_X86, CS_MODE_32
@@ -159,22 +163,103 @@ def compile_source(row):
     return out
 
 
+def listing(body, address):
+    return [(f'{ins.address:08x}', f'{ins.mnemonic} {ins.op_str}'.strip())
+            for ins in Cs(CS_ARCH_X86, CS_MODE_32).disasm(body, address)]
+
+
+def compare(expected, actual, address):
+    """Return (score, aligned rows). Score counts differing instructions; 0 is a match."""
+    left, right = listing(expected, address), listing(actual, address)
+    rows, score = [], 0
+    matcher = difflib.SequenceMatcher(a=[t for _, t in left], b=[t for _, t in right], autojunk=False)
+    for op, a0, a1, b0, b1 in matcher.get_opcodes():
+        if op != 'equal':
+            score += max(a1 - a0, b1 - b0)
+        for i in range(max(a1 - a0, b1 - b0)):
+            l = left[a0 + i] if a0 + i < a1 else ('', '')
+            r = right[b0 + i] if b0 + i < b1 else ('', '')
+            rows.append((' ' if op == 'equal' else '|', l, r))
+    if score == 0 and expected != actual:
+        score = 1  # same text, different encoding
+    return score, rows
+
+
 def difference(expected, actual, address):
-    lines = [f'Expected {len(expected)} bytes, got {len(actual)} bytes']
-    for label, body in [('reference', expected), ('compiled', actual)]:
-        lines.append(label + ': ' + body.hex(' '))
-        for ins in Cs(CS_ARCH_X86, CS_MODE_32).disasm(body, address):
-            lines.append(f'  {ins.address:08x}: {ins.mnemonic} {ins.op_str}')
+    score, rows = compare(expected, actual, address)
+    lines = [f'Expected {len(expected)} bytes, got {len(actual)} bytes; {score} differing instructions',
+             f'  {"reference":44} {"compiled"}']
+    for mark, (la, lt), (ra, rt) in rows:
+        lines.append(f'{mark} {la:8} {lt:35} {ra:8} {rt}')
+    lines.append('reference: ' + expected.hex(' '))
+    lines.append('compiled:  ' + actual.hex(' '))
     return '\n'.join(lines)
 
 
-def check(row, pe, resolve=None):
+def hint(row, message):
+    """Turn a checker error into the next action for the source author."""
+    found = re.search(r'Unresolved relocation to (\S+)', message)
+    if found:
+        name = found.group(1)
+        target = re.search(r'sub_([0-9a-f]{8})', name)
+        if name.startswith('__imp_'):
+            return (f'{name} is not an EXE import. Run make lookup ADDR=<IAT slot from the reference instruction> '
+                    'for the real name; C imports need extern "C" __declspec(dllimport).')
+        if target:
+            return ('If this is a call, add this line to config/functions.json:\n'
+                    f'  {{"id":"sub_{target.group(1)}","size":<bytes from make lookup ADDR=0x{target.group(1)}>,"symbol":"{name}","source":null}}\n'
+                    f'If it is data, add {{"symbol":"{name}","address":"0x{target.group(1)}"}} to config/globals.json.')
+        return (f'Map {name} to an address: add {{"symbol":"{name}","address":"0x<address>"}} to config/globals.json '
+                'for data, or a "source":null entry to config/functions.json for a function.')
+    found = re.search(r'Expected only function (\S+) at section offset zero; got (\[.*\])', message, re.S)
+    if found:
+        names = re.findall(r"\('([^']+)'", found.group(2))
+        if len(names) == 1:
+            return f'The object defines {names[0]}. If that is this function, set "symbol":"{names[0]}" in config/functions.json.'
+        return (f'The object defines {len(names)} functions: {", ".join(names) or "none"}. The checker needs exactly one. '
+                'Make helpers inline or declare-only, and avoid naming destructors (they emit ??_G COMDATs).')
+    if 'Additional code/data' in message:
+        return ('The object has its own data, such as a string literal, float constant, switch table, or vtable. '
+                'If the reference uses an absolute address, declare the data extern and map it in config/globals.json.')
+    if message.startswith(row['id']):
+        return ('Edit the source and rerun. Lines marked | differ. After eight compiles without a lower score, '
+                'stop: keep the draft nonmatching and record the difference in analysis/notes.md.')
+    return ''
+
+
+def record_attempt(row, score, size):
+    """Log one check per distinct source text and report progress toward the eight-compile rule."""
+    log = Path('build/harness/attempts') / (row['id'] + '.jsonl')
+    log.parent.mkdir(parents=True, exist_ok=True)
+    source = Path(row['source']).read_bytes()
+    stamp = hashlib.sha256(source + json.dumps(row.get('extra_flags', [])).encode()).hexdigest()
+    history = [json.loads(l) for l in log.read_text().splitlines()] if log.exists() else []
+    if not history or history[-1]['source'] != stamp:
+        history.append({'source': stamp, 'score': score, 'size': size, 'time': time.strftime('%Y-%m-%dT%H:%M:%S')})
+        log.write_text(''.join(json.dumps(h) + '\n' for h in history))
+    best = min(range(len(history)), key=lambda i: (history[i]['score'], i))
+    stale = len(history) - 1 - best
+    print(f"Attempt {len(history)} for {row['id']}: score {score} (best {history[best]['score']} at attempt {best + 1}); "
+          f"{stale} compiles since the best.{' Stop: eight compiles without improvement.' if stale >= 8 else ''}")
+
+
+def check(row, pe, resolve=None, track=False):
     offset, expected = original_bytes(pe, row)
     out = compile_source(row)
-    actual = function_bytes(out.read_bytes(), row['symbol'], int(row['address'], 16), resolve)
+    try:
+        actual = function_bytes(out.read_bytes(), row['symbol'], int(row['address'], 16), resolve)
+    except ValueError as error:
+        advice = hint(row, str(error))
+        raise ValueError(str(error) + ('\nhint: ' + advice if advice else '')) from None
+    score = 0 if actual == expected else compare(expected, actual, int(row['address'], 16))[0]
+    if track:
+        record_attempt(row, score, len(actual))
     if actual != expected:
-        raise ValueError(row['id'] + '\n' + difference(expected, actual, int(row['address'], 16)))
+        message = row['id'] + '\n' + difference(expected, actual, int(row['address'], 16))
+        raise ValueError(message + '\nhint: ' + hint(row, message))
     print(f"MATCH active C/C++ {row['id']} {row['address']} {len(actual)} bytes")
+    if row.get('nonmatching'):
+        print('hint: remove "nonmatching": true from its config/functions.json entry, then run make test check-overlay progress')
     return offset, actual
 
 
@@ -220,7 +305,7 @@ def main():
         selected = [r for r in rows if r['id'] == args.id]
         if len(selected) != 1 or not selected[0].get('source'):
             raise ValueError('Unknown function or missing source: ' + str(args.id))
-        check(selected[0], pe, resolve)
+        check(selected[0], pe, resolve, track=True)
     elif args.command == 'check-overlay':
         overlay(pe, rows, resolve)
     elif args.command == 'build':

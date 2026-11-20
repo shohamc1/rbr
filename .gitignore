@@ -3,7 +3,7 @@
 __pycache__/
 *.pyc
 /disc/
-/original/
+/original
 /build/
 /analysis/functions/
-/tools/local/
+/tools/local

@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-10-16T04:35:03+00:00",
+  "generated_at_utc": "2026-11-20T18:17:58+00:00",
   "method": "Unseeded Ghidra baseline; bounded RTTI-backed virtual tables, padded straight-line leaves, bounded branch graphs, reviewed callbacks, return contracts, code/data corrections, body fixups, and repeated analysis. No candidate is a source match.",
   "limitations": "Static analysis cannot prove a complete count with unresolved indirect flow, data boundaries, or runtime-selected modules.",
   "tool_sha256": {
-    "tools/census.py": "e59ded6346e0cdc8acca709264744d42ace40eeead2729f793c5911f23fa5cdb",
+    "tools/census.py": "c3240e52037e9b454b52c48a4fdf26b728a784ac25cbb6767effd8a79371d1cc",
     "tools/boundaries.py": "fa8b4b7b26e67a8352d6d463b4c17ab31e6b616c8dbd46453996e4f0570ec5ba",
     "tools/ghidra/AuditBoundaries.java": "06dcf9e90f9b065dcfa870365afb194bb99a1f20668c05baa08bea4afce92697",
     "tools/ghidra/RefineBoundaries.java": "60e97ce5ac76c70919decb8efd801a90fab61828a69c95cc7b8a073ab58accd1",

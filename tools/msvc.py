@@ -1,12 +1,14 @@
 """Set up or run the pinned MSVC 13.10.3077 candidate with Docker and Wine."""
 import argparse
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
 import tarfile
 import tempfile
 import urllib.request
+import uuid
 from extract import digest
 
 
@@ -62,13 +64,26 @@ def setup():
     print('PASS MSVC compiler hashes and Docker Wine image setup')
 
 
+TIMEOUT = int(os.environ.get('RBR_MSVC_TIMEOUT', '300'))
+
+
 def run_wine(cfg, tool, args, output_dir):
-    subprocess.run(['docker', 'run', '--rm', '--platform', cfg['docker_platform'],
-                    '--network', 'none',
-                    '--mount', f'type=bind,src={Path.cwd()},dst=/work,readonly',
-                    '--mount', f'type=bind,src={Path(cfg["compiler"]).resolve().parent},dst=/compiler,readonly',
-                    '--mount', f'type=bind,src={Path(output_dir).resolve()},dst=/output',
-                    cfg['docker_image'], '/compiler/' + tool, *args], check=True)
+    # A failed compile can leave Wine waiting forever; name the container so a
+    # timeout can remove it instead of leaving the caller to docker rm -f it.
+    name = 'rbr-msvc-' + uuid.uuid4().hex[:12]
+    command = ['docker', 'run', '--rm', '--name', name, '--platform', cfg['docker_platform'],
+               '--network', 'none',
+               '--mount', f'type=bind,src={Path.cwd()},dst=/work,readonly',
+               '--mount', f'type=bind,src={Path(cfg["compiler"]).resolve().parent},dst=/compiler,readonly',
+               '--mount', f'type=bind,src={Path(output_dir).resolve()},dst=/output',
+               cfg['docker_image'], '/compiler/' + tool, *args]
+    try:
+        subprocess.run(command, check=True, timeout=TIMEOUT)
+    except subprocess.TimeoutExpired:
+        subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
+        raise ValueError(f'{tool} timed out after {TIMEOUT} s and its container was removed. '
+                         'This usually means a compile error; check the source for syntax errors '
+                         'and missing declarations (the image has no standard headers).')
 
 
 def compile_object(source, output, flags=()):

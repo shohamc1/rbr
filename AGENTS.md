@@ -24,9 +24,9 @@ Keep disc/, original/, and build/ ignored.
 
 ## Read the evidence first
 
-Before the first function, read README.md and config/toolchain.json. Before
-choosing a target, read the initial queue below, its entry in
-config/functions.json, and analysis/notes.md. Run `make ghidra-analyze` once, then
+Before the first function, read README.md and config/toolchain.json, then run
+`make doctor`. Before choosing a target, read analysis/notes.md and run
+`make candidates`. Run `make ghidra-analyze` once, then
 `make ghidra-function FUNCTION=<id>` for pseudocode, assembly, and references.
 Run `make analyze` for the lightweight PE metadata records.
 These files are the local knowledge base; do not import PSX toolchain assumptions.
@@ -58,24 +58,82 @@ checkout. See README.md for tools. Run `make verify-inputs` and `make check-over
 Extraction needs about 5 GB plus the ISO and refuses to replace original/. It copies
 Crack/richardburnsrally.exe to original/nocd/richardburnsrally.exe without changes.
 config/artifacts.json records the extracted hashes, including this alias.
-A worktree may link a verified original/ directory, but must have its own build/
-and .venv/. Reserve src/modern/ and build/modern/ for the future port.
+A worktree may link a verified original/ directory and tools/local/, but must have
+its own build/ and .venv/. `make worktree` sets this up. Reserve src/modern/ and build/modern/ for the future port.
 
 ## The loop
 
-1. Use a task branch or `git worktree add -b decomp/<packet> <path> HEAD`.
-2. Claim one ready packet. Prefer a near-matching draft, then a small function with
-   a matched analogue, then another bounded leaf. Respect the packet's ownership.
-3. Export its Ghidra packet with `make ghidra-function FUNCTION=<id>`. Read the
-   original body, callers, callees, and data references. Confirm boundaries;
-   a RET is not the end if a branch reaches code after it.
-4. Write the smallest readable C/C++ representation. Keep uncertain layouts local
-   and assert offsets and sizes. Update the function's entry in config/functions.json;
-   set `"nonmatching": true` until the check passes.
-5. Run `make check-function FUNCTION=<id>`. It rebuilds active source every time,
-   rejects stale objects and unresolved relocations, and prints exact differences.
-6. On a match, remove `nonmatching`. Keep durable findings in analysis/notes.md and
-   check output in build/. Run `make test check-overlay progress` before integration.
+The harness commands in `tools/harness.py` cover each step. Each command prints
+the next command, so you can follow the output without holding the whole loop in
+mind.
+
+1. Check the environment: `make doctor`. Fix every `FAIL` line before you start.
+   It checks the reference hash, the Clang and Ghidra pins, Docker, the MSVC image,
+   stale MSVC containers, and the saved Ghidra and census evidence.
+2. Pick a target: `make candidates`. Prefer a near-matching draft from
+   analysis/notes.md, then the top unblocked candidate.
+3. Claim it: `make worktree FUNCTION=<id>` creates `../rbr-<id>` on branch
+   `decomp/<id>`. The branch name is the claim; `make candidates` hides it.
+4. In the worktree, run `make new-function FUNCTION=<id>`. It checks the boundary,
+   writes a scaffold source, adds a `"nonmatching": true` manifest entry, lists
+   the calls, imports, globals, and blockers to handle, and exports the Ghidra
+   packet. If the function already has a `"source": null` entry, it replaces it.
+5. Read the original body, callers, callees, and data references. Confirm
+   boundaries; a RET is not the end if a branch reaches code after it.
+   `make lookup ADDR=0x<address>` names an import slot, global, manifest function,
+   boundary candidate, section, or string.
+6. Write the smallest readable C/C++ representation. Keep uncertain layouts local
+   and assert offsets and sizes. The scaffold's calling convention is a guess from
+   register use; correct it from the evidence.
+7. Run `make check-function FUNCTION=<id>`. It rebuilds the active source every
+   time, then prints a side-by-side listing, a score, an attempt count, and a hint.
+8. On a match, remove `nonmatching`. Keep durable findings in analysis/notes.md.
+   Run `make test check-overlay progress` before integration.
+
+### Read check-function output
+
+A mismatch prints the reference and compiled instructions side by side. Lines
+marked `|` differ. The score is the number of differing instructions; 0 is a match.
+
+The checker logs one attempt per distinct source text and flag set in
+`build/harness/attempts/<id>.jsonl`. It prints the best score so far and the
+number of compiles since that best. At eight compiles without improvement, it
+prints `Stop`; follow "When a function will not match" below.
+
+Every failure ends with a `hint:` line that names the next action:
+
+- An unresolved call or data symbol prints the manifest or globals.json line to add.
+- A symbol mismatch prints the symbol the object defines.
+- Extra functions or data name the usual causes, such as destructors and literals.
+
+### Read candidates output
+
+`make candidates` decodes each unclaimed single-range boundary candidate up to
+`MAX_SIZE` bytes (default 128) and ranks it. Use `LIMIT=<count>` to show more and
+`TIER=<tier>` to filter. The full list is in `build/harness/candidates.json`.
+Lower scores are easier: size plus weights for unknown callees, globals, imports,
+and indirect calls. Entries already in the manifest with `"source": null` come
+first. The tiers are:
+
+`leaf`
+: No calls, imports, or globals.
+
+`relocations`
+: Calls only manifest functions and imports, or reads globals. Map each in
+  config/functions.json or config/globals.json.
+
+`needs-callee-entries`
+: Calls a function outside the manifest. Add a `"source": null` entry for it;
+  the checker prints the line after the first compile.
+
+`blocked`
+: Uses a form the checker can't verify yet: SEH or C++ EH (`fs:`), a switch table,
+  a special instruction such as CPUID, an unverified boundary, or a register input
+  other than ECX and EDX. Hidden unless you pass `--all` to the script.
+
+The notes column flags `ecx input: thiscall?`, `ecx/edx input: fastcall?`,
+`ret N` stack cleanup, `/GS`, x87, and SSE. These flags come from a linear scan,
+not data-flow analysis. Confirm them in the assembly.
 
 The checker accepts one function per object. REL32 external relocations resolve
 against manifest functions and IAT thunks. DIR32 externals resolve against PE
@@ -142,39 +200,26 @@ on a difference in any other source entry. Standard addresses and source paths a
 derived from the ID; add `address` or `source` only for exceptions. Set `source` to
 `null` for unresolved entries. Keep boundary notes in analysis/notes.md.
 
-## Initial work queue
+## Choose work
 
-These packets target the pinned NoCD EXE. For each ID, own only
-`src/reconstruction/<id>.cpp` and its entry in `config/functions.json`.
-Coordinate shared manifest and manual-note edits with the integrator.
+Use `make candidates` for new targets and analysis/notes.md for open drafts. For
+each ID, own only `src/reconstruction/<id>.cpp` and its entry in
+`config/functions.json`. Coordinate shared manifest and manual-note edits with
+the integrator. The manifest marks all open drafts with `"nonmatching": true`;
+keep them separate from matching progress.
 
-| Packet | Function | Size | Observed operation | Status |
-| --- | --- | --- | --- | --- |
-| P1 | sub_00401010 | 4 bytes | Read byte at ECX+4 into AL | Matched |
-| P2 | sub_00406900 | 10 bytes | Write stack word to ECX+0x28; RET 4 | Matched |
-| P3 | sub_00406940 | 10 bytes | Write stack word to ECX+0x74; RET 4 | Matched |
-
-The manifest marks all open drafts with `"nonmatching": true`.
-See analysis/notes.md for their remaining differences. Keep them separate from
-matching progress.
-
-Addresses are encoded in the IDs. Boundary confidence is high: each reviewed
-body is straight-line code with an aligned entry, a final RET, and INT3 padding.
-These bodies have no calls or global-data dependencies. The scan found no direct
-call or data-pointer candidates; indirect callers and class identity remain
-unknown. Fields may be flags, enums, integers, or pointers. Do not merge layouts
-based on proximity. P1 leaves upper EAX bits unspecified.
-
-Use a local out-of-line C++ member and an offset assertion. Follow the matched
-accessor or setter example. Each packet is independent and needs no shared header.
-Run `make check-function FUNCTION=<id>`, then `make test check-overlay progress`.
-Completion requires an exact active-source match and updated manual notes and manifest entry.
+Boundary candidates are hypotheses. Fields may be flags, enums, integers, or
+pointers. Don't merge layouts based on proximity. For accessors and setters, use
+a local out-of-line C++ member and an offset assertion, following a matched
+example such as `sub_00406900`.
 
 ## Ghidra analysis
 
-Analysis requires Ghidra 12.1.4 and Java 21. On macOS, install the tools with
-`brew install ghidra openjdk@21`. The installed Ghidra version must match
-config/ghidra.json; a different release fails verification.
+Analysis requires the Ghidra version pinned in config/ghidra.json (12.1.4) and a
+JDK that meets that release's `application.java.min`. The tools read that minimum
+from the installed Ghidra and select the oldest Homebrew `openjdk@N` that meets
+it, unless you set `JAVA_HOME`. A different Ghidra release fails verification.
+Homebrew upgrades replace the pinned release; `make doctor` reports this drift.
 
 `make ghidra-analyze` imports the pinned EXE, seeds the function boundaries in
 `config/functions.json`, runs full analysis, and exports an index and a packet for
@@ -184,7 +229,12 @@ Do not store manual work in this project; use a separate Ghidra project for that
 The old `sh tools/ghidra-import.sh` command runs this same workflow.
 
 `make ghidra-function FUNCTION=004010e0` exports one function from the saved project
-without repeating analysis. IDs such as `sub_00401000` also work. Each JSON packet
+without repeating analysis. IDs such as `sub_00401000` also work. A worktree
+without its own project reads the main checkout's saved project and writes exports
+locally. The matching project seeds only manifest entries. If it has no function
+at the address, the export retries against the census project. That retry warns
+about analyzer differences instead of failing; treat its packet as boundary
+evidence only. Each JSON packet
 contains assembly, C-like pseudocode, body ranges, inferred prototype, and incoming
 and outgoing references, including imported symbols and referenced data.
 `exports/functions.json` is the candidate inventory; `exports/complete.json`
@@ -273,7 +323,9 @@ package snapshot. Setup records the built image ID in ignored
 `tools/local/msvc-wine-image.txt`; compiler calls use that ID, not a mutable tag.
 Run setup again if the image is removed. Keep the compiler local; it is mounted
 at runtime and is not included in the image. Compiler and linker calls have no
-network access. Source and compiler mounts are read-only; only the output
+network access. Each call runs in a named `rbr-msvc-*` container. A call that
+exceeds `RBR_MSVC_TIMEOUT` seconds (default 300) fails, and its container is
+removed. A hang usually means a compile error. Source and compiler mounts are read-only; only the output
 directory is writable. Each call uses a fresh Wine prefix.
 
 The package filename says `msvc7.0`, but its actual compiler is **13.10.3077**

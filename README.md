@@ -12,7 +12,7 @@ You need Git, Make, Python 3.11 or newer, a C++ compiler, bsdtar, unshield,
 and Docker with working x86 emulation. The tested host is Apple Silicon
 macOS with OrbStack.
 
-The project uses Clang 23.1.1 and MSVC 13.10.3077. Compiler files and
+The project uses Clang 23.1.6 and MSVC 13.10.3077. Compiler files and
 libraries must match the hashes in [config/toolchain.json](config/toolchain.json)
 and [config/msvc71.json](config/msvc71.json). A different release will fail
 verification. MSVC runs through Docker and Wine; setup fetches it locally.
@@ -51,5 +51,13 @@ complete source rebuild. `make check-integrated` fails until that build exists.
 
 ## Contribute
 
+To check your environment and find work, run these commands:
+
+```sh
+make doctor
+make candidates
+```
+
 Read [AGENTS.md](AGENTS.md) for the matching workflow, analysis tools,
-compiler details, and contribution rules.
+compiler details, and contribution rules. Its "The loop" section lists every
+harness command in order.

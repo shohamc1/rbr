@@ -25,6 +25,10 @@ module dependencies are in `analysis/module-scope.json`.
 - EXE `0x00404da0` and `0x0041f080` use unresolved register inputs. Review their
   callers before assigning a standard C++ calling convention.
 
+- Clang 23.1.6 replaced 23.1.1 on 2026-11-21. Every Clang-profile match reproduces;
+  the two `make qualify` candidate probes still differ, as before. Ghidra 12.2 is
+  installed, but the pin stays 12.1.4 until census and matching analysis rerun.
+
 ## Specific behavior
 
 `sub_006de8a0` processes four floats per loop, then a scalar tail. It first applies
@@ -142,8 +146,8 @@ node links; its first stack node pointer is not a virtual table.
 Naming any destructor also emits a local `??_G` deleting-dtor
 COMDAT that breaks the one-function rule. Ghidra packets under-report extents:
 verify body ends against RET and padding (`sub_0040fa60` is 34, not 31). The
-MSVC Docker image has no standard headers; a compile error can hang the Wine
-container and needs a manual `docker rm -f`.
+MSVC Docker image has no standard headers. A compile error can hang the Wine
+container; the runner removes it after `RBR_MSVC_TIMEOUT` seconds (default 300).
 
 ## Module scope and function boundaries
 
