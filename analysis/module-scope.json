@@ -102,10 +102,10 @@
   ],
   "census_configuration_sha256": "2157221c61c68696968240b0609970dedad478efbb4095b1606b24751a4cf301",
   "game_local_modules_code_bytes": 6564446,
-  "game_local_modules_function_candidates": 53010,
+  "game_local_modules_function_candidates": 52870,
   "game_local_modules_not_analyzed": [],
   "auxiliary_local_modules_code_bytes": 505690,
-  "auxiliary_local_modules_function_candidates": 3567,
+  "auxiliary_local_modules_function_candidates": 3561,
   "auxiliary_local_modules_not_analyzed": [],
   "reconstruction_queue": [
     {
