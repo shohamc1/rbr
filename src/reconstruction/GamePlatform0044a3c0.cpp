@@ -1,3 +1,17 @@
+// GamePlatform0044a3c0 members compiled with MSVC 7.1 (/O2 /Zl). The class and
+// its merge evidence are in GamePlatform0044a3c0.h; the members that Clang
+// compiles are in GamePlatform0044a3c0Clang.cpp.
+#include "GamePlatform0044a3c0.h"
+
+// GamePlatform0044a3c0 command-line setter, called by game main (sub_00471110)
+// with the process command line. Assigns the argument to the member string at
+// offset 0xd64. The reference tail-calls the MSVCP71 import slot 0x0070c2f8,
+// std::basic_string<char>::operator=(const basic_string&), with ECX advanced
+// to the member and the caller's argument left on the stack.
+void GamePlatform0044a3c0::sub_00446bd0(const std::string& arguments) {
+    commandLine = arguments;
+}
+
 // GamePlatform0044a3c0 teardown step, called by game main (sub_00471110)
 // between shutdown and the game loop. Calls the free routine sub_004d6210
 // (writes soundtweak.cfg and releases a global object; no register input), then
@@ -41,17 +55,6 @@ struct Object00874618 {
 extern "C" Object00874618* gObject00874618;
 extern "C" void __cdecl sub_004d6210();
 
-struct GamePlatform0044a3c0 {
-    unsigned char field_0000[0x5c];
-    void* handleA;
-    void* handleB;
-    void sub_00479e00();
-};
-typedef char platform_handle_a_assertion[
-    ((unsigned int)&((GamePlatform0044a3c0*)0)->handleA) == 0x5c ? 1 : -1];
-typedef char platform_handle_b_assertion[
-    ((unsigned int)&((GamePlatform0044a3c0*)0)->handleB) == 0x60 ? 1 : -1];
-
 void GamePlatform0044a3c0::sub_00479e00() {
     sub_004d6210();
     if (handleA != 0) {
@@ -63,3 +66,6 @@ void GamePlatform0044a3c0::sub_00479e00() {
         handleB = 0;
     }
 }
+
+// Tests whether the word at +0x724 is nonzero.
+bool GamePlatform0044a3c0::sub_0047a460() { return field_724 != 0; }

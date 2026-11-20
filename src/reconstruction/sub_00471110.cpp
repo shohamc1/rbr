@@ -15,6 +15,7 @@
 
 #include "msvcp71.h"
 #include "Object0040f9f0.h"
+#include "GamePlatform0044a3c0.h"
 
 // KERNEL32/USER32/OLE32 imports; the reference reaches all of them through the
 // import address table (CALL [__imp_...]).
@@ -56,20 +57,9 @@ typedef char app_window_field_assertion[
 // constructor (sub_0040f9f0) and destructor (sub_0040fa60) are thiscalls.
 // The class is shared with Object0040f9f0.cpp through Object0040f9f0.h.
 
-// The 0x1bd0-byte platform object created below. delete uses vtable slot 0 with
-// argument 1 (the deleting destructor); the checked call uses slot 1.
-struct GamePlatform0044a3c0 {
-    virtual ~GamePlatform0044a3c0();
-    virtual unsigned int platformInit();
-    virtual void run();
-    virtual void shutdown();
-    GamePlatform0044a3c0* sub_0044a3c0(void* instance); // constructor, returns this
-    void sub_00446bd0(const std::string& arguments);
-    unsigned int sub_0047e860();
-    unsigned int sub_0047eb00();
-    void sub_00479e00();
-    void sub_004807c0();
-};
+// The 0x1bd0-byte platform object created below is declared in
+// GamePlatform0044a3c0.h (delete uses vtable slot 0 with argument 1, the
+// checked call uses slot 1).
 
 // The reference duplicates this block before the "Could not initialize COM!"
 // message and again after SetFocus. A macro keeps the two copies identical.
