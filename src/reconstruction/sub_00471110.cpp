@@ -14,6 +14,7 @@
 //   also need linker-aware checking.
 
 #include "msvcp71.h"
+#include "Object0040f9f0.h"
 
 // KERNEL32/USER32/OLE32 imports; the reference reaches all of them through the
 // import address table (CALL [__imp_...]).
@@ -53,13 +54,7 @@ typedef char app_window_field_assertion[
 
 // The ini reader object lives on this function's stack at [esp+0x4]; its
 // constructor (sub_0040f9f0) and destructor (sub_0040fa60) are thiscalls.
-struct Object0040f9f0 {
-    void* field_00;
-    void* sub_0040f9f0();
-    void sub_0040fa60();
-    void sub_0040fb60(const std::string& fileName, int mode);
-    bool sub_004100e0(const std::string& section, const std::string& key, int fallback);
-};
+// The class is shared with Object0040f9f0.cpp through Object0040f9f0.h.
 
 // The 0x1bd0-byte platform object created below. delete uses vtable slot 0 with
 // argument 1 (the deleting destructor); the checked call uses slot 1.
