@@ -1,5 +1,5 @@
 {
-  "version": "12.1.4",
+  "version": "12.2",
   "language": "x86:LE:32:default",
   "compiler_spec": "windows",
   "analyzers": {
