@@ -1,7 +1,9 @@
-// Launches "RBR Startup.exe" (literal command line at 0x007108dc) and closes
-// both child handles. Called by game main sub_00471110.
-extern "C" void *__cdecl memset(void *, int, unsigned int);
-#pragma intrinsic(memset)
+// Win32 declarations shared by the MSVC 7.1 sources; the image has no SDK
+// headers. Imports are __declspec(dllimport) so the object calls through the
+// import address table, as the EXE does (CALL [__imp__Name@N]). The structures
+// follow the documented Win32 layouts (STARTUPINFOA is 0x44 bytes,
+// PROCESS_INFORMATION is 0x10).
+#pragma once
 
 extern "C" {
 __declspec(dllimport) int __stdcall CreateProcessA(
@@ -11,9 +13,11 @@ __declspec(dllimport) int __stdcall CreateProcessA(
     const void *current_directory, void *startup_info,
     void *process_information);
 __declspec(dllimport) int __stdcall CloseHandle(void *handle);
+__declspec(dllimport) unsigned long __stdcall WaitForSingleObject(
+    void *handle, unsigned long milliseconds);
 }
 
-struct StartupInformationA {
+struct StartupInfoA {
     unsigned long cb;
     const void *lpReserved;
     void *lpDesktop;
@@ -33,6 +37,7 @@ struct StartupInformationA {
     void *hStdOutput;
     void *hStdError;
 };
+typedef char startup_info_a_size[(sizeof(StartupInfoA) == 0x44) ? 1 : -1];
 
 struct ProcessInformation {
     void *hProcess;
@@ -40,18 +45,4 @@ struct ProcessInformation {
     unsigned long dwProcessId;
     unsigned long dwThreadId;
 };
-
-extern "C" bool __cdecl sub_00470f00() {
-    StartupInformationA startup_info;
-    ProcessInformation process_info;
-    memset(&startup_info, 0, sizeof(startup_info));
-    startup_info.cb = sizeof(startup_info);
-    memset(&process_info, 0, sizeof(process_info));
-    if (!CreateProcessA(0, (void *)0x7108dc, 0, 0, 0, 0, 0, 0, &startup_info,
-                        &process_info)) {
-        return false;
-    }
-    CloseHandle(process_info.hProcess);
-    CloseHandle(process_info.hThread);
-    return true;
-}
+typedef char process_information_size[(sizeof(ProcessInformation) == 0x10) ? 1 : -1];

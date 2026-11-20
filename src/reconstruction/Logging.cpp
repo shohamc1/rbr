@@ -1,3 +1,26 @@
+// Logging path: the error wrapper sub_0043b3c0 forwards its message and
+// variadic argument pointer to the logging core sub_0048cc00, which writes to
+// stdout or to a sink object. Compiled with MSVC 7.1 (/O2 /Zl).
+//
+// stdarg.h is unavailable: the pinned MSVC 7.1 Docker image mounts no include
+// path. The core takes a plain char* argument pointer.
+
+extern "C" void __cdecl sub_0048cc00(int kind, int code, const char *message,
+                                     char *arguments);
+
+// Error-reporting wrapper: forwards a formatted-message call to the logging
+// core at sub_0048cc00 (cdecl, four stack arguments, the last being the
+// variadic argument pointer). Callers pass (7, 0, message) with no variadic
+// arguments, e.g. "Error in PlatformInit".
+//
+// The variadic argument pointer is the MSVC x86 va_start expansion
+// (ap = (va_list)&lastParam + 4).
+extern "C" void __cdecl sub_0043b3c0(int kind, int code, const char *message,
+                                     ...) {
+    char *arguments = reinterpret_cast<char *>(&message) + 4;
+    sub_0048cc00(kind, code, message, arguments);
+}
+
 // Logging core reached from the error wrapper sub_0043b3c0 as
 // (kind, code, message, argument pointer). Messages go to stdout when the
 // 0x007a18f8 flag is set. Otherwise (code * 8 + kind) indexes a dword table at
@@ -6,9 +29,7 @@
 // the shared buffer at 0x007cc4b0 and the sink receives (buffer, length)
 // through virtual slot 1. Names are hypotheses from this function alone.
 //
-// MSVCR71 imports (IAT 0x0070c5ac vprintf, 0x0070c580 vsprintf). stdarg.h is
-// unavailable, so the argument pointer is a plain char*.
-
+// MSVCR71 imports (IAT 0x0070c5ac vprintf, 0x0070c580 vsprintf).
 extern "C" {
 __declspec(dllimport) int __cdecl vprintf(const char *format, char *arguments);
 __declspec(dllimport) int __cdecl vsprintf(char *buffer, const char *format,
