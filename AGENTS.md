@@ -44,7 +44,7 @@ No external memory update is required.
 | Path | Contents |
 | --- | --- |
 | disc/, original/ | Local media and extracted references; never tracked |
-| src/reconstruction/ | Active recovered C/C++; one leaf per file for now |
+| src/reconstruction/ | Active recovered C/C++; one file can hold a class or related functions |
 | config/functions.json | Compact manifest: ID, size, symbol, compiler settings, and draft exceptions |
 | config/reference.json | Selected executable and full paths to companion modules |
 | config/toolchain.json | Qualified leaf compiler, library hashes, and flags |
@@ -135,7 +135,14 @@ The notes column flags `ecx input: thiscall?`, `ecx/edx input: fastcall?`,
 `ret N` stack cleanup, `/GS`, x87, and SSE. These flags come from a linear scan,
 not data-flow analysis. Confirm them in the assembly.
 
-The checker accepts one function per object. REL32 external relocations resolve
+One source file can define many functions. Each manifest entry whose functions
+share a file sets `"source"` to that path. MSVC `/O2` implies `/Gy`, and the Clang
+profile passes `-ffunction-sections`, so each function gets its own COMDAT
+section. The checker reads only the named symbol's section and its relocations.
+It compiles each source once per run. A call to another function defined in the
+same object resolves by name, like an external. That function must be in the
+manifest, and its own entry checks its bytes. Two functions in one section are
+rejected. REL32 external relocations resolve
 against manifest functions and IAT thunks. DIR32 externals resolve against PE
 import slots and globals in config/globals.json. Both retain relocation addends.
 Object-local data, RTTI, and SEH/C++-EH scope
@@ -203,8 +210,10 @@ derived from the ID; add `address` or `source` only for exceptions. Set `source`
 ## Choose work
 
 Use `make candidates` for new targets and analysis/notes.md for open drafts. For
-each ID, own only `src/reconstruction/<id>.cpp` and its entry in
-`config/functions.json`. Coordinate shared manifest and manual-note edits with
+each ID, own its source file and its entry in `config/functions.json`. To add a
+function to an existing class file, run
+`make new-function FUNCTION=<id> SOURCE=src/reconstruction/<file>.cpp`.
+Claim a shared file before you edit it, and keep shared types in one definition. Coordinate shared manifest and manual-note edits with
 the integrator. The manifest marks all open drafts with `"nonmatching": true`;
 keep them separate from matching progress.
 

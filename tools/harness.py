@@ -345,13 +345,22 @@ def new_function(args):
     cls = 'Object' + fid[4:]
     fields = {'fid': fid, 'cls': cls, 'n': info['stack_bytes'], 'words': words,
               'params': ', '.join(f'unsigned int arg{i}' for i in range(words)) or 'void'}
-    source = Path('src/reconstruction') / (fid + '.cpp')
-    if source.exists():
+    default = Path('src/reconstruction') / (fid + '.cpp')
+    source = Path(args.source) if args.source else default
+    scaffold = (f'// {fid}: EXE 0x{address:08x}, {size} bytes. Draft scaffold from make new-function.\n'
+                f'// Replace the convention, names, and body once the evidence supports them.\n\n'
+                + template.format(**fields))
+    if source.exists() and source == default:
         raise ValueError(f'{source} exists; edit it instead')
-    source.write_text(f'// {fid}: EXE 0x{address:08x}, {size} bytes. Draft scaffold from make new-function.\n'
-                      f'// Replace the convention, names, and body once the evidence supports them.\n\n'
-                      + template.format(**fields))
+    if source.exists():
+        # Appending to a shared file: reuse its class instead of the scaffold's when it has one.
+        source.write_text(source.read_text().rstrip('\n') + '\n\n' + scaffold)
+        print(f'Appended to {source}. If the file already declares this class, move the member into it.')
+    else:
+        source.write_text(scaffold)
     entry = {'id': fid, 'size': size, 'symbol': symbol.format(**fields), 'compiler': 'msvc71', 'nonmatching': True}
+    if source != default:
+        entry['source'] = source.as_posix()
     if info['stack_bytes'] and kind == 'thiscall':
         print(f'NOTE: thiscall with RET {info["stack_bytes"]}: add {words} parameters; the checker reports the new symbol.')
     if '/GS' in info['flags']:
@@ -460,6 +469,7 @@ def main():
     p = sub.add_parser('new-function', help='scaffold a source file and a nonmatching manifest entry')
     p.add_argument('function')
     p.add_argument('--size', type=int)
+    p.add_argument('--source', help='add the function to this source file instead of src/reconstruction/<id>.cpp')
     p.set_defaults(run=new_function)
     p = sub.add_parser('worktree', help='claim a function in its own git worktree')
     p.add_argument('function')

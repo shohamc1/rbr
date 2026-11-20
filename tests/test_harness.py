@@ -76,7 +76,7 @@ class CheckerOutputTests(unittest.TestCase):
         self.assertIn('"symbol":"_sub_004d6210","source":null',
                       hint(row, 'Unresolved relocation to _sub_004d6210').replace(' ', ''))
         self.assertIn('set "symbol":"?f@A@@QAEXXZ"',
-                      hint(row, "Expected only function _x at section offset zero; got [('?f@A@@QAEXXZ', 0, 1, 32, 2)]"))
+                      hint(row, "Function _x is not defined at section offset zero. The object defines: ['?f@A@@QAEXXZ']"))
 
 
 class JavaTests(unittest.TestCase):

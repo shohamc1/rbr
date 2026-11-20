@@ -172,12 +172,33 @@ class WorkflowTests(unittest.TestCase):
         source.write_text(source.read_text().replace('return field_0c;', 'return field_0c + 1;'))
         self.assertNotEqual(self.run_check('check-function', 'sub_00401000').returncode, 0)
 
+    def test_one_source_holds_several_functions(self):
+        combined = self.root / 'src/reconstruction/combined.cpp'
+        combined.write_text(''.join((self.root / f'src/reconstruction/{name}.cpp').read_text() + '\n'
+                                    for name in ('sub_00401000', 'sub_004068e0', 'sub_00406490')))
+        manifest = self.root / 'config/functions.json'
+        rows = json.loads(manifest.read_text())
+        for row in rows:
+            row['source'] = 'src/reconstruction/combined.cpp'
+        manifest.write_text(json.dumps(rows))
+        result = self.run_check('check-overlay')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(result.stdout.count('MATCH'), 3)
+        combined.write_text(combined.read_text().replace('return field_0c;', 'return field_0c + 1;'))
+        result = self.run_check('check-function', 'sub_004068e0')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotEqual(self.run_check('check-function', 'sub_00401000').returncode, 0)
+
     def test_symbol_and_relocation_rejection(self):
         result=self.run_check('check-function','sub_00401000')
         self.assertEqual(result.returncode,0,result.stderr)
         data=bytearray((self.root/'build/reconstruction/sub_00401000.obj').read_bytes())
         with self.assertRaises(ValueError): function_bytes(data, 'wrong_symbol')
-        struct.pack_into('<H',data,20+32,1)
+        # Give the function's own section a relocation it can't resolve without addresses.
+        count = struct.unpack_from('<H', data, 2)[0]
+        text = next(20 + 40 * i for i in range(count)
+                    if data[20 + 40 * i:20 + 40 * i + 5] == b'.text' and struct.unpack_from('<I', data, 20 + 40 * i + 16)[0])
+        struct.pack_into('<H', data, text + 32, 1)
         with self.assertRaisesRegex(ValueError,'known symbol addresses'):
             function_bytes(data,'?sub_00401000@Object00401000@@QAEIXZ')
 

@@ -147,19 +147,32 @@ def relocation_resolver(pe, rows):
     return resolve
 
 
+_compiled = {}
+
+
 def compile_source(row):
+    """Compile a row's source once per run; rows that share a source share the object."""
     profile = row.get('compiler', 'clang')
+    flags = row.get('extra_flags', [])
+    key = (row['source'], profile, tuple(flags))
+    if key in _compiled:
+        return _compiled[key]
+    stem = Path(row['source']).stem
+    if flags:
+        stem += '-' + hashlib.sha256(json.dumps([profile, flags]).encode()).hexdigest()[:8]
+    out = BUILD / (stem + '.obj')
     if profile == 'msvc71':
         from msvc import compile_object
-        return compile_object(row['source'], BUILD / (row['id'] + '.obj'), row.get('extra_flags', []))
+        _compiled[key] = compile_object(row['source'], out, flags)
+        return _compiled[key]
     if profile != 'clang':
         raise ValueError('Unknown compiler profile: ' + profile)
-    path, flags = compiler()
+    path, base_flags = compiler()
     BUILD.mkdir(parents=True, exist_ok=True)
-    out = BUILD / (row['id'] + '.obj')
     out.unlink(missing_ok=True)
     # Always compile the active source; a prior object cannot satisfy a check.
-    subprocess.run([path, *flags, *row.get('extra_flags', []), '-c', row['source'], '-o', str(out)], check=True)
+    subprocess.run([path, *base_flags, *flags, '-c', row['source'], '-o', str(out)], check=True)
+    _compiled[key] = out
     return out
 
 
@@ -211,16 +224,17 @@ def hint(row, message):
                     f'If it is data, add {{"symbol":"{name}","address":"0x{target.group(1)}"}} to config/globals.json.')
         return (f'Map {name} to an address: add {{"symbol":"{name}","address":"0x<address>"}} to config/globals.json '
                 'for data, or a "source":null entry to config/functions.json for a function.')
-    found = re.search(r'Expected only function (\S+) at section offset zero; got (\[.*\])', message, re.S)
+    found = re.search(r'The object defines: (\[.*\])', message, re.S)
     if found:
-        names = re.findall(r"\('([^']+)'", found.group(2))
+        names = re.findall(r"'([^']+)'", found.group(1))
         if len(names) == 1:
             return f'The object defines {names[0]}. If that is this function, set "symbol":"{names[0]}" in config/functions.json.'
-        return (f'The object defines {len(names)} functions: {", ".join(names) or "none"}. The checker needs exactly one. '
-                'Make helpers inline or declare-only, and avoid naming destructors (they emit ??_G COMDATs).')
-    if 'Additional code/data' in message:
-        return ('The object has its own data, such as a string literal, float constant, switch table, or vtable. '
-                'If the reference uses an absolute address, declare the data extern and map it in config/globals.json.')
+        return ('Set "symbol" in config/functions.json to the mangled name of this function: one of '
+                + (', '.join(names) or 'none (check that the function is defined, not only declared)') + '.')
+    if 'object-local data' in message:
+        return ('The function references data the object defines, such as a string literal, float constant, '
+                'switch table, or vtable. If the reference uses an absolute address, declare the data extern '
+                'and map it in config/globals.json.')
     if message.startswith(row['id']):
         return ('Edit the source and rerun. Lines marked | differ. After eight compiles without a lower score, '
                 'stop: keep the draft nonmatching and record the difference in analysis/notes.md.')
@@ -312,7 +326,7 @@ def main():
         for row in rows:
             if row.get('source'):
                 compile_source(row)
-                print('BUILT ' + row['id'])
+                print('BUILT ' + row['id'] + ' from ' + row['source'])
     elif args.command == 'progress':
         totals = {k: 0 for k in ['matching_cpp', 'nonmatching_cpp', 'assembly', 'original_fallback', 'unresolved']}
         function_counts = {k: 0 for k in totals}

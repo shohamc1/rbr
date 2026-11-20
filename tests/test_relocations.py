@@ -115,6 +115,65 @@ class CoffRelocationTests(unittest.TestCase):
             function_bytes(data, 'f', 0x401000, lambda name, kind: 0xf01000000)
 
 
+def coff_sections(sections, symbols):
+    """Build an i386 COFF object with several sections.
+    sections: (name, body, relocations, flags); symbols as in coff_object."""
+    encoded, strings = [], bytearray(4)
+    for name, value, section, kind, storage, aux in symbols:
+        raw = name.encode()
+        if len(raw) <= 8:
+            encoded.append((raw.ljust(8, b'\0'), value, section, kind, storage))
+        else:
+            encoded.append((b'\0\0\0\0' + struct.pack('<I', len(strings)), value, section, kind, storage))
+            strings += raw + b'\0'
+    struct.pack_into('<I', strings, 0, len(strings))
+    offset = 20 + 40 * len(sections)
+    headers, payload = bytearray(), bytearray()
+    for name, body, relocations, flags in sections:
+        raw = offset + len(payload)
+        payload += body
+        relptr = offset + len(payload)
+        for reloc in relocations:
+            payload += struct.pack('<IIH', *reloc)
+        headers += struct.pack('<8sIIIIIIHHI', name, len(body), 0, len(body), raw, relptr, 0, len(relocations), 0, flags)
+    symoff = offset + len(payload)
+    data = struct.pack('<HHIIIHH', 0x14c, len(sections), 0, symoff, len(encoded), 0, 0) + headers + payload
+    for name, value, section, kind, storage in encoded:
+        data += struct.pack('<8sIhHBB', name, value, section, kind, storage, 0)
+    return bytes(data + strings)
+
+
+CODE, DATA = 0x60001020, 0x40000040  # COMDAT code, initialized data
+
+
+class MultiFunctionTests(unittest.TestCase):
+    def test_each_function_is_read_from_its_own_section(self):
+        data = coff_sections([(b'.text', b'\xc3', (), CODE), (b'.text', b'\x90\xc3', (), CODE)],
+                             [('f', 0, 1, 0x20, 2, 0), ('g', 0, 2, 0x20, 2, 0)])
+        self.assertEqual(function_bytes(data, 'f'), b'\xc3')
+        self.assertEqual(function_bytes(data, 'g'), b'\x90\xc3')
+
+    def test_call_to_function_in_same_object_resolves_by_name(self):
+        data = coff_sections([(b'.text', b'\xe8\x00\x00\x00\x00\xc3', ((1, 1, 20),), CODE), (b'.text', b'\xc3', (), CODE)],
+                             [('f', 0, 1, 0x20, 2, 0), ('g', 0, 2, 0x20, 2, 0)])
+        actual = function_bytes(data, 'f', 0x401000, lambda name, kind: {'g': 0x401100}.get(name))
+        self.assertEqual(actual, b'\xe8\xfb\x00\x00\x00\xc3')
+        with self.assertRaisesRegex(ValueError, 'Unresolved relocation to g'):
+            function_bytes(data, 'f', 0x401000, lambda name, kind: None)
+
+    def test_object_local_data_is_rejected(self):
+        data = coff_sections([(b'.text', b'\xa1\x00\x00\x00\x00\xc3', ((1, 1, 6),), CODE), (b'.data', b'\x01\0\0\0', (), DATA)],
+                             [('f', 0, 1, 0x20, 2, 0), ('_global', 0, 2, 0, 2, 0)])
+        with self.assertRaisesRegex(ValueError, 'object-local data'):
+            function_bytes(data, 'f', 0x401000, lambda name, kind: 0x7a0000)
+
+    def test_functions_sharing_a_section_are_rejected(self):
+        data = coff_sections([(b'.text', b'\xc3\xc3', (), CODE)],
+                             [('f', 0, 1, 0x20, 2, 0), ('g', 1, 1, 0x20, 2, 0)])
+        with self.assertRaisesRegex(ValueError, 'shares its section'):
+            function_bytes(data, 'f')
+
+
 def fake_pe(slots, code):
     def section(characteristics, body):
         return SimpleNamespace(Characteristics=characteristics, get_data=lambda: body, VirtualAddress=0)

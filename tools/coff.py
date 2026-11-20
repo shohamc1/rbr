@@ -1,4 +1,8 @@
-"""Read one function from a small i386 COFF object, resolving declared relocations."""
+"""Read one function from an i386 COFF object, resolving declared relocations.
+
+An object can define many functions when each has its own section (MSVC /Gy,
+which /O2 implies, or Clang -ffunction-sections). The checker reads only the
+named function's section and its relocations."""
 import struct
 
 REL32 = 20  # IMAGE_REL_I386_REL32
@@ -34,16 +38,18 @@ def function_bytes(data, symbol, func_va=None, resolve=None):
         symbols.append((name.decode(), value, section, kind, storage))
         symbols.extend([None] * aux)
         index += 1 + aux
-    found = [s for s in symbols if s and s[4] == 2 and s[3] & 0x20 and s[2] > 0]
-    if len(found) != 1 or found[0][0] != symbol or found[0][1] != 0:
-        raise ValueError(f'Expected only function {symbol} at section offset zero; got {found}')
+    functions = [s for s in symbols if s and s[4] in (2, 3) and s[3] & 0x20 and s[2] > 0]
+    found = [s for s in functions if s[0] == symbol and s[4] == 2]
+    if len(found) != 1 or found[0][1] != 0:
+        defined = [s[0] for s in functions if s[4] == 2]
+        raise ValueError(f'Function {symbol} is not defined at section offset zero. The object defines: {defined}')
     _, _, section, _, _ = found[0]
     name, code, relptr, relcount, flags = sections[section - 1]
-    if name != b'.text' or not flags & 0x20:
+    if not name.startswith(b'.text') or not flags & 0x20:
         raise ValueError('Expected .text code')
-    for index, (other, body, _, _, other_flags) in enumerate(sections, 1):
-        if index != section and body and other_flags & (0x20 | 0x40 | 0x80) and not other.startswith(b'.debug'):
-            raise ValueError('Additional code/data needs a linker-aware checker: ' + repr(other))
+    sharing = [s[0] for s in functions if s[2] == section and s[0] != symbol]
+    if sharing:
+        raise ValueError(f'{symbol} shares its section with {sharing}; compile with /Gy or -ffunction-sections')
     if relcount:
         if func_va is None or resolve is None:
             raise ValueError('Relocations need checker support with known symbol addresses: ' + symbol)
@@ -56,9 +62,14 @@ def function_bytes(data, symbol, func_va=None, resolve=None):
                 raise ValueError('Relocation is outside function bytes')
             if not 0 <= symidx < len(symbols) or symbols[symidx] is None:
                 raise ValueError('Relocation targets an invalid symbol table entry')
-            target_name, value, target_section, _, storage = symbols[symidx]
-            if target_section != 0 or storage != 2 or value != 0:
-                raise ValueError('Relocation target must be an undefined external: ' + target_name)
+            target_name, value, target_section, target_kind, storage = symbols[symidx]
+            # Another function defined in this object resolves by name like an
+            # external; object-local data (literals, vtables, EH tables) does not.
+            defined_function = (target_section > 0 and storage == 2 and target_kind & 0x20 and value == 0
+                                and sections[target_section - 1][4] & 0x20)
+            if not defined_function and (target_section != 0 or storage != 2 or value != 0):
+                raise ValueError('Relocation target must be an undefined external or a function defined '
+                                 'in this object; object-local data needs a linker-aware checker: ' + target_name)
             target = resolve(target_name, kind)
             if target is None:
                 raise ValueError('Unresolved relocation to ' + target_name)

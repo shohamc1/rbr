@@ -9,7 +9,8 @@
     "-mno-sse",
     "-mno-sse2",
     "-fno-exceptions",
-    "-fno-rtti"
+    "-fno-rtti",
+    "-ffunction-sections"
   ],
   "status": "Qualified only for listed leaf examples, not the original compiler or a general game profile.",
   "libraries": {

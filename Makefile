@@ -74,7 +74,7 @@ doctor:
 candidates:
 	$(PYTHON) tools/harness.py candidates --limit $(LIMIT) --max-size $(MAX_SIZE) $(if $(TIER),--tier $(TIER))
 new-function:
-	$(PYTHON) tools/harness.py new-function $(FUNCTION) $(if $(SIZE),--size $(SIZE))
+	$(PYTHON) tools/harness.py new-function $(FUNCTION) $(if $(SIZE),--size $(SIZE)) $(if $(SOURCE),--source $(SOURCE))
 lookup:
 	$(PYTHON) tools/harness.py lookup $(ADDR)
 worktree:
