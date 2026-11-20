@@ -70,7 +70,7 @@
 {"id":"sub_0048af80","size":7,"symbol":"?sub_0048af80@Object0048af80@@QAEMXZ"},
 {"id":"sub_0048af90","size":7,"symbol":"?sub_0048af90@Object0048af90@@QAEMXZ"},
 {"id":"sub_0048cb70","size":16,"symbol":"??0Object0048cb70@@QAE@XZ","compiler":"msvc71"},
-{"id":"sub_0048cc00","size":98,"symbol":"_sub_0048cc00","source":null},
+{"id":"sub_0048cc00","size":98,"symbol":"_sub_0048cc00","compiler":"msvc71"},
 {"id":"sub_00492020","size":14,"symbol":"??0Object00492020@@QAE@XZ","compiler":"msvc71"},
 {"id":"sub_00493750","size":4,"symbol":"?sub_00493750@Object00493750@@QAEIXZ"},
 {"id":"sub_00493760","size":4,"symbol":"?sub_00493760@Object00493760@@QAEIXZ"},
