@@ -139,8 +139,8 @@ Wave 2 (clusters 5-9, 49 functions; 45 matching, 4 drafts above):
 - `sub_005524f0`/`sub_005526d0`: quickrace event callbacks (registration at
   0x00552642/0x00552d5b) writing "qr%02d_in.arp"/"qr%02d_out.arp" names. The
   `sub_005538xx` family (fields +0x38/+0x4c/+0x468) has no EXE references;
-  its dispatch mechanism is unexplained. `sub_00553930` copies a packed
-  14-byte constant tail from 0x007270b8 ("ichard Burns").
+  its dispatch mechanism is unexplained. `sub_00553930` copies the packed
+  14-byte string "Richard Burns\0" from `gRichardBurnsName` (0x007270b8).
 - `sub_005ebdb0`-`sub_005ef9e0`: container header (cursor +0, dword +4, flag
   byte +8, base +0xc) shared across strides 0x50/0xb4/0x78/0x28, plus a
   delegate record (raw-immediate table 0x007309c8 at +0, 3-pointer link at
