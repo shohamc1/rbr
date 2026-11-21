@@ -60,6 +60,19 @@ All use the pinned MSVC 7.1 profile with `/O2 /Zl` unless noted.
 | `sub_004c5d80` | 77 | 77 | Insert-path argument temps swap EAX/EDX homes: compiled loads `[esp+8]` into EAX and `[ecx+8]` into EDX, reference the reverse; 12 shapes tried including volatile. The EDX home likely came from the original inlining context. Everything else is byte-identical. |
 | `sub_0067f514` | 31 | 31 | 2-byte residual: lea scratch register (`lea ecx` vs `lea edx`), stable across every shape, /O2, "s"/"gs" pragmas, and a thiscall-member definition. ECX is a register input (container); forwards to `sub_00679212` (`RET 0x10`, reads ECX). |
 | `sub_0067f532` | 95 | 95 | Pre-call index materialization mirror only; byte-exact from `CALL sub_0067f514` onward. 18 recorded attempts. |
+| `sub_00471790` | 81 | — | SIMD math library: second SHUFPS must rotate XMM0 in place with the accumulator in XMM1; 7.1 /O2 always copies to XMM2, re-homes the accumulator, and spills (EBP+AND frame). 7 shapes, ±/arch:SSE. |
+| `sub_00463ff0`/`00464060`/`00480e80`/`00480ec0`/`00480ef0`/`004eb160`/`004eb180` | — | — | One SSE-math family (about 30 EXE sites): reference keeps `this` in a 4-byte stack slot (`PUSH ECX; MOV [ESP],ECX`) and rsqrt/shuffle copy shapes 7.1 never emits at /O2 (20+ shapes each; intrinsics without `align(16)` removed the frame but not the homing). Hypothesis: that library's objects were built with a different mode such as /GL. |
+| `sub_0061e83a`/`0061e88a` | — | — | FISTP-m32 wall: the 0x61c000-0x626000 region has 110 FISTP-m32 sites, zero FISTP-m64, zero `__ftol` calls, while the rest of .text makes 662 `__ftol` calls. `/QIfist` always emits FISTP QWORD (probed with /Op /O1 /Og- /G5), so these two curve functions cannot match under the pinned toolchain. Neighbors in the same region are 7.1-exact: the vintage split is per source file. |
+| `sub_004062a0` | 5 | 9 | `fld [esp+4]; fld1; fpatan; ret` — inline fast-math atan; no MSVC 7.1 C++ form exists and the EXE imports no atan. Categorize as an assembly candidate. |
+| `sub_00406100` | 61 | 61 | Exact instruction set; only schedule: reference loads then `divss`, 7.1 always hoists the reciprocal (const+DIVSS) above the loads (~20 shapes/flags). |
+| `sub_0040e960` | 38 | 38 | Reference hoists `mov edx,[0x016e304c]` one instruction earlier than every two-statement shape; the right order recolors registers (16+ shapes). |
+| `sub_00421a10`/`00421de0` | 87/93 | — | Identical one-byte residual: rotated advance loop's load base register (`mov eax,[ecx+K]` vs `[eax+K]`); stable across 13/11 shapes. |
+| `sub_00492fe0` | 86 | 85 | Buffered byte-writer (one of three identical template bodies): reference materializes the address then loads the value byte into the dead index register; every /O2 shape hoists the value to AL and folds the store (~40 shapes). |
+| `sub_004a5120` | 74 | — | x87 operand-form trilemma: memory-form `fadd [ecx+0x2c]` needs a volatile-leaf counterpart that contradicts the statement-split multiply; non-volatile restores forms but store-forwards. x87 operand rules derived in the report. |
+| `sub_004ce380` | 19 | 17 | Missing only the PUSH ECX/POP ECX frame slot that the compiler-generated unsigned-to-float idiom always reserves; bias 2^32f shares the pool at 0x00776a38 (same pool as 1.0f). Matches if the checker ever folds COMDAT `__real@` constants. |
+| `sub_004ea1f0` | 74 | 74 | PUSH EDI/1.0f hoisted one instruction (8 shapes). |
+| `sub_00503550` | 61 | 61 | Shared-const `mov edx,0x71135c` materializes at first use; reference materializes at join entry (8 shapes + 3 pragmas). |
+| `sub_00476270` | 109 | 109 | ECX homing slot schedule plus a custom ECX-receiving cdecl convention with no plain C++ form; its caller `sub_004767a0` matches via the cdecl alias (the reference call relies on the previous call preserving ECX — MSVC always reloads ECX between member calls). Manifest keeps the cdecl symbol `_sub_00476270`. |
 | `sub_0067ce0d` | 64 | 64 | Value/index register cycle plus prologue ordering; each flag-set configuration reproduces half the reference. Stop rule at 15 differing instructions. |
 
 For `sub_00408d00`, loops, a memset intrinsic, and nested/volatile forms were tried.
@@ -122,6 +135,86 @@ New encoding levers proven on this artifact (wave 1):
 - MSVC 7.1 allocates xmm registers in reverse definition order (z,y,x temps).
 - Declaration order of an index local versus a pointer local swaps xor/lea
   emission order in scan loops.
+
+## Batch-200 subsystem findings (branch decomp/batch-200)
+
+178 of 200 functions matching across 21 clusters (including all 17 small
+`source:null` callees that blocked batch-100 callers). Draft residuals are in
+the table above; per-cluster reports with full evidence are under
+`build/harness/reports/cluster{0..20}.md` (ignored, regenerable).
+
+- The 93-byte thiscall intrusive-list unlink now has eight byte-identical EXE
+  copies (`sub_0043d920`, `sub_004477b0/50/f0/10`, `sub_004544b0`,
+  `sub_00454ab0`, `sub_00454870`, quartet `sub_00454c30/c90/e70/e10`), one per
+  wrapper node class; 16-byte thunks DEC the owner count and tail-jmp into
+  them. Finalizer wrappers share the wave-1 shape (vtable +0, node +4,
+  owner +0xc).
+- The streambuf guard family (0x0041b250-0x0041b390) wraps MSVCP71
+  `basic_streambuf::_Lock/_Unlock`: object+0 is the stream subobject,
+  vbtable[1] gives the virtual basic_ios base offset, basic_ios+0x28 the
+  guarded streambuf. The basic_ios import needs a 2-parameter template with a
+  virtual dtor.
+- 0x0043a120-0x0043a2c0 is a 4-byte-element container/allocator family
+  (size/capacity/allocate/fill/move); only the fill has EXE call sites.
+  `sub_004b04b0/50/20` are bare-node tail-appends whose single-tail source
+  makes /O2 tail-duplicate the suffix exactly.
+- The 0x0040e5xx family extends Object0040e570: stats record at +0x6e4
+  (layout mapped to +0x8c) and a +0xf4 dispatcher whose entries are
+  `__stdcall` virtual members (slots 0x6c-0x1ac). 0x016e304c is a pointer
+  global beside the FILE* at 0x016e3044.
+- Slot-machine state on object 0x007ca200 (`sub_00474950/76270/767a0`):
+  4 slots at +0x100, state +0xe8, floats +0xec-0xfc; container family at
+  0x004728cxx walks 0xc records skipping types 0x15-0x17.
+- 0x00471790 region and 0x00480e80-0x004eb180: one SIMD math library with
+  the /GL-class residuals above; `sub_004eb180` also proves 7.1 fixed points
+  (`_mm_rsqrt_ss` always round-trips memory; same-operand shuffle always
+  copies; intrinsics need extern "C").
+- Quickrace/callback region (0x00545xxx-0x00569xxx): vtable pair
+  0x7264e4/0x7265ac, deleting dtor slot 0 class (size 0xd8) with guarded
+  cdecl callbacks at +0xd4; delegate-record finalizers clear receiver+0x10 /
+  callback+0x14; `sub_0051c000` culls by SSE length; `sub_00569f70` is the
+  cdecl quickrace callback on containers 0x0163f2a0/0x0163f0a8.
+- 0x0048f4f0-0x0048f670: multi-group dispatch table 0x00712f70 (deleting
+  finalizers at slots 0/3/6/9); 0x004809xx is a file-wrapper class (heap
+  blocks +0x14/+0x18, HANDLE +0x20, filename +0x24).
+- 0x004b3fd0 creates through global device `*(void **)0x008b4998` vtable
+  slot 0x50 then seven calls at slots 0x50-0x8c (manager at 0x008b4998 also
+  seen by `sub_004a5980`, vtable 0x0071463c).
+- CRT identities: 0x006efe34 is `__ftol2` (7.1 emits `call __ftol2` for float
+  truncation); IAT 0x0070c2d8 is the MSVCP71 basic_string dtor with
+  `sub_0043d6e0` its +0xc adjuster thunk; `sub_006efdd0` is the operator
+  delete thunk (`JMP [0x0070c504]`).
+
+New encoding levers proven on this artifact (batch 200):
+
+- One trailing clear in an unlink (zero-case arm first) makes /O2 duplicate
+  the clear into all exits and cross-jump the shared store; early-return and
+  size pragmas fail in opposite ways.
+- A getter whose reference leaves the out pointer or `this` in EAX at RET
+  originally returned that value: declaring the return type fixes register
+  allocation exactly; no reshaping moves /O2 off EAX-first.
+- `void* volatile out` parameters block CSE and flip a whole cdecl push-run
+  schedule; PUSH ECX + MOV EAX,[ESP] + PUSH EAX is the idiom for passing an
+  uninitialized 4-byte local (ECX there is dead storage, not an input).
+- `__declspec(dllimport)` must precede the return type or MSVC calls a CRT
+  thunk instead of the IAT slot; a second unused stack parameter blocks the
+  MOV [ESP+4]/JMP tail-jump in operator-new wrappers.
+- Entry `MOV EAX,ECX` in a setter means `return this` (`QAEPAV1@...`);
+  `MOV ESI,ECX` prologues identify constructors.
+- Explicit ctor call through a cast (`((Base*)this)->Base::Base()`) emits a
+  bare CALL reusing the incoming ECX home; cdecl aliases preserve ECX across
+  calls where member declarations always reload it.
+- Sparse switches give SUB/DEC JE chains where `||` gives CMP/CMP; unsigned
+  counters give JB not JL; `!(a >= b)` gives TEST AH,1/JNE; `do{}while` after
+  `flag = 1` defeats loop inversion; dword-cursor typing fixes INC/ADD tails.
+- Struct-typed parameters (by-value 12-byte triples) are load-bearing for
+  LEA/EDX ping-pong; `p->~Class()` on a class-typed parameter avoids the ??_G
+  COMDAT where void* emits one.
+- `__m128` without `align(16)` keeps intrinsics inlinable without the EBP
+  realignment frame; /arch:SSE changes nothing in intrinsic-only bodies.
+- /Oy- per file restores EBP frames; `(unsigned char)` casts give MOVZX +
+  signed FILD and avoid object-local `__real@4f800000` constants (which the
+  checker cannot yet fold — the shared pools are 0x00776a38/0x00776a3c).
 
 Wave 2 (clusters 5-9, 49 functions; 45 matching, 4 drafts above):
 
