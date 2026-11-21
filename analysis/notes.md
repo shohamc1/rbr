@@ -48,13 +48,19 @@ has machine behavior that C memcpy does not define.
 
 ## Unmatched drafts
 
-All three use the pinned MSVC 7.1 profile with `/O2 /Zl`.
+All use the pinned MSVC 7.1 profile with `/O2 /Zl` unless noted.
 
 | Function | Reference bytes | Compiled bytes | Remaining difference |
 | --- | ---: | ---: | --- |
 | `sub_00408d00` | 56 | 58 | Buffer-clear metadata stores and zero-register allocation |
 | `sub_004183d0` | 44 | 41 | Reader register allocation, load order, and store order |
 | `sub_0043ebb0` | 59 | 67 | List-tail reloads and separate head/tail paths |
+| `sub_00402b50` | 96 | 96 | Compiler folds the member `operator<<(float)` import (IAT 0x70c274) into EDI with one load and three `call edi`; the reference keeps three `call [imm]` sites. Split statements, explicit call syntax, local dllimport pointers, `optimize("g"/"t")`, /G5, /G7, and /Oi all fail or lose the push-run. Hypothesis: 13.10.3077 folds at three call sites; the reference build may have required four. |
+| `sub_004336b0` | 25 | — | Inputs arrive in AX, DX, CX plus one stack word (Borland-style register convention); no MSVC 7.1 declaration binds an input to EAX. Nothing in the EXE references it: dead code from a likely foreign-compiler object. The cdecl draft retains the packing semantics. |
+| `sub_004c5d80` | 77 | 77 | Insert-path argument temps swap EAX/EDX homes: compiled loads `[esp+8]` into EAX and `[ecx+8]` into EDX, reference the reverse; 12 shapes tried including volatile. The EDX home likely came from the original inlining context. Everything else is byte-identical. |
+| `sub_0067f514` | 31 | 31 | 2-byte residual: lea scratch register (`lea ecx` vs `lea edx`), stable across every shape, /O2, "s"/"gs" pragmas, and a thiscall-member definition. ECX is a register input (container); forwards to `sub_00679212` (`RET 0x10`, reads ECX). |
+| `sub_0067f532` | 95 | 95 | Pre-call index materialization mirror only; byte-exact from `CALL sub_0067f514` onward. 18 recorded attempts. |
+| `sub_0067ce0d` | 64 | 64 | Value/index register cycle plus prologue ordering; each flag-set configuration reproduces half the reference. Stop rule at 15 differing instructions. |
 
 For `sub_00408d00`, loops, a memset intrinsic, and nested/volatile forms were tried.
 The plain memset draft is retained after eight recorded attempts. The reader
@@ -62,6 +68,110 @@ loads three words before advancing its byte cursor and writing the output. The
 list draft handles empty and nonempty insertion paths. Earlier forms and total
 attempt counts for the reader and list were not preserved; do not claim an
 eight-attempt history for them. Regenerate instruction dumps and check logs locally.
+
+## Batch-100 subsystem findings (branch decomp/batch-100)
+
+Wave 1 (clusters 0-4, 51 functions; 49 matching, 2 drafts above). Compact
+subsystem identities, each supported by matched bodies:
+
+- `sub_00402970`/`sub_00402980`: SSO string class with vtable at 0x0070c79c; the
+  MSVCP71 `basic_string` body sits at +0x10 behind a 0x10 prefix.
+  `sub_00402970` is the c_str getter (`cap`/`buf` split at +0x24/+0x10;
+  `if (cap >= 0x10) return ptr; return buf;` matches where a ternary hoists
+  the LEA). `sub_00402c20`/`sub_00402c80` are character/string log sinks
+  (FILE* at +0x3c, flags at +0x40) inside a streambuf-like record at
+  0x0076f428. `sub_004060c0` is a cdecl `floor(float)` wrapper;
+  `sub_00406040`/`sub_00406080` need `/arch:SSE`.
+- `sub_004336d0` is half of a 64-bit version pack/compare pair
+  (`sub_004336b0` packs; callers compare against 0x00050001_08d20190).
+  `sub_00433700`-`sub_004337f0` are the stdio backend of a cdecl file
+  callback interface (open/read/write/tell/seek/close/error/user_data,
+  slots 0-7; default table built by `sub_0041f4f0`, second filler at
+  0x00433800 unclaimed). `sub_00433840` takes its object in EDX (dead ECX)
+  at both call sites (0x00433928, 0x00435014).
+- `sub_004491e0`-`sub_004492b0`: intrusive-list wrapper family. Vtable at +0,
+  node base at +4 (links +4/+8, owner +0xc); finalizers store their vtable
+  constant, decrement owner+8, and tail-jump one of four identical 93-byte
+  unlink methods (`sub_004477b0`/`sub_00447850`/`sub_004478f0`/
+  `sub_00447710`, manifest `source:null`). Vtables 0x70e964/0x70e970/
+  0x70e97c/0x70e988 put the deleting finalizer in slot 0. `sub_0048cc90`
+  (7 bytes) and `sub_0044cfe0` complete the logging-core neighborhood.
+- `sub_0046e0d0`-`sub_00471f90`: one screen/coordinate class with a 0x17c-byte
+  dispatch table at 0x00710734 (stored by SEH constructors 0x0046f960/
+  0x0046ff80). Slots 0x14c/0x150 are int-to-float ratio converters
+  (constants 360.0, 64.0, 480.0 at 0x710724/0x710728); slots 0x154/0x158 are
+  the float-to-int inverses via `_ftol`. `sub_0046e270`/`sub_0046e290` are
+  `__stdcall` table entries indexing the container at 0x00874618 through
+  `sub_004ba120` (records at base+0x14c+index*0x1c). `sub_00471f90` is a
+  cursor writer (memcpy intrinsic plus `field_04 += count`).
+- `sub_00499180`-`sub_0049d010`: hierarchical intrusive-list/allocator
+  subsystem. Containers keep a sentinel node at +4 and count at +8
+  (`sub_00499270` inlines `sub_00499180`'s reset). Outer nodes flag at +0x1d,
+  inner nodes (list embedded at +0x10) at +0x2d. Recursive node-tree release
+  `sub_00498ea0` and inner variant `sub_004432b0`, iterator `sub_00498010`
+  are manifest `source:null`. `sub_004995c0` seeds vtable 0x007137b4.
+
+New encoding levers proven on this artifact (wave 1):
+
+- Binding a subobject as a C++ reference (`Node &node = ...`) pins the exact
+  store-vtable/load-owner/test schedule where pointer locals, volatile, /O1,
+  /Os, and `optimize("s"/"g")` all let /O2 hoist the load above the store.
+- A `MOV EAX,ECX` prologue identifies a constructor where the scaffold guessed
+  a plain setter; constructor symbols then need `??0...` mangling.
+- `while (--count >= 0)` is the load-bearing form for dec/js loop guards.
+- MSVC 7.1 allocates xmm registers in reverse definition order (z,y,x temps).
+- Declaration order of an index local versus a pointer local swaps xor/lea
+  emission order in scan loops.
+
+Wave 2 (clusters 5-9, 49 functions; 45 matching, 4 drafts above):
+
+- `sub_004c1da0`-`sub_004c1f40`: one container family of 0x10- and 0x124-byte
+  records plus 0x50-stride array accessors at +4. Destination-returning
+  signatures are load-bearing for EAX homing in four copy helpers.
+  0x004c4170 is the `add ecx,8; jmp [string dtor import]` destructor of a
+  class with basic_string at +8. `sub_004c5d80` is a push_back for a
+  4-byte-element container (+4 start, +8 end, +0xc storage-end).
+- `sub_0050a8f0`/`sub_0050a910`: scalar deleting destructors (vtable slot 0 of
+  0x0071e03c/0x0071e094). `sub_0050ab80` combines two tables via a kernel
+  difference scaled by 20.3718319 (float at 0x0071e09c). The six 42-byte
+  `sub_0050bd40`-`sub_0050be30` forwarders pass (a,b) through backend vtable
+  slots 39/40/43/44/47/48 and return the first argument.
+- `sub_005524f0`/`sub_005526d0`: quickrace event callbacks (registration at
+  0x00552642/0x00552d5b) writing "qr%02d_in.arp"/"qr%02d_out.arp" names. The
+  `sub_005538xx` family (fields +0x38/+0x4c/+0x468) has no EXE references;
+  its dispatch mechanism is unexplained. `sub_00553930` copies the packed
+  14-byte string "Richard Burns\0" from `gRichardBurnsName` (0x007270b8).
+- `sub_005ebdb0`-`sub_005ef9e0`: container header (cursor +0, dword +4, flag
+  byte +8, base +0xc) shared across strides 0x50/0xb4/0x78/0x28, plus a
+  delegate record (raw-immediate table 0x007309c8 at +0, 3-pointer link at
+  +4, receiver +0x10, function +0x14) with invoker `sub_005ed120` and
+  thiscall list-unlink `sub_0043d920`.
+- `sub_006769d5`-`sub_00688b6c`: size-optimized region — six of nine need
+  `#pragma optimize("s", on)` (INC-pair adds, memory-bound compares,
+  memory-push arguments, POP cleanup, re-pushed `[ESP+N]` arguments).
+  `sub_0067bbb2`/`sub_0067bc0c` share receiver class `Object0067bbb2`
+  (container: node count +0x08, record table +0x10, node table +0x14).
+
+Additional wave-2 encoding levers:
+
+- cdecl aliasing preserves ECX=this when the aliased call is the first
+  action; `virtual` slot declarations reproduce `call [eax+N*4]` where a
+  non-virtual declaration devirtualizes to a direct REL32 call.
+- Sparse `switch {0,1,10}` gives the SUB 3/SUB 2 JE chain where `||` gives
+  CMP/CMP; `return ++field` produces the one-byte INC EAX roundtrip.
+- Struct copy from a named extern global folds to absolute per-field loads
+  plus LEA dst; a cast constant pointer materializes a base register.
+- Returning an otherwise-ignored value flips register allocation of the
+  whole body; binding an embedded subobject to a local pointer hoists
+  `ADD ECX,4` above the guard for ADD/DEC/JMP tail-call shapes.
+- `/O2` naturally spills x87 intermediates into dead argument slots and
+  interleaves `fmul [mem]` between epilogue pops.
+- `#pragma pack(2)` prevents a trailing-word struct over-copy as dword.
+
+Measurement caveats from this batch: Ghidra packets dropped `add esp,4`
+after `call 0x006efdd0` and truncated `sub_00449290` by 3 bytes — always
+verify packet listings against raw EXE bytes. MSVC 7.1 has no
+`static_assert` or `__builtin_offsetof`; use typedef-array assertions.
 
 ## Startup subsystem (entry 0x006f0208)
 

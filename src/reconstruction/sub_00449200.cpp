@@ -1,0 +1,40 @@
+// sub_00449200: EXE 0x00449200, 25 bytes. Finalizer body of the class whose
+// deleting finalizer sub_004492b0 sits in vtable slot 0 of 0x0070e970. The
+// layout is a polymorphic head at +0 (vtable slot restored here) followed by
+// an intrusive-list node base at +4: node links at +4/+8 and the owning list
+// pointer at +0xc. When the object still owns a list, the body decrements the
+// counter at list+8 and tail-jumps into the 93-byte external unlink method
+// sub_00447850 on the node base (this + 4). Binding the node base as a
+// reference before the test pins the compiler's schedule: vtable store, owner
+// load, this-adjustment, test. Sibling bodies: sub_004491e0 (vtable
+// 0x0070e964, unlink sub_004477b0), sub_00449250 (0x0070e97c, sub_004478f0),
+// sub_00449270 (0x0070e988, sub_00447710) — the four look like template
+// instantiations of one wrapper. Compiled with MSVC 7.1 (/O2 /Zl).
+// Raw-address vtable store: no object-local vtable is emitted.
+
+class Head00449200 {
+public:
+    unsigned int field_00;   // vtable slot; 0x0070e970 for this class
+};
+
+class Node00449200 {
+public:
+    void *field_00;   // node link, +4 in the wrapper
+    void *field_04;   // node link, +8 in the wrapper
+    void *field_08;   // owning list pointer, +0xc in the wrapper
+    void sub_00447850();   // external unlink method, EXE 0x00447850
+};
+
+class Object00449200 : public Head00449200, public Node00449200 {
+public:
+    void sub_00449200();
+};
+
+void Object00449200::sub_00449200() {
+    Head00449200::field_00 = 0x70e970;
+    Node00449200 &node = *static_cast<Node00449200 *>(this);
+    if (node.field_08 != 0) {
+        --*(int *)((char *)node.field_08 + 8);
+        node.sub_00447850();
+    }
+}
