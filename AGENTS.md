@@ -337,6 +337,10 @@ network access. Each call runs in a named `rbr-msvc-*` container. A call that
 exceeds `RBR_MSVC_TIMEOUT` seconds (default 300) fails, and its container is
 removed. A hang usually means a compile error. Source and compiler mounts are read-only; only the output
 directory is writable. Each call uses a fresh Wine prefix.
+Prefix setup costs about 5 s per container. `check-overlay`, `progress`, and
+`build` compile every MSVC source in one container, with up to eight parallel
+`cl.exe` jobs that share one fresh prefix. Each job keeps its own timeout.
+Clang sources compile in parallel. All objects are still rebuilt on every run.
 
 The package filename says `msvc7.0`, but its actual compiler is **13.10.3077**
 and linker is **7.10.3077**. This is a community compiler package, not a newly

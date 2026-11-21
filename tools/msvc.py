@@ -4,6 +4,8 @@ import json
 import os
 from pathlib import Path
 import re
+import shlex
+import shutil
 import subprocess
 import tarfile
 import tempfile
@@ -67,23 +69,63 @@ def setup():
 TIMEOUT = int(os.environ.get('RBR_MSVC_TIMEOUT', '300'))
 
 
-def run_wine(cfg, tool, args, output_dir):
+def run_wine(cfg, tool, args, output_dir, entrypoint=None, timeout=None):
     # A failed compile can leave Wine waiting forever; name the container so a
     # timeout can remove it instead of leaving the caller to docker rm -f it.
     name = 'rbr-msvc-' + uuid.uuid4().hex[:12]
     command = ['docker', 'run', '--rm', '--name', name, '--platform', cfg['docker_platform'],
                '--network', 'none',
+               *(['--entrypoint', entrypoint] if entrypoint else []),
                '--mount', f'type=bind,src={Path.cwd()},dst=/work,readonly',
                '--mount', f'type=bind,src={Path(cfg["compiler"]).resolve().parent},dst=/compiler,readonly',
                '--mount', f'type=bind,src={Path(output_dir).resolve()},dst=/output',
-               cfg['docker_image'], '/compiler/' + tool, *args]
+               cfg['docker_image'], *([] if entrypoint else ['/compiler/' + tool]), *args]
+    timeout = timeout or TIMEOUT
     try:
-        subprocess.run(command, check=True, timeout=TIMEOUT)
+        subprocess.run(command, check=True, timeout=timeout)
     except subprocess.TimeoutExpired:
         subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
-        raise ValueError(f'{tool} timed out after {TIMEOUT} s and its container was removed. '
+        raise ValueError(f'{tool} timed out after {timeout} s and its container was removed. '
                          'This usually means a compile error; check the source for syntax errors '
                          'and missing declarations (the image has no standard headers).')
+
+
+def compile_objects(jobs, output_dir):
+    """Compile (source, output, flags) jobs in one container and return {output: log}.
+
+    Each docker run pays about 5 s for container start and Wine prefix setup; a
+    warm prefix compiles a leaf in well under a second, so one container with
+    parallel cl.exe calls replaces one container per source. A failed job keeps
+    no object; its log holds the compiler output.
+    """
+    cfg = verify()
+    output_dir = Path(output_dir)
+    work = output_dir / '.batch'
+    shutil.rmtree(work, ignore_errors=True)
+    work.mkdir(parents=True)
+    lines = []
+    for index, (source, output, flags) in enumerate(jobs):
+        output = Path(output)
+        if output.parent.resolve() != output_dir.resolve():
+            raise ValueError('Batch outputs must share one directory: ' + str(output))
+        output.unlink(missing_ok=True)
+        source = Path(source).resolve().relative_to(Path.cwd()).as_posix()
+        command = shlex.join(['timeout', str(TIMEOUT), 'wine', '/compiler/cl.exe', *cfg['flags'], *flags,
+                              '/FoZ:/output/' + output.name, 'Z:/work/' + source])
+        lines.append(f'{command} >/output/.batch/{index}.log 2>&1')
+    (work / 'jobs.txt').write_text(''.join(line + '\n' for line in lines))
+    workers = min(8, os.cpu_count() or 1)
+    script = f'wineboot -i >/dev/null 2>&1; xargs -d "\\n" -P {workers} -n 1 sh -c < /output/.batch/jobs.txt'
+    try:
+        # Each job has its own timeout; the container limit only catches a stuck Wine server.
+        run_wine(cfg, 'cl.exe', ['-c', script], output_dir, entrypoint='sh',
+                 timeout=TIMEOUT * (1 + len(jobs) // workers))
+    except subprocess.CalledProcessError:
+        pass  # xargs exits nonzero when any job fails; each job's log and object tell which.
+    logs = {Path(output): (work / f'{index}.log').read_text(errors='replace') if (work / f'{index}.log').exists() else ''
+            for index, (_, output, _) in enumerate(jobs)}
+    shutil.rmtree(work, ignore_errors=True)
+    return logs
 
 
 def compile_object(source, output, flags=()):

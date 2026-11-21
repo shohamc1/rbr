@@ -1,6 +1,8 @@
 """Exact checks for the pinned RBR reference. No full linker exists yet."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import difflib
+import functools
 import hashlib
 import json
 import os
@@ -70,6 +72,7 @@ def original_bytes(pe, row):
     raise ValueError('Function range is not fully backed by executable file bytes')
 
 
+@functools.cache
 def compiler():
     cfg = read_json('config/toolchain.json')
     path = os.environ.get('RBR_CLANG') or shutil.which('clang-23') or cfg['tested_path']
@@ -148,19 +151,64 @@ def relocation_resolver(pe, rows):
 
 
 _compiled = {}
+_failed = {}
+
+
+def object_key(row):
+    return (row['source'], row.get('compiler', 'clang'), tuple(row.get('extra_flags', [])))
+
+
+def object_path(row):
+    source, profile, flags = object_key(row)
+    stem = Path(source).stem
+    if flags:
+        stem += '-' + hashlib.sha256(json.dumps([profile, list(flags)]).encode()).hexdigest()[:8]
+    return BUILD / (stem + '.obj')
+
+
+def compile_all(rows):
+    """Compile every distinct source for this run up front: MSVC jobs share one
+    container, and Clang jobs run in parallel. Objects are still rebuilt from the
+    active source on every run."""
+    keys = {object_key(row): row for row in rows if row.get('source')}
+    msvc = [row for key, row in keys.items() if key[1] == 'msvc71']
+    if len({object_path(row) for row in keys.values()}) != len(keys):
+        return  # Object names collide; keep the one-at-a-time path.
+    if msvc:
+        from msvc import compile_objects
+        BUILD.mkdir(parents=True, exist_ok=True)
+        logs = compile_objects([(row['source'], object_path(row), row.get('extra_flags', [])) for row in msvc], BUILD)
+        for row in msvc:
+            out = object_path(row)
+            if out.is_file():
+                _compiled[object_key(row)] = out
+            else:
+                _failed[object_key(row)] = logs[out] + f"Compile failed: {row['source']} (msvc71)"
+    clang = [row for key, row in keys.items() if key[1] == 'clang']
+    with ThreadPoolExecutor() as pool:
+        for row, error in zip(clang, pool.map(_try_compile, clang)):
+            if error is not None:
+                _failed[object_key(row)] = error
+
+
+def _try_compile(row):
+    try:
+        compile_source(row)
+    except ValueError as error:
+        return str(error)
+    return None
 
 
 def compile_source(row):
     """Compile a row's source once per run; rows that share a source share the object."""
     profile = row.get('compiler', 'clang')
     flags = row.get('extra_flags', [])
-    key = (row['source'], profile, tuple(flags))
+    key = object_key(row)
     if key in _compiled:
         return _compiled[key]
-    stem = Path(row['source']).stem
-    if flags:
-        stem += '-' + hashlib.sha256(json.dumps([profile, flags]).encode()).hexdigest()[:8]
-    out = BUILD / (stem + '.obj')
+    if key in _failed:
+        raise ValueError(_failed[key])
+    out = object_path(row)
     if profile == 'msvc71':
         from msvc import compile_object
         _compiled[key] = compile_object(row['source'], out, flags)
@@ -171,7 +219,11 @@ def compile_source(row):
     BUILD.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
     # Always compile the active source; a prior object cannot satisfy a check.
-    subprocess.run([path, *base_flags, *flags, '-c', row['source'], '-o', str(out)], check=True)
+    result = subprocess.run([path, *base_flags, *flags, '-c', row['source'], '-o', str(out)],
+                            capture_output=True, text=True)
+    if result.returncode:
+        raise ValueError(result.stderr + f"Compile failed: {row['source']} (clang)")
+    sys.stderr.write(result.stderr)
     _compiled[key] = out
     return out
 
@@ -282,6 +334,7 @@ def overlay(pe, rows, resolve=None):
     out.unlink(missing_ok=True)
     image = bytearray(pe.__data__)
     total = 0
+    compile_all([row for row in rows if row['status'] == 'matching_cpp'])
     for row in rows:
         if row['status'] != 'matching_cpp':
             continue
@@ -323,6 +376,7 @@ def main():
     elif args.command == 'check-overlay':
         overlay(pe, rows, resolve)
     elif args.command == 'build':
+        compile_all(rows)
         for row in rows:
             if row.get('source'):
                 compile_source(row)
@@ -330,6 +384,7 @@ def main():
     elif args.command == 'progress':
         totals = {k: 0 for k in ['matching_cpp', 'nonmatching_cpp', 'assembly', 'original_fallback', 'unresolved']}
         function_counts = {k: 0 for k in totals}
+        compile_all([row for row in rows if row['status'] == 'matching_cpp'])
         for row in rows:
             if row['status'] not in totals:
                 raise ValueError('Unknown progress category')

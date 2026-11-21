@@ -169,8 +169,16 @@ class WorkflowTests(unittest.TestCase):
         manifest.write_text(json.dumps(rows))
         result = self.run_check('check-function', 'sub_00401000')
         self.assertEqual(result.returncode, 0, result.stderr)
+        # check-overlay compiles MSVC sources in one batch container.
+        result = self.run_check('check-overlay')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         source.write_text(source.read_text().replace('return field_0c;', 'return field_0c + 1;'))
         self.assertNotEqual(self.run_check('check-function', 'sub_00401000').returncode, 0)
+        source.write_text('invalid C++')
+        result = self.run_check('check-overlay')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Compile failed: src/reconstruction/sub_00401000.cpp (msvc71)', result.stderr)
+        self.assertFalse((self.root / 'build/reconstruction/sub_00401000.obj').exists())
 
     def test_one_source_holds_several_functions(self):
         combined = self.root / 'src/reconstruction/combined.cpp'
