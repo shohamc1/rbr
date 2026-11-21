@@ -57,7 +57,8 @@ Run `make setup`, then `make extract ISO='/absolute/path/to/disc.iso'` in a fres
 checkout. See README.md for tools. Run `make verify-inputs` and `make check-overlay`.
 Extraction needs about 5 GB plus the ISO and refuses to replace original/. It copies
 Crack/richardburnsrally.exe to original/nocd/richardburnsrally.exe without changes.
-config/artifacts.json records the extracted hashes, including this alias.
+config/artifacts.json records the hashes of extracted PE files and census
+archives, including this alias. Game assets aren't pinned.
 A worktree may link a verified original/ directory and tools/local/, but must have
 its own build/ and .venv/. `make worktree` sets this up. Reserve src/modern/ and build/modern/ for the future port.
 
