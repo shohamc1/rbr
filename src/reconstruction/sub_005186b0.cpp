@@ -9,9 +9,6 @@
 // (sub_00516340), sub_005186f0 (sub_00453250). No EXE call sites or data
 // pointers reference these five; the dispatch mechanism is unexplained
 // (same situation as the sub_005538xx family).
-//
-// Unlink method manifest entry pending thiscall symbol (see
-// build/harness/reports/cluster16.jsonl).
 
 class Node00453310 {
 public:

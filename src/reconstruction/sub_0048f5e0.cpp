@@ -12,6 +12,8 @@
 // no object-local vtable is emitted.
 // Compiled with MSVC 7.1 (/O2 /Zl).
 
+extern "C" const void* const gVtable00712f70[]; // EXE .rdata 0x00712f70
+
 class Head0048f5e0 {
 public:
     unsigned int field_00;   // vtable slot; 0x00712f70 for this class
@@ -31,7 +33,7 @@ public:
 };
 
 void Object0048f5e0::sub_0048f5e0() {
-    Head0048f5e0::field_00 = 0x712f70;
+    Head0048f5e0::field_00 = (unsigned int)gVtable00712f70;
     Node0048f4f0 &node = *static_cast<Node0048f4f0 *>(this);
     if (node.field_08 != 0) {
         --*(int *)((char *)node.field_08 + 8);

@@ -11,8 +11,9 @@
 // sub_00518e40-sub_00518e80 — the family looks like template instantiations
 // of one wrapper, mirroring the sub_004491e0 family. Compiled with
 // MSVC 7.1 (/O2 /Zl). Raw-address vtable store: no object-local vtable is
-// emitted. Unlink manifest entry pending thiscall symbol (see
-// build/harness/reports/cluster16.jsonl).
+// emitted.
+
+extern "C" const void* const gVtable00720ff4[]; // EXE .rdata 0x00720ff4
 
 class Head00518e20 {
 public:
@@ -33,7 +34,7 @@ public:
 };
 
 void Object00518e20::sub_00518e20() {
-    Head00518e20::field_00 = 0x720ff4;
+    Head00518e20::field_00 = (unsigned int)gVtable00720ff4;
     Node004536d0 &node = *static_cast<Node004536d0 *>(this);
     if (node.field_08 != 0) {
         --*(int *)((char *)node.field_08 + 8);

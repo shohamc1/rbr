@@ -20,8 +20,10 @@ public:
     void sub_0056f440();
 };
 
+extern "C" Object0163f0a8* gObject0163f0a8; // EXE .data 0x0163f0a8
+
 extern "C" void __cdecl sub_00545c50(unsigned int argument) {
-    Object0163f0a8 *receiver = *(Object0163f0a8 **)0x0163f0a8;
+    Object0163f0a8 *receiver = gObject0163f0a8;
     if (argument == 0) {
         receiver->slot_04(0x6d, 0);
     } else {

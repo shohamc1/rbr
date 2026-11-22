@@ -2,14 +2,20 @@
 
 An object can define many functions when each has its own section (MSVC /Gy,
 which /O2 implies, or Clang -ffunction-sections). The checker reads only the
-named function's section and its relocations."""
+named function's section and its relocations.
+
+Compiler literals (`__real@` floats and doubles, `??_C@` strings) are
+object-local COMDAT data. The linker keeps one copy per name, so a literal
+resolves to the address the reference uses there, but only when the
+reference holds the same bytes at that address (see `literal`)."""
 import struct
 
 REL32 = 20  # IMAGE_REL_I386_REL32
 DIR32 = 6   # IMAGE_REL_I386_DIR32
+LITERAL_PREFIXES = ('__real@', '??_C@')
 
 
-def function_bytes(data, symbol, func_va=None, resolve=None):
+def function_bytes(data, symbol, func_va=None, resolve=None, literal=None):
     machine, count, _, symoff, symcount, optional, _ = struct.unpack_from('<HHIIIHH', data)
     if machine != 0x14c or optional != 0:
         raise ValueError('Expected an i386 COFF object')
@@ -67,6 +73,15 @@ def function_bytes(data, symbol, func_va=None, resolve=None):
             # external; object-local data (literals, vtables, EH tables) does not.
             defined_function = (target_section > 0 and storage == 2 and target_kind & 0x20 and value == 0
                                 and sections[target_section - 1][4] & 0x20)
+            if (literal is not None and kind == DIR32 and target_section > 0 and value == 0
+                    and target_name.startswith(LITERAL_PREFIXES) and not sections[target_section - 1][4] & 0x20):
+                if struct.unpack_from('<I', code, offset)[0]:
+                    raise ValueError('Literal relocations with an addend are unsupported: ' + target_name)
+                target = literal(target_name, sections[target_section - 1][1], offset)
+                if target is None:
+                    raise ValueError('Literal does not match the reference data: ' + target_name)
+                struct.pack_into('<I', patched, offset, target)
+                continue
             if not defined_function and (target_section != 0 or storage != 2 or value != 0):
                 raise ValueError('Relocation target must be an undefined external or a function defined '
                                  'in this object; object-local data needs a linker-aware checker: ' + target_name)

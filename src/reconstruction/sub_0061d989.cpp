@@ -11,6 +11,8 @@
 
 #pragma optimize("s", on)
 
+extern "C" const void* const gVtable00734090[]; // EXE .rdata 0x00734090
+
 extern "C" void __cdecl sub_006efdd0(void* memory);
 
 class Object0061d989 {
@@ -26,7 +28,7 @@ public:
 };
 
 void Object0061d989::sub_0061d989() {
-    vtable_00 = (void*)0x00734090;
+    vtable_00 = (void*)gVtable00734090;
     sub_006efdd0(field_38);
     sub_006efdd0(field_58);
     sub_006efdd0(field_5c);

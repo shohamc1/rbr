@@ -145,12 +145,34 @@ same object resolves by name, like an external. That function must be in the
 manifest, and its own entry checks its bytes. Two functions in one section are
 rejected. REL32 external relocations resolve
 against manifest functions and IAT thunks. DIR32 externals resolve against PE
-import slots and globals in config/globals.json. Both retain relocation addends.
-Object-local data, RTTI, and SEH/C++-EH scope
-tables and funclet sections still need linker-aware checking. Do not hide
+import slots, globals in config/globals.json, and manifest functions used as
+data, such as callbacks. Both retain relocation addends. Compiler literals
+(`__real@` floats and doubles, `??_C@` strings) take the address the reference
+operand names, but only when read-only reference data holds the same bytes there;
+one literal name keeps one address per run. Other object-local data, RTTI, and
+SEH/C++-EH scope tables and funclet sections still need linker-aware checking. Do not hide
 those limitations with inline assembly, binary includes, or conditional
 original-byte fallbacks. Review source as well as checker output; the checker
 cannot prove that C++ contains no disguised assembly.
+
+## Source rules
+
+`make test` enforces the first three rules in `tests/test_source_rules.py`.
+
+- Never write a code or data address as an integer, such as
+  `*(float*)0x00776a70` or `field_00 = 0x70c79c`. The checker accepts the
+  immediate, but the source hides its target and breaks under any other layout.
+  Write the literal (`0.0f`, `"rb"`), declare a named `extern "C"` global and map
+  it in config/globals.json, or declare the function and give it a manifest
+  entry. Vtables use `gVtable<address>`. Unknown data uses `g<Role><address>`.
+- Omit empty optional manifest fields, such as `"extra_flags":[]`.
+- Keep evidence in tracked files. Sources and analysis/notes.md must not cite
+  ignored reports under build/; copy the finding into analysis/notes.md.
+- A nonmatching draft must compute what the reference computes. Never use a
+  placeholder body, such as returning the argument, to make a residual visible.
+  Try the compiler intrinsic before you declare a form impossible: `/O2` implies
+  `/Oi`, and `atan` expands inline to `FPATAN`.
+- Remove comments that say a manifest entry is pending once it exists.
 
 ## When a function will not match
 

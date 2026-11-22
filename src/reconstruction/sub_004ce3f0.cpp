@@ -6,9 +6,11 @@
 // 1 when the cursor passes the end sentinel 0x007a5960. The compiler pads
 // to the 16-byte loop head at 0x004ce400 with a 7-byte LEA ESP,[ESP+0].
 // Called from the 0x004ce4xx container code with the dword from +0x50.
+extern "C" unsigned int gTable007a5820[0x50]; // EXE .data 0x007a5820
+
 extern "C" int __stdcall sub_004ce3f0(unsigned int value) {
-    for (int address = 0x007a5820; address < 0x007a5960; address += 4) {
-        if (value == *(int *)address) {
+    for (int i = 0; i < 0x50; ++i) {
+        if (value == gTable007a5820[i]) {
             return 0;
         }
     }

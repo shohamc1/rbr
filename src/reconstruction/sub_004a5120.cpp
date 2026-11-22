@@ -56,5 +56,5 @@ void Object004a5120::sub_004a5120(float value, unsigned int index)
     delta = delta * field_30;
     field_38 = 300.0f;
     field_2c = delta + field_2c;
-    field_30 = (field_24[1] - field_2c) * *(float *)0x00714514;
+    field_30 = (field_24[1] - field_2c) * (1.0f / 300.0f);
 }

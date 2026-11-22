@@ -60,6 +60,10 @@ public:
     void *sub_0054ece0(unsigned int index);   // EXE 0x0054ece0
 };
 
+extern "C" char* gPlatform;                     // EXE .data 0x007ca2a0
+extern "C" Container00569f70* gContainer0163f2a0; // EXE .data 0x0163f2a0
+extern "C" Container00569f70* gObject0163f0a8;    // EXE .data 0x0163f0a8
+
 class Object0056f440 {
 public:
     void sub_0056f440();   // EXE 0x0056f440, shared manifest class
@@ -69,16 +73,16 @@ extern "C" void __cdecl sub_00569f70() {
     Container00569f70 *container;
     Element00569f70 *element;
     Target00569f70 *result;
-    if (*(unsigned int *)((char *)*(unsigned int *)0x007ca2a0 + 0x728) == 2) {
-        container = *(Container00569f70 **)0x0163f2a0;
+    if (*(unsigned int *)(gPlatform + 0x728) == 2) {
+        container = gContainer0163f2a0;
         element = container->slot_24(0x37);
         result = element->field_0c->first->slot_58();
-        container = *(Container00569f70 **)0x0163f2a0;
+        container = gContainer0163f2a0;
     } else {
-        container = *(Container00569f70 **)0x0163f0a8;
+        container = gObject0163f0a8;
         element = (Element00569f70 *)container->sub_0054ece0(0x73);
         result = element->field_0c->first->slot_58();
-        container = *(Container00569f70 **)0x0163f0a8;
+        container = gObject0163f0a8;
     }
     if (container->field_0c == element) {
         ((Object0056f440 *)container)->sub_0056f440();

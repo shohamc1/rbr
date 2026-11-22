@@ -33,7 +33,7 @@ int Object00402c20::sub_00402c20(int character) {
             OutputDebugStringA(text);
         }
         if ((field_40 & 1) && field_3c != 0) {
-            fprintf(field_3c, (const char*)0x0076f470, character);
+            fprintf(field_3c, "%c", character);
             fflush(field_3c);
         }
     }

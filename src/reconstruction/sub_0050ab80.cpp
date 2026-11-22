@@ -29,5 +29,5 @@ float Object0050ab80::sub_0050ab80(int index, unsigned int addend) {
     }
     float first = sub_00504230(value, record);
     float second = sub_00504230(value - 1, record);
-    return (first - second) * *(float*)0x0071e09c;
+    return (first - second) * (64.0f / 3.14159265f);
 }

@@ -15,11 +15,11 @@ extern "C" void *__cdecl sub_00433700(void *self, const char *path, int flags) {
     void *result = 0;
     const char *mode = 0;
     if ((flags & 3) == 1) {
-        mode = (const char *)0x7767f4;  // "rb"
+        mode = "rb";
     } else if (flags & 4) {
-        mode = (const char *)0x7767f0;  // "r+b"
+        mode = "r+b";
     } else if (flags & 8) {
-        mode = (const char *)0x7767ec;  // "wb"
+        mode = "wb";
     }
     if (path != 0 && mode != 0) {
         result = fopen(path, mode);

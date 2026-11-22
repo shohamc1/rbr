@@ -45,11 +45,11 @@ int Object00474950::sub_00474950() {
         return 0;
     if (field_e8 != 1)
         return 1;
-    if (field_10c != *(float *)0x00776a70)
+    if (field_10c != 0.0f)
         return 1;
     if (field_f8 & 3)
         return 1;
-    if (field_fc > *(float *)0x00776a70) {
+    if (field_fc > 0.0f) {
         if (!(field_ec >= field_f4))
             return 1;
         return 0;

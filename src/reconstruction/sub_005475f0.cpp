@@ -14,9 +14,12 @@ public:
     virtual void slot_04(unsigned int a, unsigned int b);
 };
 
+extern "C" Object0163f0a8* gObject0163f0a8; // EXE .data 0x0163f0a8
+extern "C" unsigned int gFlag0163edbc;      // EXE .data 0x0163edbc
+
 extern "C" void __cdecl sub_005475f0(unsigned int argument) {
     if (argument == 0) {
-        Object0163f0a8 *receiver = *(Object0163f0a8 **)0x0163f0a8;
-        receiver->slot_04(0x5b, (*(unsigned int *)0x0163edbc = 1, 0));
+        Object0163f0a8 *receiver = gObject0163f0a8;
+        receiver->slot_04(0x5b, (gFlag0163edbc = 1, 0));
     }
 }

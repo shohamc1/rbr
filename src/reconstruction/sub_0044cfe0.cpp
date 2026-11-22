@@ -5,6 +5,8 @@
 // Compiled with MSVC 7.1 (/O2 /Zl). Raw-address store: no object-local
 // vtable is emitted; the tail call keeps ECX (this) unchanged.
 
+extern "C" const void* const gVtable0070ec00[]; // EXE .rdata 0x0070ec00
+
 class Object0048cc90 {
 public:
     void sub_0048cc90();   // base finalizer, matched in sub_0048cc90.cpp
@@ -17,6 +19,6 @@ public:
 };
 
 void Object0044cfe0::sub_0044cfe0() {
-    field_00 = 0x70ec00;
+    field_00 = (unsigned int)gVtable0070ec00;
     ((Object0048cc90 *)this)->sub_0048cc90();
 }

@@ -56,7 +56,7 @@ void Object004767a0::sub_004767a0(unsigned int value0, unsigned int value1,
     // order (its third and fourth stack words land exchanged at 0x00473e70).
     unsigned int n = 0;
     do {
-        if (field_100[n].key == *(float *)0x00776a70)
+        if (field_100[n].key == 0.0f)
             break;
         ++n;
     } while (n < 4);

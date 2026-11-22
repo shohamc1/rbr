@@ -40,6 +40,8 @@ struct Target0040e960 {
 LAYOUT_OFFSET(Target0040e960, field_2c, 0x2c);
 LAYOUT_OFFSET(Target0040e960, field_30, 0x30);
 
+extern "C" Holder0040e960* gHolder016e304c; // EXE .data 0x016e304c, beside the FILE* at 0x016e3044
+
 class Object0040e960 {
 public:
     unsigned char unknown_00[0x6e4];
@@ -62,7 +64,7 @@ LAYOUT_OFFSET(Object0040e960, field_6e4, 0x6e4);
 // eax/dl/a1; see analysis/notes.md.
 void Object0040e960::sub_0040e960() {
     field_6e4->field_09 = (field_6e4->field_08 = 1);
-    Holder0040e960* holder = *(Holder0040e960**)0x016e304c;
+    Holder0040e960* holder = gHolder016e304c;
     Target0040e960* target = holder->field_08;
     target->field_2c = 0;
     target->field_30 = 0;

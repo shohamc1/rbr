@@ -18,6 +18,15 @@
 #include "GamePlatform0044a3c0.h"
 #include "Object0040e570.h"
 
+// Startup state: the splash flag and window restored by the macro below, the
+// single-run guard, and the platform object this function creates.
+extern "C" unsigned char gFlag007ca1fc;          // EXE .data 0x007ca1fc
+extern "C" void* gWindow007ca1f8;                // EXE .data 0x007ca1f8
+extern "C" unsigned int gGuard007ca1f0;          // EXE .data 0x007ca1f0
+extern "C" int gLogToStdout;                     // EXE .data 0x007a18f8
+extern "C" GamePlatform0044a3c0* gPlatform;      // EXE .data 0x007ca2a0
+extern "C" long __stdcall sub_00470f70(void* exceptionPointers);
+
 // KERNEL32/USER32/OLE32 imports; the reference reaches all of them through the
 // import address table (CALL [__imp_...]).
 extern "C" __declspec(dllimport) void* __stdcall SetUnhandledExceptionFilter(void* filter);
@@ -49,6 +58,7 @@ struct AppWindow007c9fe8 {
 };
 typedef char app_window_field_assertion[
     ((unsigned int)&((AppWindow007c9fe8*)0)->window) == 0x28 ? 1 : -1];
+extern "C" AppWindow007c9fe8* gApplication;      // EXE .data 0x007c9fe8
 
 // The ini reader object lives on this function's stack at [esp+0x4]; its
 // constructor (sub_0040f9f0) and destructor (sub_0040fa60) are thiscalls.
@@ -61,41 +71,39 @@ typedef char app_window_field_assertion[
 // The reference duplicates this block before the "Could not initialize COM!"
 // message and again after SetFocus. A macro keeps the two copies identical.
 #define RESTORE_CURSOR_AND_WINDOW() \
-    if (*(unsigned char*)0x007ca1fc != 0) { \
-        *(unsigned char*)0x007ca1fc = 0; \
-        if (*(void**)0x007ca1f8 != 0) { \
+    if (gFlag007ca1fc != 0) { \
+        gFlag007ca1fc = 0; \
+        if (gWindow007ca1f8 != 0) { \
             ShowCursor(1); \
-            DestroyWindow(*(void**)0x007ca1f8); \
-            *(void**)0x007ca1f8 = 0; \
+            DestroyWindow(gWindow007ca1f8); \
+            gWindow007ca1f8 = 0; \
         } \
     }
 
 extern "C" int __stdcall sub_00471110(void* instance, void* previousInstance,
                                       char* commandLine, int showCommand) {
     bool runIntro = false;
-    if (*(unsigned int*)0x007ca1f0 == 0xb7) { // startup guard: main already ran
+    if (gGuard007ca1f0 == 0xb7) { // startup guard: main already ran
         return 0;
     }
-    *(unsigned int*)0x007a18f8 = 0;
-    // The reference pushes the filter address 0x00470f70 as an immediate
-    // (sub_00470f70; declared long __stdcall f(void*) by its observed use).
-    SetUnhandledExceptionFilter((void*)0x00470f70);
+    gLogToStdout = 0;
+    SetUnhandledExceptionFilter((void*)sub_00470f70);
 
     Object0040f9f0 iniReader;
     iniReader.sub_0040f9f0();
-    iniReader.sub_0040fb60(std::string((const char*)0x00710ab4), 2); // "RichardBurnsRally.ini"
+    iniReader.sub_0040fb60(std::string("RichardBurnsRally.ini"), 2); // "RichardBurnsRally.ini"
 
     runIntro = iniReader.sub_004100e0( // section "Settings", key "Fullscreen", default on
-                       std::string((const char*)0x0070eba4), std::string((const char*)0x0070ebb0), 1)
+                       std::string("Settings"), std::string("Fullscreen"), 1)
             && iniReader.sub_004100e0( // section "Settings", key "RunIntro", default on
-                       std::string((const char*)0x0070eba4), std::string((const char*)0x00710aa8), 1);
+                       std::string("Settings"), std::string("RunIntro"), 1);
 
     if (iniReader.sub_004100e0( // section "Settings", key "RunDiagnose", default off
-            std::string((const char*)0x0070eba4), std::string((const char*)0x00710a9c), 0)) {
+            std::string("Settings"), std::string("RunDiagnose"), 0)) {
         sub_0041c8a0(0);
     }
     bool runStartup = iniReader.sub_004100e0( // section "Settings", key "RunStartup", default on
-            std::string((const char*)0x0070eba4), std::string((const char*)0x00710a90), 1);
+            std::string("Settings"), std::string("RunStartup"), 1);
     if (runStartup) {
         if (sub_00470f00()) {
             iniReader.sub_0040fa60();
@@ -105,26 +113,26 @@ extern "C" int __stdcall sub_00471110(void* instance, void* previousInstance,
     sub_00470ca0(runIntro, instance);
 
     if (iniReader.sub_004100e0( // section "Settings", key "RunIntro" again after the startup run
-            std::string((const char*)0x0070eba4), std::string((const char*)0x00710aa8), 1)) {
+            std::string("Settings"), std::string("RunIntro"), 1)) {
         sub_00470ea0();
         sub_00470e60();
         sub_00470ca0(runIntro, instance);
     }
 
     if ((sub_00471110_missingCpuid(1) & 0x02000000) == 0) { // reference: MOV EAX,1; CPUID; EDX bit 25
-        MessageBoxA(0, (const char*)0x00710968, (const char*)0x00710a04, 0x10);
+        MessageBoxA(0, "You are running the wrong executeable!\r\nThe processor you are running does not support the SSE instruction set.\r\nPlease run Rally7App_3DNow.exe instead.", "SSE not supported", 0x10);
         iniReader.sub_0040fa60();
         return 0;
     }
 
     if (CoInitialize(0) < 0) {
         RESTORE_CURSOR_AND_WINDOW()
-        MessageBoxA(0, (const char*)0x00710a68, (const char*)0x00710a84, 0);
+        MessageBoxA(0, "Could not initialize COM!", "Fatal error", 0);
         iniReader.sub_0040fa60();
         return 1;
     }
 
-    GamePlatform0044a3c0*& platform = *(GamePlatform0044a3c0**)0x007ca2a0;
+    GamePlatform0044a3c0*& platform = gPlatform;
     void* platformMemory = sub_006efa32(0x1bd0);
     GamePlatform0044a3c0* created = 0;
     if (platformMemory != 0) {
@@ -139,19 +147,19 @@ extern "C" int __stdcall sub_00471110(void* instance, void* previousInstance,
     }
 
     if (platform->sub_0047e860() == 0) {
-        sub_0043b3c0(7, 0, (const char*)0x00710a4c); // "Error in PrePlatformInit"
+        sub_0043b3c0(7, 0, "Error in PrePlatformInit"); // "Error in PrePlatformInit"
     }
     if (platform->platformInit() == 0) {
-        sub_0043b3c0(7, 0, (const char*)0x00710a34); // "Error in PlatformInit"
+        sub_0043b3c0(7, 0, "Error in PlatformInit"); // "Error in PlatformInit"
     }
 
-    AppWindow007c9fe8*& application = *(AppWindow007c9fe8**)0x007c9fe8;
+    AppWindow007c9fe8*& application = gApplication;
     SetForegroundWindow((void*)application->window->sub_0040e570());
     SetFocus((void*)application->window->sub_0040e570());
     RESTORE_CURSOR_AND_WINDOW()
 
     if (platform->sub_0047eb00() == 0) {
-        sub_0043b3c0(7, 0, (const char*)0x00710a18); // "Error in PostPlatformInit"
+        sub_0043b3c0(7, 0, "Error in PostPlatformInit"); // "Error in PostPlatformInit"
     }
     platform->shutdown();
     platform->sub_00479e00();

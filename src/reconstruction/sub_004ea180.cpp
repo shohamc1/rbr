@@ -3,6 +3,9 @@
 // Seeds field_00 with the vtable candidate at EXE 0x0071be94 (slot 0 =
 // sub_004ea1b0, the deleting destructor; COL at 0x0071be90), following the
 // raw-vtable idiom of the matched sub_004995c0 (vtable 0x007137b4).
+
+extern "C" const void* const gVtable0071be94[]; // EXE .rdata 0x0071be94
+
 class Object004ea180 {
 public:
     Object004ea180();
@@ -13,5 +16,5 @@ private:
 
 Object004ea180::Object004ea180()
 {
-    vtable = 0x71be94;
+    vtable = (unsigned int)gVtable0071be94;
 }

@@ -8,6 +8,8 @@
 // the flags argument is set, and returns this in EAX. RET 4 pops the flags.
 // sub_004022f0 is the same body for vtable 0x0076f3e8.
 
+extern "C" const void* const gVtable0076f3f0[]; // EXE .rdata 0x0076f3f0
+
 extern "C" {
 __declspec(dllimport) void* __stdcall GetProcessHeap();
 __declspec(dllimport) int __stdcall HeapFree(void* heap, unsigned int flags, void* block);
@@ -25,7 +27,7 @@ public:
 
 void* Object004021e0::sub_004021e0(unsigned int flags) {
     void* block = field_04;
-    field_00 = 0x76f3f0;
+    field_00 = (unsigned int)gVtable0076f3f0;
     if (block != 0) {
         HeapFree(GetProcessHeap(), 0, block);
     }

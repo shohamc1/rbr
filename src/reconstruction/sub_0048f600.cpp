@@ -12,6 +12,8 @@
 // the owner test (CMP against it instead of TEST EAX,EAX).
 // Compiled with MSVC 7.1 (/O2 /Zl).
 
+extern "C" const void* const gVtable00712b34[]; // EXE .rdata 0x00712b34
+
 class Head0048f600 {
 public:
     unsigned int field_00;   // vtable slot; 0x00712b34 restored here
@@ -35,7 +37,7 @@ public:
 void Object0048f600::sub_0048f600() {
     field_10 = 0;
     field_14 = 0;
-    Head0048f600::field_00 = 0x712b34;
+    Head0048f600::field_00 = (unsigned int)gVtable00712b34;
     Node0048f600 &node = *static_cast<Node0048f600 *>(this);
     void *owner = node.field_08;
     if (owner != 0) {

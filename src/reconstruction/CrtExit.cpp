@@ -8,13 +8,17 @@
 
 extern "C" unsigned int __cdecl sub_006f06ac(unsigned int handler, void* begin, void* end);
 
+// CRT __onexitbegin/__onexitend handler table bounds.
+extern "C" void* gOnexitBegin; // EXE .data 0x016e3510
+extern "C" void* gOnexitEnd;   // EXE .data 0x016e350c
+
 extern "C" __declspec(dllimport) unsigned int __cdecl _onexit(unsigned int handler);
 
 extern "C" unsigned int __cdecl sub_006efea9(unsigned int handler) {
-    if (*(void**)0x0016e3510u == (void*)-1) {
+    if (gOnexitBegin == (void*)-1) {
         return _onexit(handler);
     }
-    return sub_006f06ac(handler, (void*)0x0016e3510u, (void*)0x0016e350cu);
+    return sub_006f06ac(handler, &gOnexitBegin, &gOnexitEnd);
 }
 
 extern "C" int __cdecl _atexit(unsigned int handler) {

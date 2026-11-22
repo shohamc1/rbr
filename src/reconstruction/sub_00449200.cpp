@@ -12,6 +12,8 @@
 // instantiations of one wrapper. Compiled with MSVC 7.1 (/O2 /Zl).
 // Raw-address vtable store: no object-local vtable is emitted.
 
+extern "C" const void* const gVtable0070e970[]; // EXE .rdata 0x0070e970
+
 class Head00449200 {
 public:
     unsigned int field_00;   // vtable slot; 0x0070e970 for this class
@@ -31,7 +33,7 @@ public:
 };
 
 void Object00449200::sub_00449200() {
-    Head00449200::field_00 = 0x70e970;
+    Head00449200::field_00 = (unsigned int)gVtable0070e970;
     Node00449200 &node = *static_cast<Node00449200 *>(this);
     if (node.field_08 != 0) {
         --*(int *)((char *)node.field_08 + 8);

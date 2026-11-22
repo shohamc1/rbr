@@ -49,6 +49,9 @@ struct Sink004b3fd0 {
     virtual void slot_8c(int a);
 };
 
+extern "C" Device004b3fd0* gManager008b4998; // EXE .data 0x008b4998, see sub_004a5980
+extern "C" float gFloat01640460;               // EXE .data 0x01640460
+
 struct Object004b3fd0 {
     unsigned char field_00[0x80];
     unsigned char field_80[0x50];
@@ -59,10 +62,10 @@ struct Object004b3fd0 {
 void Object004b3fd0::sub_004b3fd0(unsigned int index) {
     unsigned int *entry = field_d0 + index;
     Sink004b3fd0 *object = (Sink004b3fd0 *)
-        ((Device004b3fd0 *)*(void **)0x008b4998)->slot_50(*entry, 8, 0);
+        gManager008b4998->slot_50(*entry, 8, 0);
     object->slot_8c(1);
     object->slot_80(field_80);
-    object->slot_60(*(float *)0x01640460);
+    object->slot_60(gFloat01640460);
     object->slot_64(0);
     object->slot_74(17.0f);
     object->slot_78(5.0f);

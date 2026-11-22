@@ -17,6 +17,8 @@ extern "C" void __stdcall sub_00610b82(void* base, unsigned int count,
                                        unsigned int stride, void* callback);
 extern "C" void __cdecl sub_006efdd0(void* memory);
 
+extern "C" void __cdecl sub_006195ed(); // element destructor, a thiscall body (PUSH [ECX]; CALL delete)
+
 class Object0061c18e {
 public:
     void* sub_0061c18e(unsigned char flags);
@@ -25,7 +27,7 @@ public:
 void* Object0061c18e::sub_0061c18e(unsigned char flags) {
     if (flags & 2) {
         char* block = (char*)this - 4;
-        sub_00610b82(this, 0xc, *(unsigned int*)block, (void*)0x006195ed);
+        sub_00610b82(this, 0xc, *(unsigned int*)block, (void*)sub_006195ed);
         if (flags & 1)
             sub_006efdd0(block);
         return block;

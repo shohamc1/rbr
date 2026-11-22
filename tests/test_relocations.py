@@ -211,5 +211,43 @@ class ResolverTests(unittest.TestCase):
         self.assertEqual(resolve('_GetStartupInfoA@4', 20), 0x400000)
 
 
+class LiteralTests(unittest.TestCase):
+    FLD = b'\xd9\x05\x00\x00\x00\x00\xc3'  # fld dword ptr [literal]; ret
+
+    def literal_object(self, blob=b'\x00\x00\x80\x3f'):
+        return coff_sections([(b'.text', self.FLD, ((2, 1, 6),), CODE), (b'.rdata', blob, (), DATA)],
+                             [('f', 0, 1, 0x20, 2, 0), ('__real@3f800000', 0, 2, 0, 2, 0)])
+
+    @staticmethod
+    def rdata_pe(body, address=0x776a3c):
+        section = SimpleNamespace(Characteristics=0x40000040, VirtualAddress=address - 0x400000,
+                                  SizeOfRawData=len(body), Misc_VirtualSize=len(body), get_data=lambda: body)
+        return SimpleNamespace(OPTIONAL_HEADER=SimpleNamespace(ImageBase=0x400000), sections=[section])
+
+    def setUp(self):
+        workflow._literal_addresses.clear()
+
+    def test_literal_takes_the_reference_address_when_bytes_agree(self):
+        expected = b'\xd9\x05\x3c\x6a\x77\x00\xc3'
+        literal = workflow.literal_resolver(self.rdata_pe(b'\x00\x00\x80\x3f'), expected)
+        self.assertEqual(function_bytes(self.literal_object(), 'f', 0x401000, lambda n, k: None, literal), expected)
+
+    def test_literal_with_other_reference_bytes_cannot_match(self):
+        expected = b'\xd9\x05\x3c\x6a\x77\x00\xc3'
+        literal = workflow.literal_resolver(self.rdata_pe(b'\x00\x00\x00\x00'), expected)
+        actual = function_bytes(self.literal_object(), 'f', 0x401000, lambda n, k: None, literal)
+        self.assertNotEqual(actual, expected)
+
+    def test_one_literal_name_keeps_one_address(self):
+        pe = self.rdata_pe(b'\x00\x00\x80\x3f\x00\x00\x80\x3f', 0x776a38)
+        workflow.literal_resolver(pe, b'\xd9\x05\x38\x6a\x77\x00\xc3')('__real@3f800000', b'\x00\x00\x80\x3f', 2)
+        with self.assertRaisesRegex(ValueError, 'elsewhere'):
+            workflow.literal_resolver(pe, b'\xd9\x05\x3c\x6a\x77\x00\xc3')('__real@3f800000', b'\x00\x00\x80\x3f', 2)
+
+    def test_literal_without_checker_support_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'object-local data'):
+            function_bytes(self.literal_object(), 'f', 0x401000, lambda n, k: 0x776a3c)
+
+
 if __name__ == '__main__':
     unittest.main()

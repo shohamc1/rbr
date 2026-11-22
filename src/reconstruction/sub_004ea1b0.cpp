@@ -5,6 +5,8 @@
 // the delete path frees this through the cdecl operator-delete thunk
 // sub_006efdd0 (EXE 0x006efdd0) with add-esp cleanup. Vtable slot 0 of
 // 0x0071be94; the matching default constructor is sub_004ea180.
+
+extern "C" const void* const gVtable0071be94[]; // EXE .rdata 0x0071be94
 extern "C" void __cdecl sub_006efdd0(void *memory);
 
 class Object004ea1b0 {
@@ -17,7 +19,7 @@ private:
 
 void *Object004ea1b0::sub_004ea1b0(unsigned int flags)
 {
-    vtable = 0x71be94;
+    vtable = (unsigned int)gVtable0071be94;
     if (flags & 1)
         sub_006efdd0(this);
     return this;

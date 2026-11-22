@@ -7,6 +7,8 @@
 // Raw-vtable idiom of the matched sub_004495b0 (vtable 0x0070e994).
 // Compiled with MSVC 7.1 (/O2 /Zl).
 
+extern "C" const void* const gVtable007264e4[]; // EXE .rdata 0x007264e4
+
 struct Object00545a50 {
     unsigned int vtable;
     unsigned int field_04;
@@ -14,6 +16,6 @@ struct Object00545a50 {
 };
 
 Object00545a50::Object00545a50() {
-    vtable = 0x7264e4;
+    vtable = (unsigned int)gVtable007264e4;
     field_04 = 0;
 }

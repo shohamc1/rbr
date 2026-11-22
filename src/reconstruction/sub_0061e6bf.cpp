@@ -13,6 +13,8 @@
 
 #pragma optimize("s", on)
 
+extern "C" const void* const gVtable007340d4[]; // EXE .rdata 0x007340d4
+
 extern "C" void __cdecl sub_006efdd0(void* memory);
 
 class Object0061d989 {
@@ -38,7 +40,7 @@ public:
 };
 
 void Object0061e6bf::sub_0061e6bf() {
-    vtable_00 = (void*)0x007340d4;
+    vtable_00 = (void*)gVtable007340d4;
     if (field_f4 != 0) {
         void* base = field_f8;
         if (base != 0) {
