@@ -9,6 +9,7 @@ import os
 import re
 from pathlib import Path
 import shutil
+import struct
 import subprocess
 import sys
 import time
@@ -145,6 +146,8 @@ def relocation_resolver(pe, rows):
                 return next((slots[c] for c in candidates(base) if c in slots), None)
             if name in data:
                 return data[name]
+            if name in addresses:  # a function address used as data
+                return addresses[name]
         return None
 
     return resolve
@@ -284,9 +287,9 @@ def hint(row, message):
         return ('Set "symbol" in config/functions.json to the mangled name of this function: one of '
                 + (', '.join(names) or 'none (check that the function is defined, not only declared)') + '.')
     if 'object-local data' in message:
-        return ('The function references data the object defines, such as a string literal, float constant, '
-                'switch table, or vtable. If the reference uses an absolute address, declare the data extern '
-                'and map it in config/globals.json.')
+        return ('The function references data the object defines, such as a switch table, vtable, or EH '
+                'table ($T, $L). Float and string literals resolve. For other data the reference reads by '
+                'address, declare it extern and map it in config/globals.json.')
     if message.startswith(row['id']):
         return ('Edit the source and rerun. Lines marked | differ. After eight compiles without a lower score, '
                 'stop: keep the draft nonmatching and record the difference in analysis/notes.md.')
@@ -309,14 +312,51 @@ def record_attempt(row, score, size):
           f"{stale} compiles since the best.{' Stop: eight compiles without improvement.' if stale >= 8 else ''}")
 
 
+_literal_addresses = {}
+
+
+def literal_resolver(pe, expected):
+    """Place a compiler literal at the address the reference operand names, after
+    checking that read-only reference data holds the same bytes there. One literal
+    name keeps one address across the run, as the linker keeps one COMDAT copy.
+    When the reference operand doesn't hold the literal (usually a different
+    instruction order), the operand gets the complement of the reference bytes,
+    so the function can't match and the listing shows the difference."""
+    base = pe.OPTIONAL_HEADER.ImageBase
+
+    def holds(address, blob):
+        rva = address - base
+        for section in pe.sections:
+            delta = rva - section.VirtualAddress
+            if (0 <= delta and delta + len(blob) <= min(section.SizeOfRawData, section.Misc_VirtualSize)
+                    and not section.Characteristics & 0xa0000000):  # neither code nor writable
+                return section.get_data()[delta:delta + len(blob)] == blob
+        return False
+
+    def resolve(name, blob, offset):
+        if offset + 4 > len(expected):
+            return 0
+        address = struct.unpack_from('<I', expected, offset)[0]
+        if not holds(address, blob):
+            return ~address & 0xffffffff
+        if _literal_addresses.setdefault(name, address) != address:
+            raise ValueError(f'Literal {name} resolves to 0x{address:08x} here but '
+                             f'0x{_literal_addresses[name]:08x} elsewhere')
+        return address
+
+    return resolve
+
+
 def check(row, pe, resolve=None, track=False):
     offset, expected = original_bytes(pe, row)
     out = compile_source(row)
     try:
-        actual = function_bytes(out.read_bytes(), row['symbol'], int(row['address'], 16), resolve)
+        actual = function_bytes(out.read_bytes(), row['symbol'], int(row['address'], 16), resolve,
+                                literal_resolver(pe, expected))
     except ValueError as error:
         advice = hint(row, str(error))
-        raise ValueError(str(error) + ('\nhint: ' + advice if advice else '')) from None
+        message = str(error) if str(error).startswith(row['id']) else row['id'] + ': ' + str(error)
+        raise ValueError(message + ('\nhint: ' + advice if advice else '')) from None
     score = 0 if actual == expected else compare(expected, actual, int(row['address'], 16))[0]
     if track:
         record_attempt(row, score, len(actual))
