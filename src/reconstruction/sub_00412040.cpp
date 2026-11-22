@@ -1,4 +1,4 @@
-// sub_00412040: EXE 0x00412040, 85 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_00412040: MSVC 7.1 (/O2 /Zl).
 //
 // thiscall list member with one stack argument, RET 4. The receiver is a
 // queue record (head at +0, tail at +4) of nodes with prev at +4, next at
@@ -25,6 +25,7 @@ LAYOUT_OFFSET(Object00412040, field_04, 0x04);
 LAYOUT_OFFSET(Object00412040, field_08, 0x08);
 LAYOUT_OFFSET(Object00412040, field_35, 0x35);
 
+// FUNCTION: RBR 0x00412040
 void Object00412040::sub_00412040(Object00412040* owner) {
     Object00412040* node = field_00;
     field_00 = node->field_08;

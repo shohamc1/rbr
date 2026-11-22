@@ -1,4 +1,4 @@
-// sub_005ef9e0: EXE 0x005ef9e0, 22 bytes. __thiscall member, one pointer
+// sub_005ef9e0: __thiscall member, one pointer
 // parameter (RET 4), returns the filled slot.
 //
 // Growable pointer array: appends `value` at the cursor +0x40 of the array
@@ -17,6 +17,7 @@ public:
     void **sub_005ef9e0(void *value);
 };
 
+// FUNCTION: RBR 0x005ef9e0
 void **Object005ef9e0::sub_005ef9e0(void *value) {
     void **slot = &field_4c[field_40];
     field_40 = field_40 + 1;

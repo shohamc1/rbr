@@ -1,4 +1,4 @@
-// sub_0046e290: EXE 0x0046e290, 22 bytes. __stdcall, one dword parameter,
+// sub_0046e290: __stdcall, one dword parameter,
 // dword return (RET 4). Stored at dispatch-table slot 0x6c (EXE 0x007107a0)
 // of the screen/coordinate class; it ignores the ECX this pointer.
 //
@@ -23,6 +23,7 @@ typedef char Record004ba120_size[(sizeof(Record004ba120) == 0x1c) ? 1 : -1];
 
 extern "C" Object004ba120* gObject00874618; // EXE .data 0x00874618
 
+// FUNCTION: RBR 0x0046e290
 extern "C" unsigned int __stdcall sub_0046e290(unsigned int index) {
     return gObject00874618->sub_004ba120(index)->field_14;
 }

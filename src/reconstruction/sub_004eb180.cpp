@@ -1,4 +1,6 @@
-// sub_004eb180: EXE 0x004eb180, 96 bytes. __thiscall member with two stack
+// Build flags: /arch:SSE
+
+// sub_004eb180: __thiscall member with two stack
 // arguments (RET 8): computes out = normalize(cross(this, rhs)), returns
 // the out pointer in EAX. Needs /arch:SSE (packed arithmetic).
 //
@@ -52,6 +54,8 @@ public:
     Object004eb180 *sub_004eb180(const Object004eb180 *rhs, Object004eb180 *out);
 };
 
+// NONMATCHING
+// FUNCTION: RBR 0x004eb180
 Object004eb180 *Object004eb180::sub_004eb180(const Object004eb180 *rhs, Object004eb180 *out)
 {
     __m128 b = _mm_loadu_ps(rhs->field_00);

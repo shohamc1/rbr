@@ -1,4 +1,4 @@
-// sub_0041b250: EXE 0x0041b250, 24 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_0041b250: MSVC 7.1 (/O2 /Zl).
 //
 // Stream-buffer guard member over the stream pointer stored at +0: when the
 // stream's streambuf exists, tail-jumps to the MSVCP71 thiscall import
@@ -30,6 +30,7 @@ private:
     void *stream;  // +0: guarded stream subobject (first word: vbptr)
 };
 
+// FUNCTION: RBR 0x0041b250
 void Object0041b250::sub_0041b250() {
     char *sub = (char *)stream;
     int basicIosOffset = *(int *)(*(char **)sub + 4);  // vbtable[1]

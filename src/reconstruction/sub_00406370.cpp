@@ -1,4 +1,6 @@
-// sub_00406370: EXE 0x00406370, 125 bytes. MSVC 7.1 (/O2 /Zl /arch:SSE).
+// Build flags: /arch:SSE
+
+// sub_00406370: MSVC 7.1 (/O2 /Zl /arch:SSE).
 //
 // __cdecl cross product of two three-float vectors into a caller-provided
 // destination, which is returned in EAX:
@@ -15,6 +17,7 @@ struct Vector3_00406370 {
     float field_0[3];
 };
 
+// FUNCTION: RBR 0x00406370
 extern "C" void* __cdecl sub_00406370(Vector3_00406370* destination, const Vector3_00406370* left,
                                       const Vector3_00406370* right) {
     Vector3_00406370 result;

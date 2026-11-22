@@ -1,12 +1,41 @@
 # Reconstruction notes
 
-Scope: the NoCD EXE pinned in `config/reference.json`. DLL addresses require a
-module name. Current counts and coverage are in `analysis/function-census.json`;
-module dependencies are in `analysis/module-scope.json`.
+Scope: the NoCD EXE pinned in `reccmp-project.yml`. DLL addresses require a
+module name.
+
+## Build and comparison
+
+- Wine's emulated i386 `link.exe` 7.10.3077 fails on any second input file:
+  `create_view: Assertion 'view->protect & VPROT_SYSTEM' failed`, then LNK1000
+  in Pass1. Debian Wine 8.0 fails on i386 and amd64 images alike; Wine 10.0
+  (trixie, i386) can't map `link.exe` at all (c0000018). One input links.
+  Native `lld-link` links instead. It ignores the MSVC 7.1 CodeView symbol and
+  line subsections, so reccmp can't pair annotations by line;
+  `build/reccmp.csv` names each annotation's linker symbol instead.
+- reccmp ends an original function at any `jmp [IAT]` it reads as an import
+  thunk, which cuts functions that tail-call an import. The reviewed sizes in
+  `config/functions.csv` prevent that.
+- reccmp copies a stub's extent to the original. A read-only stub stays one
+  word, because strings follow vtables in `.rdata` and would read as vtable
+  offsets. A writable stub spans to the next listed address, so
+  `gIntroProcess+4` (`hThread`, 0x007ca1e0) names the same variable twice.
+  Rows that share an address (`__SEH_prolog`, `gRtcInitializersBegin`/`End`)
+  share one stub.
+- reccmp reads `L"%s_%s.dmp"` (0x0071090c) as the narrow string "%" unless a
+  `// STRING:` annotation marks it.
+- All 72 former Clang-profile functions match under MSVC 7.1 with typedef-array
+  layout assertions. `sub_0040ea30` returns its byte field zero-extended
+  (MOVZX), so it returns `unsigned int`; Clang had hidden this.
+- Translation units (2026-11-22): the 427 functions are grouped into 140
+  address-adjacent units. Neighbours within 0x1000 bytes with the same build
+  flags share a unit; a unit splits where two drafts define the same class
+  differently. All 393 matches survived. The boundaries are hypotheses, not
+  recovered object files. Merging the conflicting partial class layouts is
+  open work.
 
 ## Source assumptions
 
-- The manifest pins reviewed spans. Their decoded bodies are contiguous and end
+- `config/functions.csv` pins reviewed spans. Their decoded bodies are contiguous and end
   in RET; reviewed branch targets stay within each span. Straight-line leaves
   also have aligned entries and INT3 padding. Ghidra names, prototypes, and class
   identities remain hypotheses. Local offsets do not identify classes.
@@ -20,18 +49,12 @@ module dependencies are in `analysis/module-scope.json`.
 - `sub_004c4b20` reads a child field at offset `0x214`. Child identity and alignment
   remain assumptions. `sub_00587080` computes a wrapped 32-bit address with stride
   `0x46c`; this representation needs review for a native port.
-- Target pointer-layout assertions apply to x86. Native host behavior tests use
-  host pointer sizes and do not establish the Windows ABI or floating-point state.
+- Pointer-layout assertions apply to x86 only.
 - EXE `0x00404da0` and `0x0041f080` use unresolved register inputs. Review their
   callers before assigning a standard C++ calling convention.
 
-- Clang 23.1.6 replaced 23.1.1 on 2026-11-21. Every Clang-profile match reproduces;
-  the two `make qualify` candidate probes still differ, as before.
-- Ghidra 12.2 replaced 12.1.4 on 2026-11-21. After two refinement passes, the EXE
-  census has 27,201 entry candidates (27,207 before) and pseudocode covers 26,508
-  functions in seven modules (26,642 before). MSVCP71 changed most: 125
-  noncontiguous bodies (13 before) and 56 cross-function jumps (271 before). The
-  matching project indexes 15,706 EXE functions.
+- A Ghidra 12.2 census found 27,201 EXE entry candidates, including thunks and
+  compiler helpers. It is not a count of source functions.
 
 ## Specific behavior
 
@@ -103,7 +126,7 @@ subsystem identities, each supported by matched bodies:
   node base at +4 (links +4/+8, owner +0xc); finalizers store their vtable
   constant, decrement owner+8, and tail-jump one of four identical 93-byte
   unlink methods (`sub_004477b0`/`sub_00447850`/`sub_004478f0`/
-  `sub_00447710`, manifest `source:null`). Vtables 0x70e964/0x70e970/
+  `sub_00447710`, stubs in `config/symbols.csv`). Vtables 0x70e964/0x70e970/
   0x70e97c/0x70e988 put the deleting finalizer in slot 0. `sub_0048cc90`
   (7 bytes) and `sub_0044cfe0` complete the logging-core neighborhood.
 - `sub_0046e0d0`-`sub_00471f90`: one screen/coordinate class with a 0x17c-byte
@@ -119,7 +142,7 @@ subsystem identities, each supported by matched bodies:
   (`sub_00499270` inlines `sub_00499180`'s reset). Outer nodes flag at +0x1d,
   inner nodes (list embedded at +0x10) at +0x2d. Recursive node-tree release
   `sub_00498ea0` and inner variant `sub_004432b0`, iterator `sub_00498010`
-  are manifest `source:null`. `sub_004995c0` seeds vtable 0x007137b4.
+  are stubs in `config/symbols.csv`. `sub_004995c0` seeds vtable 0x007137b4.
 
 New encoding levers proven on this artifact (wave 1):
 
@@ -278,21 +301,10 @@ verify packet listings against raw EXE bytes. MSVC 7.1 has no
 
 ## Startup subsystem (entry 0x006f0208)
 
-The checker resolves REL32 calls to manifest symbols and DIR32 `__imp_` imports
-(IAT slots and `FF 25` import thunks); relocation-free objects are unaffected.
-Both relocation forms retain their COFF addends. Resolution requires an
-undefined external symbol. DIR32 also resolves manifest functions used as data
-(callbacks) and compiler literals (`__real@` floats and doubles, `??_C@`
-strings): a literal takes the address the reference operand names, only when
-read-only reference data holds the same bytes there, and one literal name
-keeps one address across the run. Pools observed: 0.0f 0x00776a70, 1.0f
-0x00776a3c, -1.0f 0x00776a48, 2^32 0x00776a38, 254.0f 0x0072db70.
-Other object-local and common symbols remain unsupported.
-`make build` compiles drafts without extracting their code. Exact checks still
-reject extra code/data sections. Clang qualification uses the same resolver.
-MSVC SEH and C++ EH frames still need linker-aware checking: scope tables land
-in `.rdata`, funclets in `.text$x`, with `.xdata$x` funcinfo and
-`__CxxFrameHandler` references (see `sub_0040f9f0`).
+Float pools observed: 0.0f 0x00776a70, 1.0f 0x00776a3c, -1.0f 0x00776a48,
+2^32 0x00776a38, 254.0f 0x0072db70. MSVC SEH and C++ EH frames are not checked
+yet: scope tables land in `.rdata`, funclets in `.text$x`, with `.xdata$x`
+funcinfo and `__CxxFrameHandler` references (see `sub_0040f9f0`).
 
 Matched entry callees: `sub_006f078b` returns zero; `sub_006f0770`
 `__setdefaultprecision` calls the `_controlfp` thunk 0x006f0414 with
@@ -324,15 +336,14 @@ Raw boundary review includes code after early returns. `sub_00471110` ends
 after RET 0x10 at 0x0047160b (1,278 bytes); its return at 0x00471589 does not
 end the function. `sub_004807c0` ends after RET at 0x00480910 (337 bytes),
 and `sub_0059ee80` after RET at 0x0059eea4 (37 bytes). `sub_00411bc0` ends
-after RET 0xc at 0x00411c73 (182 bytes), before padding. The manifest uses
-these spans, rather than summed Ghidra body-range sizes.
+after RET 0xc at 0x00411c73 (182 bytes), before padding. `config/functions.csv`
+uses these spans, rather than summed Ghidra body-range sizes.
 
 ## Launch and crash startup helpers
 
 The reference build uses `/GS`: the cookie lives at 0x007c9410 and the check
 call targets `@__security_check_cookie@4` (fastcall decoration) at 0x006efe25.
-`config/globals.json` maps data symbols, so `/GS` functions compile with
-`"extra_flags": ["/GS"]`; `sub_00470f70` (the CRASHDUMP.TXT unhandled-exception
+`/GS` functions carry `// Build flags: /GS`; `sub_00470f70` (the CRASHDUMP.TXT unhandled-exception
 filter, 410 bytes) matches this way. Any function showing the cookie load or
 check call needs the flag; MSVC 7.1 is opt-in `/GS`.
 
@@ -391,7 +402,7 @@ deletes the object at 0x008cadb0), then releases the handles at +0x5c and +0x60
 through virtual slot 27 of `gObject00874618`. `sub_00446bd0` assigns the string at
 +0xd64 through the MSVCP71 `basic_string::operator=` import. MSVC 7.1 ends an
 argument list whose last parameter is a class type with `@@@Z`; check other
-manifest symbols with that shape.
+symbols with that shape.
 
 ## Shared objects and class files
 
@@ -409,31 +420,19 @@ Object00406a20 instance. `0x007aeb78` is a state object whose +8 word
 0x007b5a04 with stride 0xe8; the element class holds the five `sub_005c2f90`
 to `sub_005c3030` accessors.
 
-Likely merges that wait on test edits: Collection00416390 with Collection004163c0
-(the same receivers and a 0x74-byte record), and Reader004183d0 with
-Object004181e0. Nine sources are pinned by test includes or fixtures. Cross-profile
-pairs (`sub_00406a20` with `sub_004087a0`, `sub_004c4a70` with `sub_004c4b00`,
-`sub_004c41c0` with `sub_004c4240`) share receivers but stay split by compiler
-profile. Shared headers use `layout.h` assertions, which compile under both
-Clang and MSVC 7.1.
+Likely class merges: Collection00416390 with Collection004163c0 (the same
+receivers and a 0x74-byte record), Reader004183d0 with Object004181e0, and the
+receiver pairs `sub_00406a20`/`sub_004087a0`, `sub_004c4a70`/`sub_004c4b00`,
+and `sub_004c41c0`/`sub_004c4240`. Shared headers use `layout.h` assertions.
 
-## Module scope and function boundaries
-
-Use the separate census projects in `build/census/<sha256-prefix>/`. They do not
-change the matching project or function manifests. Every count is a count of
-machine-code entry candidates. It includes thunks, compiler helpers, and exception
-handlers. It cannot recover the number of original source functions or inlined
-functions. All unexplained code-section bytes remain in the coverage denominator.
-Computed-call totals include imports and virtual calls. A missing decoded call
-target does not by itself establish a missing game function.
+## Module scope
 
 The EXE loads the base HedgeHog3D and LocoMotion DLLs through `HH_Create` and
 `LM_Create`. EXE load sites are `sub_004b9450` and `sub_004b9640`; provider exports
 are `HedgeHog3D.dll:0x10006100` and `LocoMotion.dll:0x10029bc0`. Normal imports
 also require MSVCR71 and MSVCP71. EXE `sub_0041adf0` loads DBGHELP for crash dumps;
-DBGHELP imports MSVCRT. Launcher `sub_00417ae1` can load Unicows. Their supplied
-binaries have separate census and pseudocode outputs. Windows can load a system
-copy instead of a bundled DLL. Actual loaded paths remain untested.
+DBGHELP imports MSVCRT. Launcher `sub_00417ae1` can load Unicows. Windows can
+load a system copy instead of a bundled DLL. Actual loaded paths remain untested.
 
 The EXE has optional load code for NPClient at `0x004c69f8` and ParticleTweakerD
 at `0x005cfe5e`. Their binaries are missing and entry reachability is unresolved.
@@ -443,37 +442,3 @@ text, not a PE image; EXE `sub_00436dd0` parses it. The five base RBZ archives
 have no other DLL- or EXE-named members. Local import-name/ordinal checks found
 all 1,221 symbols across 13 edges in the supplied export tables; this does not
 establish ABI compatibility or runtime use.
-
-Reviewed corrections are in `config/census.json`. The imported operator delete
-returns; a false no-return contract truncated many EXE bodies. Seven text limits
-stop RTTI table scans before labels that resemble code addresses. A clean EXE
-census removed two false entries from text. Seven reviewed false splits join their
-owners. The `_onexit` callback at EXE `0x006f0726` has explicit startup evidence.
-Code/data corrections restore direct call targets, switch cases, loop paths, and
-epilogues. EXE `0x006e130c` and `0x005c2028` are RET followed by LEA padding;
-Ghidra falsely read each four-byte sequence as address `0x00498dc3`.
-
-The bounded branch scan follows both conditional paths and code after an early
-RET. It rejects indirect jumps, unknown direct-call targets, overlapping bodies,
-interior instruction targets and unexplained gaps. Each end must be 16-byte
-aligned or followed by complete INT3 alignment. Candidates need an aligned start
-after INT3 or a decoded RET. The scan collects adjacent chains in one batch.
-Ghidra must agree with each
-accepted body span. These limits leave unpadded entries, shared tails, exception
-handlers, and indirect flow for review. A complete scan is not an exact count.
-Keep LocoMotion `Catch@1003996e` and `Catch@1003997a` separate: the latter has a
-data reference from exception metadata at `0x1006212c` and calls `_CxxThrowException`.
-HedgeHog3D JMP `0x10005e8c` had a false CALL_RETURN override. Its target
-`0x10005f90` restores the frame and SEH chain of `0x10005cb0`. Both incoming
-branches belong to that owner. Restore the JMP and merge the false epilogue
-entry. The raw entry candidate at
-`HedgeHog3D.dll:0x10155a60` is inside PFMUL at `0x10155a5d`. LocoMotion has
-the same instruction sequence at `0x1004a05d`. The ModR/M byte 0xcc resembles
-INT3 padding. The Ghidra instruction-boundary check rejects both false entries.
-
-`make census-decompile` exports pseudocode for every current candidate in DLLs
-with supported load paths. It records failures per address. Export success does
-not prove correct types, boundaries, runtime behavior, or recovered C/C++.
-DLL source matching still needs module-qualified manifests and a module-aware
-checker. The current source checker selects the EXE. The full source link and
-Windows gameplay remain unproved.

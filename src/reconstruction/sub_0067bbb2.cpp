@@ -1,4 +1,4 @@
-// sub_0067bbb2: EXE 0x0067bbb2, 90 bytes. __thiscall member with two stack
+// sub_0067bbb2: __thiscall member with two stack
 // words (RET 8): (node index, value).
 //
 // Accumulates a value range along a chain in the node table at this+0x14.
@@ -15,7 +15,6 @@
 // The compare-then-load interleave at the minimum update and the absence of
 // loop alignment padding come from the file-local size pragma.
 
-#pragma optimize("s", on)
 
 class Object0067bbb2 {
 public:
@@ -52,6 +51,8 @@ public:
     void sub_0067bc0c(unsigned int index, unsigned int value);
 };
 
+#pragma optimize("s", on)
+// FUNCTION: RBR 0x0067bbb2
 void Object0067bbb2::sub_0067bbb2(unsigned int index, unsigned int value) {
     for (;;) {
         Node *node = field_14[index];
@@ -73,3 +74,4 @@ void Object0067bbb2::sub_0067bbb2(unsigned int index, unsigned int value) {
         index = node->field_08;
     }
 }
+#pragma optimize("", on)

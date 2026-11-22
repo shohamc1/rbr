@@ -1,4 +1,4 @@
-// sub_00499180: EXE 0x00499180, 43 bytes. __thiscall, no stack args.
+// sub_00499180: __thiscall, no stack args.
 // Resets an intrusive hierarchical list: field_04 is the sentinel node and
 // field_08 the count. Releases the node tree rooted at sentinel->field_04
 // through sub_00498ea0 (recursive walk; sibling chain +0, child chain +8,
@@ -27,6 +27,7 @@ struct Object00499180 {
     void sub_00499180();
 };
 
+// FUNCTION: RBR 0x00499180
 void Object00499180::sub_00499180()
 {
     ((Object00498ea0*)this)->sub_00498ea0(field_04->field_04);

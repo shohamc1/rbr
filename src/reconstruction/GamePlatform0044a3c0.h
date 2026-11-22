@@ -1,15 +1,15 @@
-// GamePlatform0044a3c0: the 0x1bd0-byte platform object that game main
+// GamePlatform0044a3c0 is the 0x1bd0-byte platform object that game main
 // (sub_00471110) allocates with sub_006efa32(0x1bd0) at 0x004713e0, constructs
 // with sub_0044a3c0 and stores in the global at 0x007ca2a0 (0x00471404).
 //
-// Merge evidence for one class: the manifest symbols for sub_0044a3c0,
+// Merge evidence for one class: the linker symbols for sub_0044a3c0,
 // sub_00446bd0, sub_00479e00, sub_0047e860, sub_0047eb00 and sub_004807c0
 // already name GamePlatform0044a3c0. The global at 0x007ca2a0 is the `this`
 // of every method below. Game main loads it for sub_00446bd0 (0x00471435) and
 // sub_00479e00 (0x0047159d). Other EXE code loads the same global for
 // sub_0047a0a0 (49 call sites, for example 0x00477e64), sub_0047a1f0 (3) and
 // sub_0047a460 (9, for example 0x0052f923). The compiler profiles differ per
-// method, so this header builds under both Clang and MSVC 7.1.
+// method, so this header builds under MSVC 7.1.
 //
 // Names are hypotheses. sub_0047a0a0 returns the address of the byte at
 // +0x70; callers such as 0x00557f3f pass it as `this` to sub_004837b0, so

@@ -8,7 +8,7 @@
 //
 // MSVC 7.1 has no source form for an EDI register argument, so the callee is
 // declared cdecl with a stack argument: the only decoration the checker's
-// REL32 resolver accepts for the manifest symbol. This keeps the handler
+// REL32 resolver accepts for the linker symbol. This keeps the handler
 // live so the optimizer reserves ESI and EBX as in the reference; the draft
 // stays nonmatching on the EDI handoff bytes (57/8B FE/5F) and on the
 // caller-side stack cleanup the register form avoids.
@@ -23,6 +23,8 @@ int __cdecl sub_0041c820();  // default diagnostics handler
 extern void* gDiagnosticsFile; // FILE*, EXE .data 0x016e3044
 }
 
+// NONMATCHING
+// FUNCTION: RBR 0x0041c8a0
 extern "C" int __cdecl sub_0041c8a0(DiagnosticsHandler* handler) {
     if (!handler) {
         gDiagnosticsFile = fopen("Diagnostics.txt", "wt");

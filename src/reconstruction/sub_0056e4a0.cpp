@@ -1,4 +1,4 @@
-// sub_0056e4a0: EXE 0x0056e4a0, 72 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_0056e4a0: MSVC 7.1 (/O2 /Zl).
 //
 // Quickrace session-state handler, thiscall member with no stack arguments
 // (bare RET), the tail target of the cdecl event thunk sub_005524f0, which
@@ -53,6 +53,7 @@ public:
     void sub_0056d380(unsigned int callback, unsigned int flag);  // 0x0056d380
 };
 
+// FUNCTION: RBR 0x0056e4a0
 void Object0056e4a0::sub_0056e4a0() {
     switch (gObject007a1184->sub_slot30()) {
     case 3:

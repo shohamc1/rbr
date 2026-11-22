@@ -1,4 +1,4 @@
-// sub_0051c000: EXE 0x0051c000, 93 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_0051c000: MSVC 7.1 (/O2 /Zl).
 //
 // Range culling test on a scene-graph node: returns 1 when the vector at
 // +0x190 is shorter than the inner radius read from *(this+0x34)+0x15c, or
@@ -29,6 +29,7 @@ public:
     int sub_0051c000();
 };
 
+// FUNCTION: RBR 0x0051c000
 int Object0051c000::sub_0051c000() {
     float inner = *(float *)((char *)field_34 + 0x15c);
     if (((Object00471790 *)((char *)this + 0x190))->sub_00471790() < inner) {

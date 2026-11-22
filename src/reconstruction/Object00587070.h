@@ -6,9 +6,7 @@
 // 0x0054f071) and sub_005877e0 (12, for example 0x0058d62b). Function
 // 0x00555c60 calls sub_00587080 (0x00555cb1) and sub_00587070 (0x00555d03) on
 // it. sub_00587070 returns the array base, and the returned pointer is the
-// `this` of Object00586c20 methods (see Object00586c20.cpp). The compiler
-// profile differs per method, so this header builds under both Clang and
-// MSVC 7.1. sub_00587830, called with the same ECX at 0x0058d79c, is a free
+// `this` of Object00586c20 methods (see Unit00586c20.cpp). sub_00587830, called with the same ECX at 0x0058d79c, is a free
 // function and stays outside the class. Names are hypotheses.
 #pragma once
 

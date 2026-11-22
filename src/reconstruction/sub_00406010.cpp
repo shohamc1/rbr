@@ -1,4 +1,4 @@
-// sub_00406010: EXE 0x00406010, 48 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_00406010: MSVC 7.1 (/O2 /Zl).
 //
 // Dispatch loop: calls the same __thiscall member on consecutive elements of
 // a stride-addressed array. Arguments: first element, byte stride, element
@@ -16,6 +16,7 @@ public:
     void member00406010();
 };
 
+// FUNCTION: RBR 0x00406010
 extern "C" void __stdcall sub_00406010(Element00406010* element, int stride, int count,
                                        void (Element00406010::*method)()) {
     while (--count >= 0) {

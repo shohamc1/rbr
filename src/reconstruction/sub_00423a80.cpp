@@ -1,4 +1,4 @@
-// sub_00423a80: EXE 0x00423a80, 28 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_00423a80: MSVC 7.1 (/O2 /Zl).
 //
 // Register-argument forwarder: __stdcall with four stack words (mangled
 // _sub_00423a80@16) whose address is stored into the callback record built
@@ -14,6 +14,7 @@ extern "C" void __fastcall sub_00423d50(void* self, void* arg_edx, void* global_
 
 extern "C" void* gObject016e3050; // EXE .data 0x016e3050
 
+// FUNCTION: RBR 0x00423a80
 extern "C" void __stdcall sub_00423a80(void* arg1, void* arg2, void* arg3, void* arg4) {
     sub_00423d50(arg2, arg1, gObject016e3050, arg3);
 }

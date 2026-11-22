@@ -1,3 +1,4 @@
+#include "layout.h"
 // Object0048af80: an object with two float fields.
 //
 // Merge evidence: in functions 0x0053d7f0 and 0x0053d9d0 one `mov ecx,esi`
@@ -12,8 +13,11 @@ struct Object0048af80 {
     float sub_0048af80();
     float sub_0048af90();
 };
-static_assert(__builtin_offsetof(Object0048af80, field_80) == 0x80, "field offset");
-static_assert(__builtin_offsetof(Object0048af80, field_84) == 0x84, "field offset");
+LAYOUT_OFFSET(Object0048af80, field_80, 0x80);
+LAYOUT_OFFSET(Object0048af80, field_84, 0x84);
 
+// FUNCTION: RBR 0x0048af80
 float Object0048af80::sub_0048af80() { return field_80; }
+
+// FUNCTION: RBR 0x0048af90
 float Object0048af80::sub_0048af90() { return field_84; }

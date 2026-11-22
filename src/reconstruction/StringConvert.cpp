@@ -8,6 +8,8 @@ typedef unsigned short u16;
 // Narrows a NUL-terminated 16-bit string into an 8-bit buffer. A character with
 // any bit set in 0xff00 becomes 0xff. Returns the destination, which the
 // reference keeps in EAX.
+
+// FUNCTION: RBR 0x0059e9d0
 extern "C" char* __cdecl sub_0059e9d0(const u16* source, char* destination) {
     char* out = destination;
     u16 c = *source;
@@ -27,6 +29,7 @@ extern "C" char* __cdecl sub_0059e9d0(const u16* source, char* destination) {
 
 // Widens a NUL-terminated 8-bit string into a 16-bit buffer. Returns the
 // destination.
+// FUNCTION: RBR 0x0059ee80
 extern "C" u16* __cdecl sub_0059ee80(const char* source, u16* destination) {
     u16* out = destination;
     do {

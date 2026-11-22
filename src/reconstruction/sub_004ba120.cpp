@@ -1,4 +1,4 @@
-// sub_004ba120: EXE 0x004ba120, 17 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_004ba120: MSVC 7.1 (/O2 /Zl).
 //
 // thiscall member with one cdecl stack argument (RET 4), dword return.
 // Indexes the container object at 0x00874618 (see the matched callers
@@ -21,6 +21,7 @@ public:
 
 typedef char Record004ba120_size[(sizeof(Record004ba120) == 0x1c) ? 1 : -1];
 
+// FUNCTION: RBR 0x004ba120
 Record004ba120* Object004ba120::sub_004ba120(unsigned int index) {
     return (Record004ba120*)((char*)this + 0x14c) + index;
 }

@@ -1,4 +1,4 @@
-// sub_0046e250: EXE 0x0046e250, 28 bytes. __thiscall member, one int
+// sub_0046e250: __thiscall member, one int
 // parameter, float return on the x87 stack (RET 0x4).
 //
 // Virtual slot 0x64 of the screen/coordinate class whose dispatch table is
@@ -44,6 +44,7 @@ public:
     float sub_0046e250(int index);
 };
 
+// FUNCTION: RBR 0x0046e250
 float Object0046e250::sub_0046e250(int index) {
     return vslot150(vslot6c(index));
 }

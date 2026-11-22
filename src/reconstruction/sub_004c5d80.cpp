@@ -1,4 +1,4 @@
-// sub_004c5d80: EXE 0x004c5d80, 77 bytes. __thiscall member (ECX = this)
+// sub_004c5d80: __thiscall member (ECX = this)
 // with one reference argument (RET 4).
 //
 // push_back-style append for the 0x004c5dxx container: +4 is the element
@@ -22,6 +22,8 @@ public:
     void sub_004c5d80(const unsigned int &value);
 };
 
+// NONMATCHING
+// FUNCTION: RBR 0x004c5d80
 void Object004c5d80::sub_004c5d80(const unsigned int &value) {
     unsigned int size;
     unsigned int capacity;

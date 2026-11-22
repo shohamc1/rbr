@@ -1,4 +1,4 @@
-// sub_00464010: EXE 0x00464010, 76 bytes. __thiscall three-float subtract
+// sub_00464010: __thiscall three-float subtract
 // returning the four-float record by value: ECX is the left operand, the
 // hidden return-slot pointer is the first stack argument ([EBP+8]), the
 // right operand pointer is the second ([EBP+0xc]). RET 8.
@@ -20,6 +20,7 @@ public:
     Object00464010 sub_00464010(const Object00464010& other);
 };
 
+// FUNCTION: RBR 0x00464010
 Object00464010 Object00464010::sub_00464010(const Object00464010& other) {
     Object00464010 result;
     result.field_00 = field_00 - other.field_00;

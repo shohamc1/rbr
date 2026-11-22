@@ -1,4 +1,6 @@
-// sub_00464080: EXE 0x00464080, 41 bytes. Copy constructor, __thiscall with
+// Build flags: /arch:SSE
+
+// sub_00464080: Copy constructor, __thiscall with
 // one stack argument (the source), returns this in EAX.
 //
 // Copies the 0x30-byte float record with three MOVUPS load/store pairs:
@@ -38,6 +40,8 @@ public:
     Object00464080(const Object00464080& other);
 };
 
+// NONMATCHING
+// FUNCTION: RBR 0x00464080
 Object00464080::Object00464080(const Object00464080& other) {
     _mm_storeu_ps(&field_00[0], _mm_loadu_ps(&other.field_00[0]));
     _mm_storeu_ps(&field_00[4], _mm_loadu_ps(&other.field_00[4]));

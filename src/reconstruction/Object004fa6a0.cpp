@@ -1,3 +1,4 @@
+#include "layout.h"
 // Object004fa6a0: the member object at offset 0x58 of the object that
 // function 0x00527420 receives in ECX.
 //
@@ -12,8 +13,11 @@ struct Object004fa6a0 {
     unsigned int sub_004fa6a0();
     unsigned int sub_004fa6b0();
 };
-static_assert(__builtin_offsetof(Object004fa6a0, field_04) == 4, "field offset");
-static_assert(__builtin_offsetof(Object004fa6a0, field_08) == 8, "field offset");
+LAYOUT_OFFSET(Object004fa6a0, field_04, 4);
+LAYOUT_OFFSET(Object004fa6a0, field_08, 8);
 
+// FUNCTION: RBR 0x004fa6a0
 unsigned int Object004fa6a0::sub_004fa6a0() { return field_04; }
+
+// FUNCTION: RBR 0x004fa6b0
 unsigned int Object004fa6a0::sub_004fa6b0() { return field_08; }

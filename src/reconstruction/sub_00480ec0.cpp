@@ -1,4 +1,6 @@
-// sub_00480ec0: EXE 0x00480ec0, 46 bytes. __thiscall member with two stack
+// Build flags: /arch:SSE
+
+// sub_00480ec0: __thiscall member with two stack
 // arguments (RET 8), returns this in EAX.
 //
 // Scaled add on the 16-byte float record: this += v * t as one packed SSE
@@ -39,6 +41,8 @@ public:
     Object00480ec0* sub_00480ec0(const Object00480ec0* v, float t);
 };
 
+// NONMATCHING
+// FUNCTION: RBR 0x00480ec0
 Object00480ec0* Object00480ec0::sub_00480ec0(const Object00480ec0* v, float t) {
     float* volatile dst = field_00;
     __m128 vv = _mm_loadu_ps(v->field_00);

@@ -1,4 +1,4 @@
-// sub_0048f500: EXE 0x0048f500, 16 bytes. Byte-identical sibling of the
+// sub_0048f500: Byte-identical sibling of the
 // finalizer body sub_0048f4f0 (same node layout at +0, same 93-byte external
 // unlink sub_00454ab0, only the JMP immediate differs by the address gap).
 // Both look like COMDAT copies of one template instantiation for two classes.
@@ -19,6 +19,7 @@ public:
     void sub_0048f500();
 };
 
+// FUNCTION: RBR 0x0048f500
 void Object0048f500::sub_0048f500() {
     Node0048f4f0 &node = *this;
     if (node.field_08 != 0) {

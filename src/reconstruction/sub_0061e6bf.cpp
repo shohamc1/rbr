@@ -1,4 +1,4 @@
-// sub_0061e6bf: EXE 0x0061e6bf, 122 bytes. MSVC 7.1 (/O2 /Zl) with the
+// sub_0061e6bf: MSVC 7.1 (/O2 /Zl) with the
 // file-local size pragma (POP ECX cleanups, per-iteration state reloads).
 //
 // Derived teardown member of the Object0061d989 hierarchy: stores the
@@ -11,7 +11,6 @@
 // sub_0061d989 with this in ECX. __thiscall, no stack arguments. Callers:
 // 0x00627fec, 0x00628754, 0x00628788, 0x006287bc, 0x006287f0, 0x00628824.
 
-#pragma optimize("s", on)
 
 extern "C" const void* const gVtable007340d4[]; // EXE .rdata 0x007340d4
 
@@ -39,6 +38,8 @@ public:
     void sub_0061e6bf();
 };
 
+#pragma optimize("s", on)
+// FUNCTION: RBR 0x0061e6bf
 void Object0061e6bf::sub_0061e6bf() {
     vtable_00 = (void*)gVtable007340d4;
     if (field_f4 != 0) {
@@ -57,3 +58,4 @@ void Object0061e6bf::sub_0061e6bf() {
     sub_006efdd0(field_f8);
     ((Object0061d989*)this)->sub_0061d989();
 }
+#pragma optimize("", on)

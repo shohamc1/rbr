@@ -1,10 +1,10 @@
-// sub_004a6070: EXE 0x004a6070, 16 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_004a6070: MSVC 7.1 (/O2 /Zl).
 //
 // Byte-identical twin of sub_004a6060 at 0x004a6060 (same 16 bytes, no
 // incoming references). thiscall member, no stack args: when the owning
 // container pointer at +0x08 is non-null, decrements the container count at
 // its +0x08 and tail-jumps into the gap-closing unlink sub_00454870
-// (byte-identical second copy of sub_00453b50's body, manifest source:null)
+// (byte-identical second copy of sub_00453b50's body, stub in config/symbols.csv)
 // with ECX still holding this receiver. Receiver layout: intrusive-node
 // triple {next +0, prev +4, owner +8}.
 
@@ -33,6 +33,7 @@ public:
     void sub_004a6070();
 };
 
+// FUNCTION: RBR 0x004a6070
 void Object004a6070::sub_004a6070()
 {
     if (field_08 != 0) {

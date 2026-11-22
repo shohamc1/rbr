@@ -1,4 +1,4 @@
-// sub_00569f70: EXE 0x00569f70, 108 bytes. __cdecl callback (caller
+// sub_00569f70: __cdecl callback (caller
 // 0x004c53ca) in the quickrace event neighborhood. Reads the game platform
 // instance at 0x007ca2a0 (GamePlatform0044a3c0) and switches on its dword at
 // +0x728:
@@ -10,7 +10,7 @@
 // element's +0xc holder (holder->first->slot_58) — the sequences stay
 // duplicated, the branches join only at the result move — and reloads its
 // container pointer. If the container's field at +0xc equals the element,
-// sub_0056f440 runs on it (ECX carried from the reload; its manifest class
+// sub_0056f440 runs on it (ECX carried from the reload; its class
 // is the shared Object0056f440). A nonzero slot-0x58 result is tail-jumped
 // into sub_00569d50 with ECX = result.
 // Compiled with MSVC 7.1 (/O2 /Zl).
@@ -66,9 +66,10 @@ extern "C" Container00569f70* gObject0163f0a8;    // EXE .data 0x0163f0a8
 
 class Object0056f440 {
 public:
-    void sub_0056f440();   // EXE 0x0056f440, shared manifest class
+    void sub_0056f440();   // EXE 0x0056f440, shared class
 };
 
+// FUNCTION: RBR 0x00569f70
 extern "C" void __cdecl sub_00569f70() {
     Container00569f70 *container;
     Element00569f70 *element;

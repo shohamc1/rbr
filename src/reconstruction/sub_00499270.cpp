@@ -1,4 +1,4 @@
-// sub_00499270: EXE 0x00499270, 119 bytes. __thiscall, no stack args.
+// sub_00499270: __thiscall, no stack args.
 // Clear-all for the same hierarchical list type as sub_00499180 (field_04
 // sentinel, field_08 count). Walks the ring of nodes linked from
 // sentinel->field_00; each node carries an embedded list of its own at +0x10.
@@ -50,6 +50,7 @@ struct Object00499270 {
     void sub_00499270();
 };
 
+// FUNCTION: RBR 0x00499270
 void Object00499270::sub_00499270()
 {
     Node00499270* cursor = field_04->field_00;

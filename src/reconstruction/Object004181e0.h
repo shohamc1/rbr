@@ -6,7 +6,7 @@
 // sub_00418590 (0x0046d0f4, 0x0046d10f) on the same stack slot, with ESP
 // adjusted for the pushes in between. sub_004181e0 zeroes field_04, the word
 // the other two read and write. The compiler profile differs per method, so
-// this header builds under both Clang and MSVC 7.1. Names are hypotheses.
+// this header builds under MSVC 7.1. Names are hypotheses.
 #pragma once
 
 #include "layout.h"

@@ -17,6 +17,8 @@ extern "C" unsigned char gIntroRunning;      // EXE .data 0x007ca1ec
 // forever on the intro child process handle at 0x007ca1dc, closes both child
 // handles (0x007ca1dc process, 0x007ca1e0 thread) from that PROCESS_INFORMATION
 // record, and clears the flag. __cdecl, no parameters, bare RET.
+
+// FUNCTION: RBR 0x00470e60
 extern "C" void __cdecl sub_00470e60() {
     if (gIntroRunning) {
         WaitForSingleObject(gIntroProcess.hProcess, (unsigned long)-1);
@@ -40,6 +42,8 @@ extern "C" void __cdecl sub_00470e60() {
 // and aggregate inits, memset-on-literal expansions, struct value-init,
 // statement reorders, and #pragma optimize("s") (EBP frame; wrong).
 
+// NONMATCHING
+// FUNCTION: RBR 0x00470ea0
 extern "C" void __cdecl sub_00470ea0() {
     StartupInfoA si;
     memset(&si, 0, sizeof(si));
@@ -56,6 +60,7 @@ extern "C" void __cdecl sub_00470ea0() {
 
 // Launches "RBR Startup.exe" (literal command line at 0x007108dc) and closes
 // both child handles. Called by game main sub_00471110.
+// FUNCTION: RBR 0x00470f00
 extern "C" bool __cdecl sub_00470f00() {
     StartupInfoA startup_info;
     ProcessInformation process_info;

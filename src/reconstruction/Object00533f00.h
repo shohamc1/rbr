@@ -7,7 +7,7 @@
 // 0x0047de85, 0x0048449a, 0x0056386f). The field at +8 is a state word:
 // sub_005341e0 stores it and sub_005342a0 and sub_00534390 compare it with 0
 // and 5. The compiler profile differs per method, so this header builds
-// under both Clang and MSVC 7.1. Names are hypotheses.
+// under MSVC 7.1. Names are hypotheses.
 #pragma once
 
 #include "layout.h"

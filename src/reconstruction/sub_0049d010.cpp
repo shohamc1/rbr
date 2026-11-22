@@ -1,4 +1,4 @@
-// sub_0049d010: EXE 0x0049d010, 40 bytes. __thiscall, one stack word (RET 4).
+// sub_0049d010: __thiscall, one stack word (RET 4).
 // Finds the first null slot among the sixteen pointers at this->field_30,
 // stores the argument there, and returns 1; returns 0 when all are taken.
 // The scan walks a running pointer while the one-shot store stays indexed off
@@ -10,6 +10,7 @@ struct Object0049d010 {
     int sub_0049d010(void* value);
 };
 
+// FUNCTION: RBR 0x0049d010
 int Object0049d010::sub_0049d010(void* value)
 {
     unsigned int index = 0;

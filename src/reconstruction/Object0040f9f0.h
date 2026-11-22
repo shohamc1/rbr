@@ -1,6 +1,6 @@
 // Ini reader holder: a 4-byte object that owns a 0x40-byte reader block.
 //
-// Merge evidence for one class: the manifest symbols for sub_0040f9f0,
+// Merge evidence for one class: the linker symbols for sub_0040f9f0,
 // sub_0040fa60, sub_0040fb60 and sub_004100e0 all use Object0040f9f0, and
 // callers pass the same stack object to the constructor and the release. In
 // the EXE function at 0x0044af60, `lea ecx,[ebp-0x84]` feeds both

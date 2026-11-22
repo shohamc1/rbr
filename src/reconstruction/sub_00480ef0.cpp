@@ -1,4 +1,6 @@
-// sub_00480ef0: EXE 0x00480ef0, 47 bytes. __thiscall member with two stack
+// Build flags: /arch:SSE
+
+// sub_00480ef0: __thiscall member with two stack
 // arguments (RET 8), returns this in EAX.
 //
 // Packed lerp on the 16-byte float record: this = this + (v - this) * t as
@@ -41,6 +43,8 @@ public:
     Object00480ef0* sub_00480ef0(const Object00480ef0* v, float t);
 };
 
+// NONMATCHING
+// FUNCTION: RBR 0x00480ef0
 Object00480ef0* Object00480ef0::sub_00480ef0(const Object00480ef0* v, float t) {
     float* volatile dst = field_00;
     __m128 tt = _mm_set_ps1(t);

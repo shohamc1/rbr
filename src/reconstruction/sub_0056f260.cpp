@@ -1,4 +1,4 @@
-// sub_0056f260: EXE 0x0056f260, 10 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_0056f260: MSVC 7.1 (/O2 /Zl).
 //
 // thiscall setter with one cdecl stack argument (RET 4) of the quickrace
 // name-format object at EXE 0x007b184c: stores the argument at +0x10.
@@ -15,6 +15,7 @@ public:
     void sub_0056f260(const char* name);
 };
 
+// FUNCTION: RBR 0x0056f260
 void Object0056f250::sub_0056f260(const char* name) {
     field_10 = name;
 }

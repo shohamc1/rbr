@@ -1,4 +1,4 @@
-// sub_0067bc0c: EXE 0x0067bc0c, 95 bytes. __thiscall member with two stack
+// sub_0067bc0c: __thiscall member with two stack
 // words (RET 8): (node index, value). Same receiver class as sub_0067bbb2
 // (Object0067bbb2), which this member calls on this at the end.
 //
@@ -14,7 +14,6 @@
 // The re-pushed second argument from [ESP+8] at the tail call and the pops
 // scheduled around the final compare come from the file-local size pragma.
 
-#pragma optimize("s", on)
 
 class Object0067bbb2 {
 public:
@@ -51,6 +50,8 @@ public:
     void sub_0067bc0c(unsigned int index, unsigned int value);
 };
 
+#pragma optimize("s", on)
+// FUNCTION: RBR 0x0067bc0c
 void Object0067bbb2::sub_0067bc0c(unsigned int index, unsigned int value) {
     Node *node = field_14[index];
     Record *record = field_10[node->field_04];
@@ -67,3 +68,4 @@ void Object0067bbb2::sub_0067bc0c(unsigned int index, unsigned int value) {
     if (node->field_14 != 0xffffffffu)
         sub_0067bbb2(node->field_14, value);
 }
+#pragma optimize("", on)

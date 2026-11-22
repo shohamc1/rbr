@@ -10,7 +10,7 @@
 // (0x004b9fc6) and sub_0040eb90 (0x00533f2d). The field offsets do not
 // overlap, and the pointer at +0x6e4 is shared by sub_0040ea00 and
 // sub_0040eb90. The compiler profile differs per method, so this header builds
-// under both Clang and MSVC 7.1.
+// under MSVC 7.1.
 //
 // Names are hypotheses. sub_00471110 uses sub_0040e570 as a window handle
 // source for SetForegroundWindow and SetFocus; the rest are unnamed.
@@ -72,7 +72,7 @@ struct Object0040e570 {
     unsigned int sub_0040e930();
     unsigned char* sub_0040e9e0();
     void sub_0040ea00();
-    unsigned char sub_0040ea30();
+    unsigned int sub_0040ea30();
     unsigned char sub_0040eb90();
 };
 

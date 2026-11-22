@@ -1,0 +1,10 @@
+targets:
+  RBR:
+    filename: richardburnsrally.exe
+    source_root: src
+    hash:
+      sha256: 2b871c95a1ed669b249a9628497173b75bc7245feba0b820ac5a3929c57494a0
+    data_sources:
+      - config/symbols.csv
+      - config/functions.csv
+      - build/reccmp.csv

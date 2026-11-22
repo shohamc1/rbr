@@ -1,5 +1,5 @@
-// sub_005b02a0: EXE 0x005b02a0, 8 bytes. this-adjust thunk: ECX += 0x5c and
-// a tail jump to sub_00492520 (0x00492520, 82 bytes, not in the manifest), a
+// sub_005b02a0: this-adjust thunk: ECX += 0x5c and
+// a tail jump to sub_00492520 (0x00492520, 82 bytes, not in config/functions.csv), a
 // __thiscall member that returns a pointer (error string 0x713150 /
 // 0x7131b0 or the cached entry at this+4) for the global object at
 // 0x00872c40. The thunk's address is stored in data at 0x0072d994, so it is
@@ -17,6 +17,7 @@ struct Object005b02a0 {
     void sub_005b02a0();
 };
 
+// FUNCTION: RBR 0x005b02a0
 void Object005b02a0::sub_005b02a0() {
     field_5c.sub_00492520();
 }

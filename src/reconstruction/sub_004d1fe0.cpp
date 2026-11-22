@@ -1,4 +1,4 @@
-// sub_004d1fe0: EXE 0x004d1fe0, 26 bytes. thiscall member with two stack
+// sub_004d1fe0: thiscall member with two stack
 // arguments (RET 8): a record pointer and a float scale.
 //
 // Converts the record's int field at +0xc to float (FILD), multiplies by
@@ -12,6 +12,7 @@ public:
     void sub_004d1fe0(void *record, float scale);
 };
 
+// FUNCTION: RBR 0x004d1fe0
 void Object004d1fe0::sub_004d1fe0(void *record, float scale) {
     *(int *)((char *)this + 0x14) =
         (int)(*(int *)((char *)record + 0xc) * scale);

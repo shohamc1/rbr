@@ -1,4 +1,4 @@
-// sub_0045aa10: EXE 0x0045aa10, 10 bytes. __thiscall member with no stack
+// sub_0045aa10: __thiscall member with no stack
 // arguments, plain RET. Its address is stored as data at 0x0045aa26 (by the
 // initializer at 0x0045aa20, alongside 0x00452490), 0x0045d8c8, 0x0046165e,
 // and 0x006f1f50, so it is dispatched through a pointer. Forwards the
@@ -16,6 +16,7 @@ public:
     void sub_0045aa10();
 };
 
+// FUNCTION: RBR 0x0045aa10
 void Object0045aa10::sub_0045aa10() {
     sub_00456450(field_0c);
 }

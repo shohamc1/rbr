@@ -1,4 +1,6 @@
-// sub_00464060: EXE 0x00464060, 29 bytes. Default constructor, __thiscall,
+// Build flags: /arch:SSE
+
+// sub_00464060: Default constructor, __thiscall,
 // no parameters, returns this in EAX.
 //
 // Zeroes the 64-byte float record (a 4x4-float matrix) with XORPS plus four
@@ -30,6 +32,8 @@ public:
     Object00464060();
 };
 
+// NONMATCHING
+// FUNCTION: RBR 0x00464060
 Object00464060::Object00464060() {
     __m128 zero = _mm_setzero_ps();
     _mm_storeu_ps(&field_00[0], zero);

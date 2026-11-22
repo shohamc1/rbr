@@ -1,4 +1,6 @@
-// sub_0061decb: EXE 0x0061decb, 85 bytes. MSVC 7.1 (/O2 /Zl /Oy-).
+// Build flags: /Oy-
+
+// sub_0061decb: MSVC 7.1 (/O2 /Zl /Oy-).
 //
 // Color unpack member returning this: writes the four bytes of the packed
 // color argument to *this as floats scaled by 1/255 (gColorScale0070e9ec)
@@ -21,6 +23,7 @@ public:
     Object0061decb* sub_0061decb(unsigned int packed);
 };
 
+// FUNCTION: RBR 0x0061decb
 Object0061decb* Object0061decb::sub_0061decb(unsigned int packed) {
     float scale = gColorScale0070e9ec;
     field_00[0] = (float)(unsigned char)(packed >> 16) * scale;

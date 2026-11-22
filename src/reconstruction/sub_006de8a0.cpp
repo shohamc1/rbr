@@ -1,3 +1,4 @@
+#include "layout.h"
 struct State006de8a0 {
     float unknown_00[3];
     float bias[24];
@@ -11,19 +12,12 @@ struct Context006de8a0 {
     const float** mapped;
 };
 
-#if defined(_MSC_VER)
-#define OFFSET(type, member) ((unsigned int)&(((type*)0)->member))
-#else
-#define OFFSET(type, member) __builtin_offsetof(type, member)
-#endif
-typedef char state_bias_offset[(OFFSET(State006de8a0, bias) == 0x0c) ? 1 : -1];
-typedef char state_maximum_offset[(OFFSET(State006de8a0, maximum) == 0x6c) ? 1 : -1];
-#if defined(_M_IX86) || defined(__i386__)
-typedef char context_state_offset[(OFFSET(Context006de8a0, state) == 4) ? 1 : -1];
-typedef char context_mapped_offset[(OFFSET(Context006de8a0, mapped) == 0x0c) ? 1 : -1];
-#endif
-#undef OFFSET
+LAYOUT_OFFSET(State006de8a0, bias, 0x0c);
+LAYOUT_OFFSET(State006de8a0, maximum, 0x6c);
+LAYOUT_OFFSET(Context006de8a0, state, 4);
+LAYOUT_OFFSET(Context006de8a0, mapped, 0x0c);
 
+// FUNCTION: RBR 0x006de8a0
 extern "C" void sub_006de8a0(Context006de8a0* context, const float* delta,
                               const float* source, int channel, float* output) {
     const int count = context->count;

@@ -1,3 +1,5 @@
+// Build flags: /GS
+
 // Unhandled-exception filter installed by game main (sub_00471110) as the
 // literal 0x00470f70 for SetUnhandledExceptionFilter. Writes CRASHDUMP.TXT
 // ("exceptionhandler called!!"), builds "<computer>_<date>.dmp" from the
@@ -7,11 +9,11 @@
 // (EXCEPTION_EXECUTE_HANDLER).
 //
 // The 0x1e1c-byte frame exceeds one page, so the compiler emits the __chkstk
-// probe resolved by the manifest symbol at 0x006f00e0. Format strings and
+// probe resolved by the linker symbol at 0x006f00e0. Format strings and
 // file names are literal .rdata addresses pushed as immediates; they stay
 // literal casts to avoid extern data symbols.
 //
-// The manifest enables /GS for the cookie at EXE 0x007c9410 and the check
+// The build flags enable /GS for the cookie at EXE 0x007c9410 and the check
 // at 0x006efe25. It also pins the helper addresses used by REL32 calls.
 
 // This MSVC 7.1 package has no native wchar_t without CRT headers.
@@ -44,6 +46,7 @@ extern "C" void __cdecl sub_0059e9d0(const wchar_t* source, char* destination);
 extern "C" void __stdcall sub_0041af00(int kind, const wchar_t* fileName,
                                        unsigned long threadId, void* exceptionInfo);
 
+// FUNCTION: RBR 0x00470f70
 extern "C" int __stdcall sub_00470f70(void* exceptionInfo) {
     wchar_t computerNameWide[1024];  // widest buffer, ends at the /GS cookie slot
     char computerName[1024];         // GetComputerNameA buffer
@@ -74,6 +77,7 @@ extern "C" int __stdcall sub_00470f70(void* exceptionInfo) {
     sub_0059ee80(computerName, computerNameWide);
     sub_0059ee80(dateText, dateWide);
     sub_0059ee80(emptyName, emptyWide);
+    // STRING: RBR 0x0071090c
     swprintf(fileNameWide, L"%s_%s.dmp", computerNameWide, dateWide);
     file = fopen("CRASHDUMP.TXT", "wt");
     if (file != 0) {

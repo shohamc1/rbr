@@ -1,4 +1,6 @@
-// sub_00463ff0: EXE 0x00463ff0, 17 bytes. Default constructor, __thiscall,
+// Build flags: /arch:SSE
+
+// sub_00463ff0: Default constructor, __thiscall,
 // no parameters, returns this in EAX.
 //
 // Zeroes the 16-byte float record with XORPS/MOVUPS (SSE intrinsics on a
@@ -38,6 +40,8 @@ public:
     Object00463ff0();
 };
 
+// NONMATCHING
+// FUNCTION: RBR 0x00463ff0
 Object00463ff0::Object00463ff0() {
     _mm_storeu_ps(field_00, _mm_setzero_ps());
 }

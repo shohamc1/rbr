@@ -1,4 +1,4 @@
-// sub_00555fb0: EXE 0x00555fb0, 55 bytes. __thiscall member returning 1, no
+// sub_00555fb0: __thiscall member returning 1, no
 // stack arguments. When the dword at +0x00 is 3 or 5 (SUB 3 / SUB 2 chain),
 // stores the 16-bit value (0xfffe - word@+0x794) through the pointer at
 // +0xc98; otherwise stores a zero word through it. The 16-bit arithmetic
@@ -21,6 +21,7 @@ public:
 typedef char Object00555fb0_offset_794[((unsigned int)&(((Object00555fb0*)0)->field_794) == 0x794) ? 1 : -1];
 typedef char Object00555fb0_offset_c98[((unsigned int)&(((Object00555fb0*)0)->field_c98) == 0xc98) ? 1 : -1];
 
+// FUNCTION: RBR 0x00555fb0
 int Object00555fb0::sub_00555fb0() {
     switch (field_00) {
     case 3:

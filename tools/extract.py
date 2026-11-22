@@ -1,11 +1,13 @@
 """Extract the pinned local media without executing its installers."""
 import argparse
 import hashlib
-import json
 from pathlib import Path
 import re
 import shutil
 import subprocess
+
+# The supplied disc image; its Crack/ executable is the matching reference.
+ISO_SHA256 = 'ce49419534d2e0737f78b201670a44ef96da1f5c0e74ff7c108db68a33275238'
 
 
 def digest(path):
@@ -34,8 +36,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('iso', type=Path)
     args = parser.parse_args()
-    expected = json.loads(Path('config/reference.json').read_text())['iso_sha256']
-    if digest(args.iso) != expected:
+    if digest(args.iso) != ISO_SHA256:
         raise ValueError('ISO hash differs from the selected reference')
     root = Path('original')
     if root.exists():

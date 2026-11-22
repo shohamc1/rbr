@@ -1,4 +1,4 @@
-// sub_0041b360: EXE 0x0041b360, 36 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_0041b360: MSVC 7.1 (/O2 /Zl).
 //
 // Byte-identical twin of sub_0041b310 (a second instantiation of the same
 // stream-buffer guard constructor): stores the stream pointer at +0 and, when
@@ -30,6 +30,7 @@ private:
     void *stream;  // +0: guarded stream subobject (first word: vbptr)
 };
 
+// FUNCTION: RBR 0x0041b360
 Object0041b360::Object0041b360(void *streamValue) : stream(streamValue) {
     char *sub = (char *)streamValue;
     int basicIosOffset = *(int *)(*(char **)sub + 4);  // vbtable[1]

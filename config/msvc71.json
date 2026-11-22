@@ -1,9 +1,8 @@
 {
-  "name": "msvc-13.10.3077-candidate",
+  "name": "msvc-13.10.3077",
   "archive_url": "https://github.com/OmniBlade/decomp.me/releases/download/msvcwin9x/msvc7.0.tar.gz",
   "archive_sha256": "49eba7f9f72644f6f872a4176baeac544e8b5dfb2be1f47bb4d439b1136ffeac",
   "catalog": "https://github.com/decompme/compilers/blob/4694562e964e6198f7fef863ed48462bf1ff2f49/values.yaml",
-  "compiler": "tools/local/msvc71/Bin/cl.exe",
   "flags": [
     "/nologo",
     "/c",
@@ -38,7 +37,5 @@
     "Bin/vcdeploy.exe": "26fd6191b79b9b2f0346fb438b7fafaa7bcc4f2327715679d9fe57a6218dc046",
     "Bin/vcvars32.bat": "f9ec1fff41c8009bc65278997d249fe25708e4469c278709639f05eed224184e"
   },
-  "status": "Matches five probes with /arch:SSE for the constructor. Original NoCD compiler identity and complete game options remain inferred.",
-  "docker_platform": "linux/386",
-  "docker_image_file": "tools/local/msvc-wine-image.txt"
+  "docker_platform": "linux/386"
 }

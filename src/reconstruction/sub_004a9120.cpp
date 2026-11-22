@@ -1,4 +1,4 @@
-// sub_004a9120: EXE 0x004a9120, 16 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_004a9120: MSVC 7.1 (/O2 /Zl).
 //
 // thiscall member, no stack args. Release: when the owning container pointer
 // at +0x08 is non-null, decrements the container count at its +0x08 and
@@ -34,6 +34,7 @@ public:
     void sub_004a9120();
 };
 
+// FUNCTION: RBR 0x004a9120
 void Object004a9120::sub_004a9120()
 {
     if (field_08 != 0) {

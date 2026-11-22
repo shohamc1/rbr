@@ -59,6 +59,7 @@ struct Object004b3fd0 {
     void sub_004b3fd0(unsigned int index);
 };
 
+// FUNCTION: RBR 0x004b3fd0
 void Object004b3fd0::sub_004b3fd0(unsigned int index) {
     unsigned int *entry = field_d0 + index;
     Sink004b3fd0 *object = (Sink004b3fd0 *)

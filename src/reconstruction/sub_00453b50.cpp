@@ -1,4 +1,4 @@
-// sub_00453b50: EXE 0x00453b50, 93 bytes. MSVC 7.1 (/O2 /Zl).
+// sub_00453b50: MSVC 7.1 (/O2 /Zl).
 //
 // thiscall member, no stack args, bare RET. Closes a pending gap in an
 // intrusive doubly-linked list (node links: next +4, prev +8, owner +0xc;
@@ -9,7 +9,7 @@
 // head-side node makes field_00 the container first; a null tail-side node
 // makes field_04 the container last with a nulled next; with neither, the
 // container is emptied. All three receiver fields are cleared in every path.
-// EXE 0x00454870 (manifest source:null) holds a byte-identical 93-byte second
+// EXE 0x00454870 (stub in config/symbols.csv; ) holds a byte-identical 93-byte second
 // copy of this body.
 
 struct Node00453b50 {
@@ -32,6 +32,7 @@ public:
     void sub_00453b50();
 };
 
+// FUNCTION: RBR 0x00453b50
 void Object00453b50::sub_00453b50()
 {
     if (field_08 != 0) {
