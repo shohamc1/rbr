@@ -12,6 +12,8 @@
 extern "C" void __fastcall sub_00423d50(void* self, void* arg_edx, void* global_value,
                                         void* arg3);
 
+extern "C" void* gObject016e3050; // EXE .data 0x016e3050
+
 extern "C" void __stdcall sub_00423a80(void* arg1, void* arg2, void* arg3, void* arg4) {
-    sub_00423d50(arg2, arg1, *(void**)0x016e3050, arg3);
+    sub_00423d50(arg2, arg1, gObject016e3050, arg3);
 }

@@ -57,16 +57,16 @@ extern "C" int __stdcall sub_00470f70(void* exceptionInfo) {
     unsigned long computerNameSize;  // in/out for GetComputerNameA
 
     emptyName[0] = 0;
-    FILE* file = fopen((const char*)0x00710958, (const char*)0x0076f468); // "CRASHDUMP.TXT", "wt"
+    FILE* file = fopen("CRASHDUMP.TXT", "wt");
     if (file == 0) {
         return 1;
     }
-    fprintf(file, (const char*)0x0071093c); // "exceptionhandler called!!"
+    fprintf(file, "exceptionhandler called!!");
     fclose(file);
     _tzset();
     _time64((long long*)crashTime);
     Tm00470f70* parts = _localtime64((const long long*)crashTime);
-    sprintf(dateText, (const char*)0x00710920, // "%d %02d %02d-%02d %02d %02d"
+    sprintf(dateText, "%d %02d %02d-%02d %02d %02d",
             parts->tm_year + 1900, parts->tm_mon + 1, parts->tm_mday,
             parts->tm_hour, parts->tm_min, parts->tm_sec);
     computerNameSize = 0x100;
@@ -74,11 +74,11 @@ extern "C" int __stdcall sub_00470f70(void* exceptionInfo) {
     sub_0059ee80(computerName, computerNameWide);
     sub_0059ee80(dateText, dateWide);
     sub_0059ee80(emptyName, emptyWide);
-    swprintf(fileNameWide, (const wchar_t*)0x0071090c, computerNameWide, dateWide); // L"%s_%s.dmp"
-    file = fopen((const char*)0x00710958, (const char*)0x0076f468);
+    swprintf(fileNameWide, L"%s_%s.dmp", computerNameWide, dateWide);
+    file = fopen("CRASHDUMP.TXT", "wt");
     if (file != 0) {
         sub_0059e9d0(fileNameWide, fileName);
-        fprintf(file, (const char*)0x007108ec, fileName); // "exceptionhandler called( %s )!!"
+        fprintf(file, "exceptionhandler called( %s )!!", fileName);
         fclose(file);
     }
     sub_0041af00(4, fileNameWide, GetCurrentThreadId(), exceptionInfo);

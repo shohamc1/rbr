@@ -9,6 +9,8 @@ struct Record004ce3d0 {
     unsigned char bytes[0x18];
 };
 
+extern "C" Record004ce3d0 gRecords007186c0[]; // EXE .data 0x007186c0
+
 extern "C" Record004ce3d0 * __stdcall sub_004ce3d0(unsigned int index) {
-    return (Record004ce3d0 *)0x007186c0 + index;
+    return gRecords007186c0 + index;
 }

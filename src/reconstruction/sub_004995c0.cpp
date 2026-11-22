@@ -5,6 +5,8 @@
 // the raw-vtable idiom of the matched sub_004495b0 (vtable 0x0070e994).
 // Caller: sub_00450a10 at 0x00450a13.
 
+extern "C" const void* const gVtable007137b4[]; // EXE .rdata 0x007137b4
+
 struct Object004995c0 {
     unsigned int vtable;
     unsigned int field_04;
@@ -24,7 +26,7 @@ struct Object004995c0 {
 
 Object004995c0::Object004995c0()
 {
-    vtable = 0x7137b4;
+    vtable = (unsigned int)gVtable007137b4;
     field_04 = 0;
     field_08 = 0;
     field_0c = 0;

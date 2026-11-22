@@ -31,7 +31,7 @@ LAYOUT_SIZE(Object00473e70, 0x40);
 int Object00473e70::sub_00473e70(unsigned int value0, unsigned int value1,
                                  unsigned int value2, float key) {
     for (unsigned int i = 0; i < 4; i++) {
-        if (slots[i].key == *(float *)0x00776a70) {
+        if (slots[i].key == 0.0f) {
             slots[i].field_0 = value0;
             slots[i].field_4 = value1;
             slots[i].field_8 = value2;

@@ -6,13 +6,14 @@
 // bare RET), so MSVC 7.1 /O2 emits the two-instruction thunk below. Compiled
 // with /O2 /Zl.
 
-// Callee class declaration for the unresolved sub_0056e4a0; manifest entry
-// pending (see build/harness/reports/cluster7.jsonl).
+// Callee class declaration; the callee has its own manifest entry.
 class Object0056e4a0 {
 public:
     void sub_0056e4a0();
 };
 
+extern "C" Object0056e4a0* gObject007b17cc; // EXE .data 0x007b17cc
+
 extern "C" void __cdecl sub_005524f0() {
-    ((Object0056e4a0 *)*(unsigned int *)0x007b17cc)->sub_0056e4a0();
+    gObject007b17cc->sub_0056e4a0();
 }

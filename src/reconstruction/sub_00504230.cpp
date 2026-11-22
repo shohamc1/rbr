@@ -29,7 +29,7 @@ float Object0050ab80::sub_00504230(unsigned int value, unsigned int* record) {
     float* entry = (float*)((char*)field_04 + value * 0x20 + 0x1fc);
     float* rec = (float*)record;
     float base;
-    if (rec[2] != *(float*)0x00776a70) {
+    if (rec[2] != 0.0f) {
         base = entry[3];
     } else {
         base = entry[2] * rec[5] + entry[1] * rec[4] + rec[3] * entry[0];

@@ -3,6 +3,8 @@
 // Registered as a callback from sub_00547d60 at 0x00548250. Compiled with
 // MSVC 7.1 (/O2 /Zl).
 
+extern "C" unsigned int gFlag0163edbc; // EXE .data 0x0163edbc
+
 extern "C" void __cdecl sub_00545b50() {
-    *(unsigned int *)0x0163edbc = 0;
+    gFlag0163edbc = 0;
 }

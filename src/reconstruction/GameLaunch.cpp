@@ -8,17 +8,21 @@
 extern "C" void *__cdecl memset(void *, int, unsigned int);
 #pragma intrinsic(memset)
 
+// Intro child process record and its launch-success flag.
+extern "C" ProcessInformation gIntroProcess; // EXE .data 0x007ca1dc
+extern "C" unsigned char gIntroRunning;      // EXE .data 0x007ca1ec
+
 // Game-launch teardown called by game main (sub_00471110) after the intro
 // launcher (sub_00470ea0). When the success flag at 0x007ca1ec is set, waits
 // forever on the intro child process handle at 0x007ca1dc, closes both child
 // handles (0x007ca1dc process, 0x007ca1e0 thread) from that PROCESS_INFORMATION
 // record, and clears the flag. __cdecl, no parameters, bare RET.
 extern "C" void __cdecl sub_00470e60() {
-    if (*(unsigned char *)0x007ca1ec) {
-        WaitForSingleObject(*(void **)0x007ca1dc, (unsigned long)-1);
-        CloseHandle(*(void **)0x007ca1dc);
-        CloseHandle(*(void **)0x007ca1e0);
-        *(unsigned char *)0x007ca1ec = 0;
+    if (gIntroRunning) {
+        WaitForSingleObject(gIntroProcess.hProcess, (unsigned long)-1);
+        CloseHandle(gIntroProcess.hProcess);
+        CloseHandle(gIntroProcess.hThread);
+        gIntroRunning = 0;
     }
 }
 
@@ -27,8 +31,6 @@ extern "C" void __cdecl sub_00470e60() {
 // empty STARTUPINFOA (cb = 0x44) on the stack and a PROCESS_INFORMATION record
 // at the literal globals 0x007ca1dc-0x007ca1e8; success sets the byte flag at
 // 0x007ca1ec. __cdecl, no parameters, return value unused by the caller.
-//
-// The checker resolves the CreateProcessA IAT import; data addresses are literal.
 //
 // NONMATCHING: the instruction set is exact (89 bytes, same encodings), but
 // the /O2 scheduler weaves the five stores into the argument-push run while
@@ -41,14 +43,14 @@ extern "C" void __cdecl sub_00470e60() {
 extern "C" void __cdecl sub_00470ea0() {
     StartupInfoA si;
     memset(&si, 0, sizeof(si));
-    *(void**)0x007ca1dc = 0;
-    *(void**)0x007ca1e0 = 0;
-    *(unsigned long*)0x007ca1e4 = 0;
-    *(unsigned long*)0x007ca1e8 = 0;
+    gIntroProcess.hProcess = 0;
+    gIntroProcess.hThread = 0;
+    gIntroProcess.dwProcessId = 0;
+    gIntroProcess.dwThreadId = 0;
     si.cb = sizeof(si);
-    if (CreateProcessA(0, (char*)0x007108d0, 0, 0, 0, 0, 0, 0, &si,
-                       (void*)0x007ca1dc)) {
-        *(unsigned char*)0x007ca1ec = 1;
+    if (CreateProcessA(0, (char*)"Intro.exe", 0, 0, 0, 0, 0, 0, &si,
+                       &gIntroProcess)) {
+        gIntroRunning = 1;
     }
 }
 
@@ -60,7 +62,7 @@ extern "C" bool __cdecl sub_00470f00() {
     memset(&startup_info, 0, sizeof(startup_info));
     startup_info.cb = sizeof(startup_info);
     memset(&process_info, 0, sizeof(process_info));
-    if (!CreateProcessA(0, (void *)0x7108dc, 0, 0, 0, 0, 0, 0, &startup_info,
+    if (!CreateProcessA(0, (char*)"RBR Startup.exe", 0, 0, 0, 0, 0, 0, &startup_info,
                         &process_info)) {
         return false;
     }

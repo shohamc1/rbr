@@ -13,4 +13,6 @@ public:
     Object00552710();
 };
 
-Object00552710::Object00552710() { field_00 = 0x00726f50; }
+extern "C" const void* const gVtable00726f50[]; // EXE .rdata 0x00726f50
+
+Object00552710::Object00552710() { field_00 = (unsigned int)gVtable00726f50; }

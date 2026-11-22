@@ -9,6 +9,8 @@
 // (raw-address store), so no object-local vtable is emitted and the store
 // order stays under source control. Compiled with MSVC 7.1 (/O2 /Zl).
 
+extern "C" const void* const gVtable00727e48[]; // EXE .rdata 0x00727e48
+
 class Object00567730 {
 public:
     unsigned int field_00;   // vtable slot; 0x00727e48 for this class
@@ -23,5 +25,5 @@ Object00567730::Object00567730() {
     field_08 = 0;
     field_04 = 0;
     field_0c = 0;
-    field_00 = 0x727e48;
+    field_00 = (unsigned int)gVtable00727e48;
 }

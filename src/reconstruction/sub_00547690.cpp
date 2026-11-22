@@ -10,6 +10,8 @@
 // at 0x00548121, sub_005529a0 at 0x00552c42, sub_0055a670, sub_0055aa30.
 // Compiled with MSVC 7.1 (/O2 /Zl).
 
+extern "C" const void* const gVtable007265ac[]; // EXE .rdata 0x007265ac
+
 class Object00547690 {
 public:
     struct Triple {
@@ -35,6 +37,6 @@ Object00547690::Object00547690(Triple first, Triple second, Triple third,
     field_14 = second;
     field_20 = third;
     field_04 = 0;
-    vtable = 0x7265ac;
+    vtable = (unsigned int)gVtable007265ac;
     field_2c = last;
 }

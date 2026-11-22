@@ -5,6 +5,8 @@
 // 0x006eff06 that the 0x004491e0-family vtables also use. Compiled with
 // MSVC 7.1 (/O2 /Zl). Raw-address store: no object-local vtable is emitted.
 
+extern "C" const void* const gVtable00712b90[]; // EXE .rdata 0x00712b90
+
 class Object0048cc90 {
 public:
     unsigned int field_00;   // vtable slot; 0x00712b90 when constructed
@@ -12,5 +14,5 @@ public:
 };
 
 void Object0048cc90::sub_0048cc90() {
-    field_00 = 0x712b90;
+    field_00 = (unsigned int)gVtable00712b90;
 }

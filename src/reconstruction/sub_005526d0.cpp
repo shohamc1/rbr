@@ -7,15 +7,16 @@
 // sibling clear member at 0x0056f200 zeroes +0x00..+0x10 with -1 at +0x04.
 // Compiled with MSVC 7.1 (/O2 /Zl).
 
-// Callee class declaration for the unresolved sub_0056f250/sub_0056f260;
-// manifest entries pending (see build/harness/reports/cluster7.jsonl).
+// Callee class declaration; both callees have their own manifest entries.
 class Object0056f250 {
 public:
     void sub_0056f250(const char *name);
     void sub_0056f260(const char *name);
 };
 
+extern "C" Object0056f250 gObject007b184c; // EXE .data 0x007b184c
+
 extern "C" void __cdecl sub_005526d0() {
-    ((Object0056f250 *)0x007b184c)->sub_0056f250((const char *)0x00726f3c);
-    ((Object0056f250 *)0x007b184c)->sub_0056f260((const char *)0x00726f2c);
+    gObject007b184c.sub_0056f250("qr%02d_in.arp");
+    gObject007b184c.sub_0056f260("qr%02d_out.arp");
 }

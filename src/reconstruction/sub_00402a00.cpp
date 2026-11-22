@@ -10,6 +10,8 @@
 // of Object00402980 (shared class shape with sub_00402980.cpp); ECX passes
 // through unchanged, EAX/flags are whatever the callee leaves.
 
+extern "C" const void* const gVtable0070c79c[]; // EXE .rdata 0x0070c79c
+
 class Object004029a0 {
 public:
     void sub_004029a0();   // base-class destructor body, EXE 0x004029a0
@@ -22,6 +24,6 @@ public:
 };
 
 void Object00402980::sub_00402a00() {
-    field_00 = (void*)0x70c79c;
+    field_00 = (void*)gVtable0070c79c;
     ((Object004029a0*)this)->sub_004029a0();
 }

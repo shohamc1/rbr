@@ -11,6 +11,8 @@
 // (0x00727e54, sub_00454e70). Compiled with MSVC 7.1 (/O2 /Zl).
 // Raw-address vtable store: no object-local vtable is emitted.
 
+extern "C" const void* const gVtable00727e60[]; // EXE .rdata 0x00727e60
+
 class Head005676d0 {
 public:
     unsigned int field_00;   // vtable slot; 0x00727e60 for this class
@@ -30,7 +32,7 @@ public:
 };
 
 void Object005676d0::sub_005676d0() {
-    Head005676d0::field_00 = 0x727e60;
+    Head005676d0::field_00 = (unsigned int)gVtable00727e60;
     Node005676d0 &node = *static_cast<Node005676d0 *>(this);
     if (node.field_08 != 0) {
         --*(int *)((char *)node.field_08 + 8);

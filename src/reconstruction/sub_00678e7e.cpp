@@ -13,6 +13,8 @@
 
 #pragma optimize("s", on)
 
+extern "C" const void* const gVtable0073c904[]; // EXE .rdata 0x0073c904
+
 extern "C" void __cdecl sub_006efdd0(void* memory);  // 0x006efdd0, operator delete thunk
 
 class Object0067c65d {
@@ -25,7 +27,7 @@ public:
 };
 
 void Object0067c65d::sub_00678e7e() {
-    vtable_00 = (void*)0x0073c904;
+    vtable_00 = (void*)gVtable0073c904;
     sub_006efdd0(field_c8);
     sub_0067884c();
 }

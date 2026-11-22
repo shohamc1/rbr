@@ -14,6 +14,8 @@
 // slot-1 call goes through an abstract-class view so the compiler emits the
 // virtual dispatch without an object-local vtable.
 
+extern "C" const void* const gVtable00720c9c[]; // EXE .rdata 0x00720c9c
+
 class Visitor005183f0 {
 public:
     unsigned int field_00;   // dispatch table; 0x00720c9c for this visitor
@@ -45,7 +47,7 @@ public:
 
 void Object005183f0::sub_005183f0() {
     Visitor005183f0 visitor;
-    visitor.field_00 = 0x720c9c;
+    visitor.field_00 = (unsigned int)gVtable00720c9c;
     visitor.field_04 = 1.0f;
     visitor.field_08 = (char *)field_28 + 0x10;
     void *receiver = field_20;

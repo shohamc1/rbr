@@ -39,6 +39,8 @@ public:
     virtual void vslot_58(SubObject004a5980* object);
 };
 
+extern "C" Manager008b4998* gManager008b4998; // EXE .data 0x008b4998
+
 class Object004a5980 {
 public:
     unsigned char field_00[0x70];
@@ -56,7 +58,7 @@ void Object004a5980::sub_004a5980()
     if (field_88 != 0) {
         field_88->vslot_54();
         if (field_88 != 0) {
-            (*(Manager008b4998**)0x008b4998)->vslot_58(field_88);
+            gManager008b4998->vslot_58(field_88);
             field_88 = 0;
         }
     }

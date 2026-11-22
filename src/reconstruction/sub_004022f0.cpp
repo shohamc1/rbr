@@ -7,6 +7,8 @@
 // free the object through the cdecl operator-delete thunk sub_006efdd0 when
 // bit 0 of the flags argument is set, and return this in EAX. RET 4.
 
+extern "C" const void* const gVtable0076f3e8[]; // EXE .rdata 0x0076f3e8
+
 extern "C" {
 __declspec(dllimport) void* __stdcall GetProcessHeap();
 __declspec(dllimport) int __stdcall HeapFree(void* heap, unsigned int flags, void* block);
@@ -24,7 +26,7 @@ public:
 
 void* Object004022f0::sub_004022f0(unsigned int flags) {
     void* block = field_04;
-    field_00 = 0x76f3e8;
+    field_00 = (unsigned int)gVtable0076f3e8;
     if (block != 0) {
         HeapFree(GetProcessHeap(), 0, block);
     }

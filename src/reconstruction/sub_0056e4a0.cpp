@@ -41,6 +41,12 @@ public:
     void sub_0057b2e0(unsigned int kind, unsigned int callback, unsigned int flag);
 };
 
+extern "C" Object007a1184* gObject007a1184; // EXE .data 0x007a1184
+extern "C" unsigned int gFlag01640038;      // EXE .data 0x01640038
+extern "C" Object007b1c7c* gObject007b1c7c; // EXE .data 0x007b1c7c
+extern "C" void __cdecl sub_0056c450(); // callback; its body is a bare RET
+extern "C" void __cdecl sub_0056da90(); // callback
+
 class Object0056e4a0 {
 public:
     void sub_0056e4a0();
@@ -48,18 +54,18 @@ public:
 };
 
 void Object0056e4a0::sub_0056e4a0() {
-    switch (((Object007a1184*)*(unsigned int*)0x007a1184)->sub_slot30()) {
+    switch (gObject007a1184->sub_slot30()) {
     case 3:
         return;
     case 4:
-        sub_0056d380(0x0056c450, 0);
+        sub_0056d380((unsigned int)sub_0056c450, 0);
         return;
     case 5:
-        sub_0056d380(0x0056c450, 0);
+        sub_0056d380((unsigned int)sub_0056c450, 0);
         return;
     }
-    if (*(unsigned int*)0x01640038 != 0) {
-        ((Object007b1c7c*)*(unsigned int*)0x007b1c7c)
-            ->sub_0057b2e0(0xb, 0x0056da90, 0);
+    if (gFlag01640038 != 0) {
+        gObject007b1c7c
+            ->sub_0057b2e0(0xb, (unsigned int)sub_0056da90, 0);
     }
 }

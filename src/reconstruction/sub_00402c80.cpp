@@ -29,7 +29,7 @@ int Object00402c80::sub_00402c80(const char* text, int length) {
         OutputDebugStringA(text);
     }
     if ((field_40 & 1) && field_3c != 0) {
-        fprintf(field_3c, (const char*)0x0076f46c, text);
+        fprintf(field_3c, "%s", text);
         fflush(field_3c);
     }
     return length;

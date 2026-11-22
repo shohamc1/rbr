@@ -19,21 +19,23 @@ __declspec(dllimport) void* __cdecl fopen(const char* filename, const char* mode
 __declspec(dllimport) int __cdecl fclose(void* stream);
 int __cdecl sub_0041c1b0(DiagnosticsHandler* handler);
 int __cdecl sub_0041c5f0();
+int __cdecl sub_0041c820();  // default diagnostics handler
+extern void* gDiagnosticsFile; // FILE*, EXE .data 0x016e3044
 }
 
 extern "C" int __cdecl sub_0041c8a0(DiagnosticsHandler* handler) {
     if (!handler) {
-        *(void**)0x016e3044 = fopen((const char*)0x77069c, (const char*)0x76f468);
-        handler = (DiagnosticsHandler*)0x0041c820;
+        gDiagnosticsFile = fopen("Diagnostics.txt", "wt");
+        handler = sub_0041c820;
     }
     int result = sub_0041c1b0(handler);
     if (!result) {
         result = sub_0041c5f0();
     }
-    void* file = *(void**)0x016e3044;
+    void* file = gDiagnosticsFile;
     if (file) {
         fclose(file);
-        *(void**)0x016e3044 = 0;
+        gDiagnosticsFile = 0;
     }
     return result;
 }

@@ -21,6 +21,8 @@ public:
 
 typedef char Record004ba120_size[(sizeof(Record004ba120) == 0x1c) ? 1 : -1];
 
+extern "C" Object004ba120* gObject00874618; // EXE .data 0x00874618
+
 extern "C" unsigned int __stdcall sub_0046e290(unsigned int index) {
-    return ((Object004ba120*)*(unsigned int*)0x00874618)->sub_004ba120(index)->field_14;
+    return gObject00874618->sub_004ba120(index)->field_14;
 }

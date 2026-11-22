@@ -71,7 +71,7 @@ void Object00476270::sub_00476270() {
         // the FMUL with the -1.0 constant, as in the reference. A plain read
         // makes MSVC 7.1 load the constant first and use the field as the
         // memory operand.
-        field_fc = *(volatile float *)&field_fc * *(float *)0x00776a48;
+        field_fc = *(volatile float *)&field_fc * -1.0f;
         field_ec = field_f4;
     } else {
         field_ec = field_f0;

@@ -55,6 +55,8 @@ struct Target0043bfe0 {
 
 LAYOUT_OFFSET(Target0043bfe0, field_70, 0x70);
 
+extern "C" App007c9fe8* gApplication; // EXE .data 0x007c9fe8
+
 class Object0043bfe0 {
 public:
     void sub_0043bfe0();
@@ -67,7 +69,7 @@ LAYOUT_OFFSET(Object0043bfe0, field_a0, 0xa0);
 void Object0043bfe0::sub_0043bfe0() {
     Target0043bfe0* target = field_a0;
     if (target != 0) {
-        ((App007c9fe8*)*(void**)0x007c9fe8)->field_40
+        gApplication->field_40
             ->slot_58(target->field_70, 0);
     }
 }

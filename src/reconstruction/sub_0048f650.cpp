@@ -7,6 +7,8 @@
 // register. No EXE reference reaches this constructor directly.
 // Compiled with MSVC 7.1 (/O2 /Zl).
 
+extern "C" const void* const gVtable00712f70[]; // EXE .rdata 0x00712f70
+
 class Object0048f650 {
 public:
     unsigned int field_00;   // table slot; 0x00712f70 stored here
@@ -21,5 +23,5 @@ Object0048f650::Object0048f650() {
     field_08 = 0;
     field_04 = 0;
     field_0c = 0;
-    field_00 = 0x712f70;
+    field_00 = (unsigned int)gVtable00712f70;
 }

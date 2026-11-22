@@ -10,11 +10,12 @@
 // conditional release at +8 when the pointer at +4 is nonzero, then a reset
 // run that zeroes +0x44/+0x04/+0x50, restores +0x0c to the table 0x0071dfd8,
 // and resets the pointer pairs at +0x4c and +0x34/+0x38, +0x24/+0x28,
-// +0x14/+0x18 to the shared empty record at EXE 0x0071135c (its first
-// dword is 0x00478970) plus zero.
+// +0x14/+0x18 to the vtable at EXE 0x0071135c (its entries are code
+// addresses, starting 0x00478970) plus zero. Each pair looks like an embedded
+// polymorphic member {vptr, value}.
 //
 // NONMATCHING (score 2 of 19 instructions, 61/61 bytes): everything matches
-// except the shared empty-record constant. The reference materializes
+// except the shared vtable constant. The reference materializes
 // `mov edx,0x71135c` at its first use, after the three zero stores; every
 // draft shape materializes it at the if-body fall-through / join entry,
 // three stores earlier. Tried: statement orders both ways, a const local
@@ -23,6 +24,11 @@
 // pair struct (object-local data; checker rejects), #pragma optimize
 // "s"/"t"/"g" ("s" and "g" change the whole prologue and register choice,
 // "t" keeps the same two-instruction difference).
+
+extern "C" const void* const gVtable0071e094[]; // EXE .rdata 0x0071e094
+
+extern "C" const void* const gVtable0071dfd8[]; // EXE .rdata 0x0071dfd8
+extern "C" const void* const gVtable0071135c[]; // EXE .rdata 0x0071135c
 
 class Object0050a910 {
 public:
@@ -48,19 +54,19 @@ public:
 };
 
 void Object0050a910::sub_00503550() {
-    vtable_00 = (void*)0x0071e094;
+    vtable_00 = (void*)gVtable0071e094;
     if (field_04 != 0) {
         field_08 = 0;
     }
     field_44 = 0;
     field_04 = 0;
     field_50 = 0;
-    field_4c = (void*)0x0071135c;
-    field_0c = (void*)0x0071dfd8;
-    field_34 = (void*)0x0071135c;
+    field_4c = (void*)gVtable0071135c;
+    field_0c = (void*)gVtable0071dfd8;
+    field_34 = (void*)gVtable0071135c;
     field_38 = 0;
-    field_24 = (void*)0x0071135c;
+    field_24 = (void*)gVtable0071135c;
     field_28 = 0;
-    field_14 = (void*)0x0071135c;
+    field_14 = (void*)gVtable0071135c;
     field_18 = 0;
 }

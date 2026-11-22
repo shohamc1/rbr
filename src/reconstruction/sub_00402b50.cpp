@@ -40,8 +40,8 @@ namespace std {
 // #pragma optimize("g"/"t"), and /G5, /G7, /Oi.
 extern "C" void __cdecl sub_00402b50(std::basic_ostream<char, std::char_traits<char> >& stream,
                                      float x, float y, float z) {
-    stream << (const char*)0x0076f478 << x
-           << (const char*)0x0076f474 << y
-           << (const char*)0x0076f474 << z
-           << (const char*)0x0076f480;
+    stream << "(" << x
+           << ", " << y
+           << ", " << z
+           << ")";
 }

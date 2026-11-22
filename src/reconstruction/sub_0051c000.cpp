@@ -10,9 +10,6 @@
 // sub_0050c240 (XOR EAX,EAX; RET), returning 0. thiscall member returning
 // int, one local (PUSH ECX), bare RET. Vtable references 0x007203b8 and
 // 0x00722f18; also reached by JMP from 0x0050fbd0 and 0x005131d0.
-//
-// Callee manifest entries pending (see build/harness/reports/cluster16.jsonl):
-// sub_00471790 float-return symbol, sub_0050c240 thiscall member.
 
 class Object00471790 {
 public:

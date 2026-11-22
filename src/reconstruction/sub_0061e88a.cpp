@@ -5,10 +5,8 @@
 // to an int index, and combines the two consecutive table entries at
 // 0x00733c90 as
 //   table[index] - table[index+1] + table[index+1] * frac
-// where frac = scaled - unsigned(index): the signed FILD, then the shared
-// constant-pool 2^32 float at 0x00776a38 added on the negative branch
-// (FILD/JGE/FADD; the pinned pool address avoids an object-local
-// __real@4f800000, the idiom recorded with sub_004ce380). __thiscall with
+// where frac = scaled - (float)(unsigned)index; MSVC expands that
+// conversion to FILD/JGE/FADD with the 2^32 pool float at 0x00776a38. __thiscall with
 // one float stack word (RET 4); ECX is unused; result in ST(0). Callers:
 // 0x0061f090, 0x0061f0b9, 0x0061f0c8, 0x0061f0d6.
 //
@@ -30,18 +28,13 @@ public:
     float sub_0061e88a(float value);
 };
 
-static float unsignedFloat0061e88a(int value) {
-    float converted = (float)value;
-    if (value < 0)
-        converted += *(const float*)0x00776a38;
-    return converted;
-}
+extern "C" const float gCurveTable00733c90[]; // EXE .rdata 0x00733c90
 
 float Object0061e88a::sub_0061e88a(float value) {
     float square = value * value;
-    float scaled = square * *(const float*)0x0072db70;
+    float scaled = square * 254.0f;
     int index = (int)scaled;
-    const float* table = (const float*)0x00733c90;
+    const float* table = gCurveTable00733c90;
     return table[index] - table[index + 1]
-         + table[index + 1] * (scaled - unsignedFloat0061e88a(index));
+         + table[index + 1] * (scaled - (float)(unsigned int)index);
 }

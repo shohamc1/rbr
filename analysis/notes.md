@@ -63,15 +63,12 @@ All use the pinned MSVC 7.1 profile with `/O2 /Zl` unless noted.
 | `sub_00471790` | 81 | — | SIMD math library: second SHUFPS must rotate XMM0 in place with the accumulator in XMM1; 7.1 /O2 always copies to XMM2, re-homes the accumulator, and spills (EBP+AND frame). 7 shapes, ±/arch:SSE. |
 | `sub_00463ff0`/`00464060`/`00480e80`/`00480ec0`/`00480ef0`/`004eb160`/`004eb180` | — | — | One SSE-math family (about 30 EXE sites): reference keeps `this` in a 4-byte stack slot (`PUSH ECX; MOV [ESP],ECX`) and rsqrt/shuffle copy shapes 7.1 never emits at /O2 (20+ shapes each; intrinsics without `align(16)` removed the frame but not the homing). Hypothesis: that library's objects were built with a different mode such as /GL. |
 | `sub_0061e83a`/`0061e88a` | — | — | FISTP-m32 wall: the 0x61c000-0x626000 region has 110 FISTP-m32 sites, zero FISTP-m64, zero `__ftol` calls, while the rest of .text makes 662 `__ftol` calls. `/QIfist` always emits FISTP QWORD (probed with /Op /O1 /Og- /G5), so these two curve functions cannot match under the pinned toolchain. Neighbors in the same region are 7.1-exact: the vintage split is per source file. |
-| `sub_004062a0` | 5 | 9 | `fld [esp+4]; fld1; fpatan; ret` — inline fast-math atan; no MSVC 7.1 C++ form exists and the EXE imports no atan. Categorize as an assembly candidate. |
-| `sub_00406100` | 61 | 61 | Exact instruction set; only schedule: reference loads then `divss`, 7.1 always hoists the reciprocal (const+DIVSS) above the loads (~20 shapes/flags). |
-| `sub_0040e960` | 38 | 38 | Reference hoists `mov edx,[0x016e304c]` one instruction earlier than every two-statement shape; the right order recolors registers (16+ shapes). |
+| `sub_0040e960` | 38 | 38 | Reference hoists `mov edx,[0x016e304c]` one instruction earlier than every two-statement shape; the right order recolors registers (16+ shapes). Loading the holder between the two flag stores fixes the order but recolors to EAX/DL in every form tried (local flag, early declarations; score 6). |
 | `sub_00421a10`/`00421de0` | 87/93 | — | Identical one-byte residual: rotated advance loop's load base register (`mov eax,[ecx+K]` vs `[eax+K]`); stable across 13/11 shapes. |
 | `sub_00492fe0` | 86 | 85 | Buffered byte-writer (one of three identical template bodies): reference materializes the address then loads the value byte into the dead index register; every /O2 shape hoists the value to AL and folds the store (~40 shapes). |
-| `sub_004a5120` | 74 | — | x87 operand-form trilemma: memory-form `fadd [ecx+0x2c]` needs a volatile-leaf counterpart that contradicts the statement-split multiply; non-volatile restores forms but store-forwards. x87 operand rules derived in the report. |
-| `sub_004ce380` | 19 | 17 | Missing only the PUSH ECX/POP ECX frame slot that the compiler-generated unsigned-to-float idiom always reserves; bias 2^32f shares the pool at 0x00776a38 (same pool as 1.0f). Matches if the checker ever folds COMDAT `__real@` constants. |
+| `sub_004a5120` | 74 | — | x87 operand-form trilemma: memory-form `fadd [ecx+0x2c]` needs a volatile-leaf counterpart that contradicts the statement-split multiply; non-volatile restores forms but store-forwards. Reading the target `field_24[1]` into a local first reproduces the leading `fld [ecx+0x28]` but not the memory-form FADD (score 7). x87 operand rules are under the batch-200 levers below. |
 | `sub_004ea1f0` | 74 | 74 | PUSH EDI/1.0f hoisted one instruction (8 shapes). |
-| `sub_00503550` | 61 | 61 | Shared-const `mov edx,0x71135c` materializes at first use; reference materializes at join entry (8 shapes + 3 pragmas). |
+| `sub_00503550` | 61 | 61 | Shared vtable const `mov edx,0x71135c` (0x0071135c holds code addresses; the four {vptr, 0} pairs look like embedded polymorphic members) materializes at first use; reference materializes at join entry (8 shapes + 3 pragmas). |
 | `sub_00476270` | 109 | 109 | ECX homing slot schedule plus a custom ECX-receiving cdecl convention with no plain C++ form; its caller `sub_004767a0` matches via the cdecl alias (the reference call relies on the previous call preserving ECX — MSVC always reloads ECX between member calls). Manifest keeps the cdecl symbol `_sub_00476270`. |
 | `sub_0067ce0d` | 64 | 64 | Value/index register cycle plus prologue ordering; each flag-set configuration reproduces half the reference. Stop rule at 15 differing instructions. |
 
@@ -140,8 +137,7 @@ New encoding levers proven on this artifact (wave 1):
 
 178 of 200 functions matching across 21 clusters (including all 17 small
 `source:null` callees that blocked batch-100 callers). Draft residuals are in
-the table above; per-cluster reports with full evidence are under
-`build/harness/reports/cluster{0..20}.md` (ignored, regenerable).
+the table above.
 
 - The 93-byte thiscall intrusive-list unlink now has eight byte-identical EXE
   copies (`sub_0043d920`, `sub_004477b0/50/f0/10`, `sub_004544b0`,
@@ -212,9 +208,23 @@ New encoding levers proven on this artifact (batch 200):
   COMDAT where void* emits one.
 - `__m128` without `align(16)` keeps intrinsics inlinable without the EBP
   realignment frame; /arch:SSE changes nothing in intrinsic-only bodies.
+- x87 operand forms: leaf*leaf multiply loads the right factor and
+  memory-forms the left; a subtraction keeps the memory form on the right
+  when the left is a volatile leaf or an arithmetic subexpression, or the
+  right is plain; statement-split `d = d * field` memory-forms the right,
+  an in-expression multiply never does; a volatile-cast read blocks
+  load/store forwarding but always takes its own FLD.
 - /Oy- per file restores EBP frames; `(unsigned char)` casts give MOVZX +
-  signed FILD and avoid object-local `__real@4f800000` constants (which the
-  checker cannot yet fold — the shared pools are 0x00776a38/0x00776a3c).
+  signed FILD with no 2^32 fixup.
+- `(float)unsignedValue` is the source of FILD/JGE/FADD with the 2^32 pool
+  float at 0x00776a38 and the PUSH ECX slot (`sub_004ce380`).
+- /O2 implies /Oi, and the atan intrinsic expands inline to FLD1/FPATAN
+  (`sub_004062a0`); the EXE imports no atan.
+- A float literal memory-forms each use (`fmul [__real@...]`). A reference
+  that loads the constant once and reuses ST(n) read a named constant, so
+  `sub_0061decb` keeps `gColorScale0070e9ec`. The reverse also holds: reading
+  1.0f through a pointer hoisted the reciprocal in `sub_00406100`; the literal
+  matches.
 
 Wave 2 (clusters 5-9, 49 functions; 45 matching, 4 drafts above):
 
@@ -271,7 +281,13 @@ verify packet listings against raw EXE bytes. MSVC 7.1 has no
 The checker resolves REL32 calls to manifest symbols and DIR32 `__imp_` imports
 (IAT slots and `FF 25` import thunks); relocation-free objects are unaffected.
 Both relocation forms retain their COFF addends. Resolution requires an
-undefined external symbol; object-local and common symbols remain unsupported.
+undefined external symbol. DIR32 also resolves manifest functions used as data
+(callbacks) and compiler literals (`__real@` floats and doubles, `??_C@`
+strings): a literal takes the address the reference operand names, only when
+read-only reference data holds the same bytes there, and one literal name
+keeps one address across the run. Pools observed: 0.0f 0x00776a70, 1.0f
+0x00776a3c, -1.0f 0x00776a48, 2^32 0x00776a38, 254.0f 0x0072db70.
+Other object-local and common symbols remain unsupported.
 `make build` compiles drafts without extracting their code. Exact checks still
 reject extra code/data sections. Clang qualification uses the same resolver.
 MSVC SEH and C++ EH frames still need linker-aware checking: scope tables land

@@ -393,7 +393,9 @@ def report(info, slots):
     for name in sorted(set(info['imports'])):
         print(f'Uses import {name}: declare it extern "C" __declspec(dllimport) (C++ names need real declarations).')
     for value in info['globals']:
-        print(f'References data 0x{value:08x}: declare it extern and add {{"symbol":"<mangled>","address":"0x{value:08x}"}} to config/globals.json.')
+        print(f'References data 0x{value:08x}: if it holds a float or string literal, write the literal; '
+              f'otherwise declare it extern and add {{"symbol":"<mangled>","address":"0x{value:08x}"}} to '
+              f'config/globals.json. Never cast the address itself.')
     blocking = [f for f in info['flags'] if f in BLOCKERS]
     if blocking:
         print('Blockers the checker cannot verify yet: ' + ', '.join(blocking) + '. See AGENTS.md before spending compiles.')

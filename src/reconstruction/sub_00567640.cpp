@@ -19,6 +19,8 @@
 // load above the clears (volatile on only one side does not stop it; /Os
 // and optimize("g", off) wreck the stores).
 
+extern "C" const void* const gVtable0070e06c[]; // EXE .rdata 0x0070e06c
+
 class Head00567640 {
 public:
     unsigned int field_00;   // vtable slot; 0x0070e06c for this class
@@ -44,7 +46,7 @@ void Object00567640::sub_00567640() {
     void *zero = 0;
     *(void * volatile *)((char *)this + 0x10) = zero;
     *(void * volatile *)((char *)this + 0x14) = zero;
-    *(unsigned int volatile *)((char *)this) = 0x70e06c;
+    *(unsigned int volatile *)((char *)this) = (unsigned int)gVtable0070e06c;
     owner = *(void * volatile *)((char *)this + 0xc);
     Link005ed040 &node = *static_cast<Link005ed040 *>(this);
     if (owner != zero) {

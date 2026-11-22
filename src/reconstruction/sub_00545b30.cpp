@@ -7,6 +7,8 @@
 // sub_0056f160). The cdecl alias call reproduces the JMP while leaving ECX
 // = this untouched. Compiled with MSVC 7.1 (/O2 /Zl).
 
+extern "C" const void* const gVtable00726524[]; // EXE .rdata 0x00726524
+
 class Object00545b30 {
 public:
     unsigned int vtable;
@@ -16,6 +18,6 @@ public:
 extern "C" void __cdecl sub_00572230();
 
 void Object00545b30::sub_00545b30() {
-    vtable = 0x726524;
+    vtable = (unsigned int)gVtable00726524;
     sub_00572230();
 }
